@@ -1,4 +1,5 @@
 import { browser, version } from "$app/environment";
+import { myCanvas } from "$lib/runes/canvas.svelte";
 import { ui } from "$lib/runes/ui.svelte";
 
 // Types
@@ -8,7 +9,12 @@ export let dbData = undefined as
 	| {
 			name: string;
 			version: string;
-			ui: typeof ui;
+			canvasSaveRestore: {
+				offsetX: number;
+				offsetY: number;
+				scale: number;
+			};
+			uiOptionsSaveRestore: typeof ui.options;
 	  };
 
 export const myIndexedDB = (() => {
@@ -62,7 +68,15 @@ export const myIndexedDB = (() => {
 						indexedStore.clear();
 					} else {
 						// Load data from indexedDB
-						ui.options = indexedDBContent.ui.options;
+
+						// Restore canvas position and scale
+						const canvasSaveRestore = indexedDBContent.canvasSaveRestore;
+						myCanvas.offsetX = canvasSaveRestore.offsetX;
+						myCanvas.offsetY = canvasSaveRestore.offsetX;
+						myCanvas.scale = canvasSaveRestore.scale;
+
+						// Restore ui options
+						ui.options = indexedDBContent.uiOptionsSaveRestore;
 					}
 
 					resolve(null);
@@ -78,7 +92,12 @@ export const myIndexedDB = (() => {
 			dbData = {
 				name: datasetName,
 				version: version,
-				ui: $state.snapshot(ui),
+				canvasSaveRestore: {
+					offsetX: myCanvas.offsetX,
+					offsetY: myCanvas.offsetY,
+					scale: myCanvas.scale,
+				},
+				uiOptionsSaveRestore: ui.options,
 			};
 
 			indexedDBStore.put(dbData);

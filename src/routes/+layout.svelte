@@ -4,7 +4,7 @@
 	import FileMenu from "$lib/components/interface/FileMenu.svelte";
 	import LightDarkMode from "$lib/components/interface/LightDarkMode.svelte";
 	import MouseInfo from "$lib/components/interface/MouseInfo.svelte";
-	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
+	import TopToolBar from "$lib/components/interface/TopToolBar.svelte";
 
 	// Light/Dark theme
 	import { ModeWatcher } from "mode-watcher";
@@ -12,12 +12,30 @@
 	// IndexedDB
 	import { myIndexedDB } from "$lib/scripts/indexedDB/index.svelte";
 
+	// Global Events
+	import { keyPressEvent, onWheel, onMouseMove } from "$lib/scripts/globalEvents";
+
 	import "../app.css";
+	import { onMount } from "svelte";
+
 	let { children } = $props();
+
+	onMount(() => {
+		document.addEventListener(
+			"wheel",
+			(event: MouseEvent) => {
+				if (event.ctrlKey) {
+					event.preventDefault();
+				}
+			},
+			{ passive: false }
+		);
+	});
 </script>
 
 <!-- Light/Dark theme -->
 <ModeWatcher></ModeWatcher>
+<TopToolBar></TopToolBar>
 
 {#await myIndexedDB.init() then}
 	<!-- Interface -->
@@ -29,3 +47,9 @@
 {/await}
 
 <Toaster />
+
+<!-- Global event listeners -->
+<svelte:window
+	onmousemove={(event) => onMouseMove(event)}
+	onwheel={(event) => onWheel(event)}
+	onkeydown={(event) => keyPressEvent(event)} />

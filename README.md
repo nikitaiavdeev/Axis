@@ -98,4 +98,3 @@ Axis is licensed under the [GNU General Public License v3.0](LICENSE).
 ---
 
 Feel free to reach out if you have any questions or need support using Axis!
-

@@ -1,0 +1,17 @@
+<script lang="ts">
+	// Components
+	import Grid from "./Grid.svelte";
+
+	// Runes
+	import { ui } from "$lib/runes/ui.svelte";
+	import { myCanvas } from "$lib/runes/canvas.svelte";
+</script>
+
+<svg id="main-canvas" class="h-screen w-screen" role="figure">
+	{#if ui.options.showGrid}
+		<Grid></Grid>
+	{/if}
+	<g id="canvas-content" transform="translate({myCanvas.offsetX} {myCanvas.offsetY}) scale({myCanvas.scale})">
+		<circle cx="768" cy="412.8" r="25" fill="white"></circle>
+	</g>
+</svg>

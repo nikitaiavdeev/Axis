@@ -17,6 +17,8 @@
 
 	import "../app.css";
 	import { onMount } from "svelte";
+	import { ui } from "$lib/runes/ui.svelte";
+	import NewRectangle from "$lib/components/canvas/shapes/Rectangle/NewRectangle.svelte";
 
 	let { children } = $props();
 
@@ -42,6 +44,10 @@
 	<FileMenu></FileMenu>
 	<LightDarkMode></LightDarkMode>
 	<MouseInfo></MouseInfo>
+
+	{#if ui.showMenu == "CreateRectangle"}
+		<NewRectangle />
+	{/if}
 
 	{@render children()}
 {/await}

@@ -1,3 +1,4 @@
+import type { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rectangleRune.svelte";
 import * as d3 from "d3";
 
 export class Canvas {
@@ -6,8 +7,12 @@ export class Canvas {
 	scale = $state(1);
 
 	consts = {
-		GRID_SIZE: 25,
+		GRID_SIZE: 100,
 	};
+
+	shapes = $state({
+		rectangles: [] as Rectangle[],
+	});
 
 	private __svg: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 	private __gridPattern: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
@@ -26,17 +31,18 @@ export class Canvas {
 		this.zoomDelta(0.9);
 	}
 
-	zoomDelta(zoomScale: number) {
-		const posX = this.svg.node()!.getBoundingClientRect().width * 0.5,
-			posY = this.svg.node()!.getBoundingClientRect().height * 0.5;
-
-		this.offsetX -= (posX - this.offsetX)  * (zoomScale - 1);
-		this.offsetY -= (posY - this.offsetY)  * (zoomScale - 1);
-		this.scale *= zoomScale;
+	resetZoom() {
+		this.zoomDelta(1 / this.scale);
 	}
 
-	resetZoom() {
-		this.scale = 1;
+	zoomDelta(
+		zoomScale: number,
+		posX = this.svg.node()!.getBoundingClientRect().width * 0.5,
+		posY = this.svg.node()!.getBoundingClientRect().height * 0.5
+	) {
+		this.offsetX -= (posX - this.offsetX) * (zoomScale - 1);
+		this.offsetY -= (posY - this.offsetY) * (zoomScale - 1);
+		this.scale *= zoomScale;
 	}
 
 	get svg(): d3.Selection<Element, unknown, HTMLElement, HTMLElement> {

@@ -28,6 +28,11 @@
 		--destructive: 0 72.22% 50.59%;
 		--destructive-foreground: 0 0% 98%;
 
+		--shape: 173 58% 39%;
+		--shape-selected: 12 76% 61%;
+
+		--grid: 0 0% 60%;
+
 		--border: 240 5.9% 90%;
 		--input: 240 5.9% 90%;
 		--ring: 240 5.9% 10%;
@@ -59,6 +64,11 @@
 		--destructive: 0 100% 70%;
 		--destructive-foreground: 0 0% 98%;
 
+		--shape: 220 70% 50%;
+		--shape-selected: 340 75% 55%;
+
+		--grid: 0 0% 30%;
+
 		--border: 240 3.7% 15.9%;
 		--input: 240 3.7% 15.9%;
 		--ring: 240 4.9% 83.9%;
@@ -79,5 +89,36 @@
 	label,
 	button {
 		@apply select-none;
+	}
+
+	/* Chrome, Safari, Edge, Opera */
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* Firefox */
+	input[type="number"] {
+		-moz-appearance: textfield;
+	}
+
+	.shape {
+		@apply fill-shape/40;
+		@apply stroke-shape;
+		vector-effect: non-scaling-stroke;
+	}
+
+	.point {
+		@apply stroke-2;
+		@apply stroke-transparent;
+		@apply fill-shape;
+		@apply hover:stroke-shape;
+		@apply hover:cursor-pointer;
+		vector-effect: non-scaling-stroke;
+	}
+
+	.point.selected {
+		@apply fill-shape-selected;
 	}
 }

@@ -19,15 +19,9 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 	},
 	onWheel = (event: WheelEvent) => {
 		if (event.ctrlKey) {
-			const wheelDelta =
-					-event.deltaY * (event.deltaMode === 1 ? 0.05 : event.deltaMode ? 1 : 0.001),
-				zoomScale = 1 + wheelDelta;
-
-			myCanvas.offsetX += event.pageX - (event.pageX - myCanvas.offsetX) * (zoomScale - 1);
-			myCanvas.offsetY += event.pageY - (event.pageY - myCanvas.offsetX) * (zoomScale - 1);
-			myCanvas.scale *= zoomScale;
+			const zoomScale = 1 - event.deltaY * 0.001;
+			myCanvas.zoomDelta(zoomScale, event.pageX, event.pageY);
 		}
-		// myCanvas.zoomDelta(event.deltaY * -0.001);
 	},
 	onMouseMove = (event: MouseEvent) => {
 		event.preventDefault();

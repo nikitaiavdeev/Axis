@@ -13,10 +13,38 @@
 	width={GRID_SIZE * myCanvas.scale}
 	height={GRID_SIZE * myCanvas.scale}
 	opacity={Math.min(myCanvas.scale, 1)}>
-	<line class="stroke-border" x1="0" y1="0" x2={GRID_SIZE * myCanvas.scale} y2="0"></line>
-	<line class="stroke-border" x1="0" y1="0" x2="0" y2={GRID_SIZE * myCanvas.scale}></line>
+	<line class="major-grid" x1="0" y1="0" x2={GRID_SIZE * myCanvas.scale} y2="0"></line>
+	<line class="major-grid" x1="0" y1="0" x2="0" y2={GRID_SIZE * myCanvas.scale}></line>
+
+	{#each { length: 4 }, idx}
+		<line
+			class="minor-grid"
+			stroke-dasharray={GRID_SIZE / 36}
+			x1="0"
+			y1={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2}
+			x2={GRID_SIZE * myCanvas.scale}
+			y2={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2}></line>
+		<line
+			class="minor-grid"
+			stroke-dasharray={GRID_SIZE / 36}
+			x1={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2}
+			y1="0"
+			x2={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2}
+			y2={GRID_SIZE * myCanvas.scale}></line>
+	{/each}
 </pattern>
 
 <g id="grid">
 	<rect class="h-screen w-screen" fill="url(#grid-pattern)"></rect>
 </g>
+
+<style>
+	.major-grid {
+		@apply stroke-grid;
+	}
+
+	.minor-grid {
+		@apply stroke-grid/50;
+		vector-effect: non-scaling-stroke;
+	}
+</style>

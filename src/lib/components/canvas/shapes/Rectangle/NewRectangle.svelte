@@ -7,6 +7,10 @@
 
 	// Rune
 	import { ui } from "$lib/runes/ui.svelte";
+	import { myCanvas } from "$lib/runes/canvas.svelte";
+	import { Rectangle, ReferencePoint } from "./rectangleRune.svelte";
+
+	myCanvas.newShape = new Rectangle();
 
 	const onKeyDown = (event: KeyboardEvent) => {
 			if (event.key === "Escape") {
@@ -18,32 +22,35 @@
 		};
 </script>
 
+{#snippet marker(refPoint: ReferencePoint, cx: number, cy: number, r: number)}
+	<circle
+		class="point"
+		class:selected={myCanvas.newShape!.referencePoint == refPoint}
+		{cx}
+		{cy}
+		{r}
+		role="none"
+		onclick={() => {
+			myCanvas.newShape!.referencePoint = refPoint;
+		}}></circle>
+{/snippet}
+
 <Card.Root
-	class="absolute left-4 top-1/2 inline-flex w-[280px] -translate-y-1/2 flex-col gap-y-4 rounded-md p-4">
+	class="absolute left-4 top-1/3 inline-flex w-[280px] -translate-y-1/2 flex-col gap-y-4 rounded-md p-4">
 	<div class="flex flex-col gap-1.5">
 		<Label for="reference_points">Reference Point</Label>
 		<svg class="w-full" id="reference_points" width="100" height="100" viewBox="0 0 100 100">
 			<rect class="shape" x="10" y="10" width="80" height="80"></rect>
 
-			<!-- Lower Left -->
-			<circle class="point" cx={10} cy={90} r={6}></circle>
-			<!-- Middle Left -->
-			<circle class="point" cx={10} cy={50} r={4}></circle>
-			<!-- Upper Left -->
-			<circle class="point" cx={10} cy={10} r={6}></circle>
-			<!-- Middle Upper -->
-			<circle class="point" cx={50} cy={10} r={4}></circle>
-			<!-- Upper Right -->
-			<circle class="point" cx={90} cy={10} r={6}></circle>
-			<!-- Middle Right -->
-			<circle class="point" cx={90} cy={50} r={4}></circle>
-			<!-- Lower Right -->
-			<circle class="point" cx={90} cy={90} r={6}></circle>
-			<!-- Middle Lower -->
-			<circle class="point" cx={50} cy={90} r={4}></circle>
-
-			<!-- Center -->
-			<circle class="point" cx={50} cy={50} r={6}></circle>
+			{@render marker(ReferencePoint.leftLower, 10, 90, 6)}
+			{@render marker(ReferencePoint.middleLeft, 10, 50, 4)}
+			{@render marker(ReferencePoint.leftUpper, 10, 10, 6)}
+			{@render marker(ReferencePoint.middleUpper, 50, 10, 4)}
+			{@render marker(ReferencePoint.rightUpper, 90, 10, 6)}
+			{@render marker(ReferencePoint.middleRight, 90, 50, 4)}
+			{@render marker(ReferencePoint.rightLower, 90, 90, 6)}
+			{@render marker(ReferencePoint.middleLower, 50, 90, 4)}
+			{@render marker(ReferencePoint.center, 50, 50, 6)}
 		</svg>
 	</div>
 

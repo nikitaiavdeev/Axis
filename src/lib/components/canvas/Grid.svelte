@@ -11,25 +11,24 @@
 	x={myCanvas.offsetX}
 	y={myCanvas.offsetY}
 	width={GRID_SIZE * myCanvas.scale}
-	height={GRID_SIZE * myCanvas.scale}
-	opacity={Math.min(myCanvas.scale, 1)}>
-	<line class="major-grid" x1="0" y1="0" x2={GRID_SIZE * myCanvas.scale} y2="0"></line>
-	<line class="major-grid" x1="0" y1="0" x2="0" y2={GRID_SIZE * myCanvas.scale}></line>
+	height={GRID_SIZE * myCanvas.scale}>
+	<line class="major-grid" x1="0" y1="0.5" x2={GRID_SIZE * myCanvas.scale} y2="0.5"></line>
+	<line class="major-grid" x1="0.5" y1="0" x2="0.5" y2={GRID_SIZE * myCanvas.scale}></line>
 
 	{#each { length: 4 }, idx}
 		<line
 			class="minor-grid"
-			stroke-dasharray={GRID_SIZE / 36}
+			stroke-dasharray={(GRID_SIZE / 72) * myCanvas.scale}
 			x1="0"
-			y1={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2}
+			y1={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2 + 0.5}
 			x2={GRID_SIZE * myCanvas.scale}
-			y2={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2}></line>
+			y2={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2 + 0.5}></line>
 		<line
 			class="minor-grid"
-			stroke-dasharray={GRID_SIZE / 36}
-			x1={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2}
+			stroke-dasharray={(GRID_SIZE / 72) * myCanvas.scale}
+			x1={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2 + 0.5}
 			y1="0"
-			x2={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2}
+			x2={GRID_SIZE * myCanvas.scale * (idx + 1) * 0.2 + 0.5}
 			y2={GRID_SIZE * myCanvas.scale}></line>
 	{/each}
 </pattern>
@@ -45,6 +44,5 @@
 
 	.minor-grid {
 		@apply stroke-grid/50;
-		vector-effect: non-scaling-stroke;
 	}
 </style>

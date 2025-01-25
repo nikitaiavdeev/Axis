@@ -34,6 +34,6 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 		}
 
 		document.body.style.cursor = "auto";
-		ui.mouse.x = myCanvas.d3Scale.x.invert(event.pageX);
-		ui.mouse.y = myCanvas.d3Scale.y.invert(event.pageY);
+		ui.mouse.x = myCanvas.d3Scale.x.invert(event.pageX );
+		ui.mouse.y = myCanvas.d3Scale.y.invert(event.pageY );
 	};

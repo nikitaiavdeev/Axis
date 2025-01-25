@@ -7,21 +7,21 @@ export class Canvas {
 	scale = $state(1);
 
 	consts = {
-		GRID_SIZE: 100,
+		GRID_SIZE: 500,
 	};
 
-	shapes = $state({
-		rectangles: [] as Rectangle[],
-	});
+	newShape = $state(undefined as undefined | Rectangle);
+
+	shapes = $state([] as Rectangle[]);
 
 	private __svg: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 	private __gridPattern: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 	private __content: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 
-	d3Scale = {
-		x: d3.scaleLinear([0, 0.1], [this.offsetX, this.offsetX + this.consts.GRID_SIZE * this.scale]),
-		y: d3.scaleLinear([0, 0.1], [this.offsetY + this.consts.GRID_SIZE * this.scale, this.offsetY]),
-	};
+	d3Scale = $derived({
+		x: d3.scaleLinear([0, 0.5], [this.offsetX, this.offsetX + this.consts.GRID_SIZE * this.scale]),
+		y: d3.scaleLinear([0, 0.5], [this.offsetY + this.consts.GRID_SIZE * this.scale, this.offsetY]),
+	});
 
 	zoomIn() {
 		this.zoomDelta(1.1);

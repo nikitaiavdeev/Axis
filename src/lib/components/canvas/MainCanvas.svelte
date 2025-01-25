@@ -16,13 +16,13 @@
 
 <svg id="main-canvas" class="h-screen w-screen" role="figure">
 	{#if ui.options.showGrid}
-		<Grid></Grid>
+		<Grid ></Grid>
 	{/if}
 	<g
 		id="canvas-content"
-		transform="translate({myCanvas.offsetX} {myCanvas.offsetY}) scale({myCanvas.scale})">
+		>
 		<!-- <circle cx="768" cy="412.8" r="25" fill="white"></circle> -->
 
-		<RectangleSVG rect={new Rectangle(768, 412.8, ReferencePoint.center, 25, 25, 0, false)} />
+		<RectangleSVG rect={new Rectangle()} />
 	</g>
 </svg>

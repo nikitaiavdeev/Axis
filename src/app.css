@@ -110,12 +110,12 @@
 	}
 
 	.point {
-		@apply stroke-2;
-		@apply stroke-transparent;
+		/* @apply stroke-2;
+		@apply stroke-transparent; */
 		@apply fill-shape;
-		@apply hover:stroke-shape;
+		/* @apply hover:stroke-shape; */
 		@apply hover:cursor-pointer;
-		vector-effect: non-scaling-stroke;
+		@apply hover:fill-shape-selected;
 	}
 
 	.point.selected {

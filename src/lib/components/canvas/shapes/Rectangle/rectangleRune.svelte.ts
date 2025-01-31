@@ -14,7 +14,7 @@ export class Rectangle {
 	refX = $state(0);
 	refY = $state(0);
 	referencePoint = $state(ReferencePoint.center);
-	width = $state(1);
+	width = $state(2);
 	height = $state(1);
 	angle = $state(0);
 	isHole = $state(false);

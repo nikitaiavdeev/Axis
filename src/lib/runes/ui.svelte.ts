@@ -1,8 +1,8 @@
 export const ui = $state({
 	options: {
 		showGrid: true,
+		magnet: true,
 	},
-	showMenu: undefined as undefined | "CreateRectangle",
 	mouse: {
 		x: 0,
 		y: 0,

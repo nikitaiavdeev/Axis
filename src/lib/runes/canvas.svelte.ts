@@ -18,10 +18,15 @@ export class Canvas {
 	private __gridPattern: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 	private __content: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 
-	d3Scale = $derived({
+	mouseScale = $derived({
 		x: d3.scaleLinear([0, 0.5], [this.offsetX, this.offsetX + this.consts.GRID_SIZE * this.scale]),
 		y: d3.scaleLinear([0, 0.5], [this.offsetY + this.consts.GRID_SIZE * this.scale, this.offsetY]),
 	});
+
+	d3Scale = {
+		x: d3.scaleLinear([0, 0.5], [0, this.consts.GRID_SIZE * this.scale]),
+		y: d3.scaleLinear([0, 0.5], [0 + this.consts.GRID_SIZE * this.scale, 0]),
+	};
 
 	zoomIn() {
 		this.zoomDelta(1.1);

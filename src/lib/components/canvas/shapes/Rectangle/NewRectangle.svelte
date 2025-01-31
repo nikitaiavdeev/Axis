@@ -4,34 +4,42 @@
 	import { Label } from "$lib/components/ui/label/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
+	import { Checkbox } from "$lib/components/ui/checkbox/index.js";
 
 	// Rune
-	import { ui } from "$lib/runes/ui.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Rectangle, ReferencePoint } from "./rectangleRune.svelte";
 
-	myCanvas.newShape = new Rectangle();
+	let { rect }: { rect: Rectangle } = $props();
 
 	const onKeyDown = (event: KeyboardEvent) => {
 			if (event.key === "Escape") {
 				closeMenu();
+			} else if (event.key === "Enter") {
+				createShape();
+			}
+		},
+		createShape = () => {
+			if (myCanvas.newShape) {
+				myCanvas.shapes.push(myCanvas.newShape);
+				myCanvas.newShape = undefined;
 			}
 		},
 		closeMenu = () => {
-			ui.showMenu = undefined;
+			myCanvas.newShape = undefined;
 		};
 </script>
 
 {#snippet marker(refPoint: ReferencePoint, cx: number, cy: number, r: number)}
 	<circle
 		class="point"
-		class:selected={myCanvas.newShape!.referencePoint == refPoint}
+		class:selected={rect.referencePoint == refPoint}
 		{cx}
 		{cy}
 		{r}
 		role="none"
 		onclick={() => {
-			myCanvas.newShape!.referencePoint = refPoint;
+			rect.referencePoint = refPoint;
 		}}></circle>
 {/snippet}
 
@@ -57,29 +65,34 @@
 	<div class="flex w-full flex-row gap-2">
 		<div class="flex-1 flex-col gap-1.5">
 			<Label for="width">Width, in</Label>
-			<Input type="number" id="width" placeholder="width" />
+			<Input type="number" id="width" bind:value={rect.width} placeholder="width" />
 		</div>
 
 		<div class="flex-1 flex-col gap-1.5">
 			<Label for="height">Height, in</Label>
-			<Input type="number" id="height" placeholder="height" />
+			<Input type="number" id="height" bind:value={rect.height} placeholder="height" />
 		</div>
 	</div>
 
 	<div class="flex w-full flex-row gap-2">
 		<div class="flex-1 flex-col gap-1.5">
 			<Label for="x_loc">X loc, in</Label>
-			<Input type="number" id="x_loc" placeholder="x location" />
+			<Input type="number" id="x_loc" bind:value={rect.refX} placeholder="x location" />
 		</div>
 
 		<div class="flex-1 flex-col gap-1.5">
 			<Label for="y_loc">Y loc, in</Label>
-			<Input type="number" id="y_loc" placeholder="y location" />
+			<Input type="number" id="y_loc" bind:value={rect.refY} placeholder="y location" />
 		</div>
 	</div>
 
+	<div class="flex w-full items-center space-x-2">
+		<Checkbox id="is_hole" bind:checked={rect.isHole} />
+		<Label for="is_hole">Is Hole</Label>
+	</div>
+
 	<div class="flex flex-row justify-end gap-2">
-		<Button>Create</Button>
+		<Button onclick={createShape}>Create</Button>
 		<Button variant="secondary" onclick={closeMenu}>Cancel</Button>
 	</div>
 </Card.Root>

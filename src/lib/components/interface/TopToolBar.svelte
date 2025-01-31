@@ -12,6 +12,14 @@
 
 	// Runes
 	import { ui } from "$lib/runes/ui.svelte";
+	import { myCanvas } from "$lib/runes/canvas.svelte.js";
+	import { Rectangle } from "../canvas/shapes/Rectangle/rectangleRune.svelte.js";
+
+	const createNewShape = (shepe: "rectangle") => {
+		if (shepe == "rectangle") {
+			myCanvas.newShape = new Rectangle();
+		}
+	};
 </script>
 
 <Tooltip.Provider>
@@ -22,7 +30,7 @@
 					<DropdownMenu.Trigger class={buttonVariants({ variant: "ghost", size: "icon" })}
 						><DiamondPlus /></DropdownMenu.Trigger>
 					<DropdownMenu.Content>
-						<DropdownMenu.Item onclick={() => (ui.showMenu = "CreateRectangle")}>
+						<DropdownMenu.Item onclick={() => createNewShape("rectangle")}>
 							<Square class="mr-2 size-4" />
 							<span>Square</span>
 						</DropdownMenu.Item>
@@ -71,18 +79,7 @@
 
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<Toggle><Magnet /></Toggle>
-			</Tooltip.Trigger>
-			<Tooltip.Content>
-				<p>Toggle Snap to Grid</p>
-			</Tooltip.Content>
-		</Tooltip.Root>
-
-		<Separator orientation="vertical" />
-
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				<Toggle><Magnet /></Toggle>
+				<Toggle bind:pressed={ui.options.magnet}><Magnet /></Toggle>
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Toggle Snap to Grid</p>

@@ -25,15 +25,15 @@
 				case ReferencePoint.leftLower:
 				case ReferencePoint.middleLower:
 				case ReferencePoint.rightLower:
-					return rect.refY;
+					return rect.refY + rect.height;
 				case ReferencePoint.leftUpper:
 				case ReferencePoint.middleUpper:
 				case ReferencePoint.rightUpper:
-					return rect.refY - rect.height;
+					return rect.refY;
 				case ReferencePoint.middleLeft:
 				case ReferencePoint.middleRight:
 				case ReferencePoint.center:
-					return rect.refY - 0.5 * rect.height;
+					return rect.refY + 0.5 * rect.height;
 			}
 		});
 
@@ -53,21 +53,21 @@
 	class="point"
 	cx={myCanvas.d3Scale.x(rectX)}
 	cy={myCanvas.d3Scale.y(rectY)}
-	r={4 }
+	r={4 / myCanvas.scale}
 	role="none"
 	onmousedown={(event) => onDrag(event)}></circle>
 <circle
 	class="point"
 	cx={myCanvas.d3Scale.x(rectX)}
-	cy={myCanvas.d3Scale.y(rectY + rect.height)}
-	r={4 }></circle>
+	cy={myCanvas.d3Scale.y(rectY - rect.height)}
+	r={4 / myCanvas.scale}></circle>
 <circle
 	class="point"
 	cx={myCanvas.d3Scale.x(rectX + rect.width)}
 	cy={myCanvas.d3Scale.y(rectY)}
-	r={4}></circle>
+	r={4 / myCanvas.scale}></circle>
 <circle
 	class="point"
 	cx={myCanvas.d3Scale.x(rectX + rect.width)}
-	cy={myCanvas.d3Scale.y(rectY + rect.height)}
-	r={4 }></circle>
+	cy={myCanvas.d3Scale.y(rectY - rect.height)}
+	r={4 / myCanvas.scale}></circle>

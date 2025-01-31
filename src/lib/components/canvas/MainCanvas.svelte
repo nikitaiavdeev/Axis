@@ -16,13 +16,19 @@
 
 <svg id="main-canvas" class="h-screen w-screen" role="figure">
 	{#if ui.options.showGrid}
-		<Grid ></Grid>
+		<Grid></Grid>
 	{/if}
 	<g
 		id="canvas-content"
-		>
-		<!-- <circle cx="768" cy="412.8" r="25" fill="white"></circle> -->
+		transform="translate({myCanvas.offsetX} {myCanvas.offsetY}) scale({myCanvas.scale})">
+		{#each myCanvas.shapes as shape}
+			{#if shape instanceof Rectangle}
+				<RectangleSVG rect={shape} />
+			{/if}
+		{/each}
 
-		<RectangleSVG rect={new Rectangle()} />
+		{#if myCanvas.newShape instanceof Rectangle}
+			<RectangleSVG rect={myCanvas.newShape} />
+		{/if}
 	</g>
 </svg>

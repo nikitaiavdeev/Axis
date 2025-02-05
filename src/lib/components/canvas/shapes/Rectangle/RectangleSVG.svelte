@@ -1,73 +1,22 @@
 <script lang="ts">
 	import { myCanvas } from "$lib/runes/canvas.svelte";
-	import { Rectangle, ReferencePoint } from "./rectangleRune.svelte";
+	import { Rectangle } from "./rune.svelte";
 
 	let { rect }: { rect: Rectangle } = $props();
 
-	let rectX = $derived.by(() => {
-			switch (rect.referencePoint) {
-				case ReferencePoint.leftLower:
-				case ReferencePoint.middleLeft:
-				case ReferencePoint.leftUpper:
-					return rect.refX;
-				case ReferencePoint.rightLower:
-				case ReferencePoint.middleRight:
-				case ReferencePoint.rightUpper:
-					return rect.refX - rect.width;
-				case ReferencePoint.middleLower:
-				case ReferencePoint.middleUpper:
-				case ReferencePoint.center:
-					return rect.refX - 0.5 * rect.width;
-			}
-		}),
-		rectY = $derived.by(() => {
-			switch (rect.referencePoint) {
-				case ReferencePoint.leftLower:
-				case ReferencePoint.middleLower:
-				case ReferencePoint.rightLower:
-					return rect.refY + rect.height;
-				case ReferencePoint.leftUpper:
-				case ReferencePoint.middleUpper:
-				case ReferencePoint.rightUpper:
-					return rect.refY;
-				case ReferencePoint.middleLeft:
-				case ReferencePoint.middleRight:
-				case ReferencePoint.center:
-					return rect.refY + 0.5 * rect.height;
-			}
-		});
-
-	const onDrag = (event: MouseEvent) => {
-		console.log(event);
-	};
+	const point1XY = $derived(rect.countourPoints[0].d3Coord),
+		point2XY = $derived(rect.countourPoints[1].d3Coord),
+		point3XY = $derived(rect.countourPoints[2].d3Coord),
+		point4XY = $derived(rect.countourPoints[3].d3Coord),
+		pointsXY = $derived([point1XY, point2XY, point3XY, point4XY]);
 </script>
 
-<rect
+<path
 	class="shape"
-	x={myCanvas.d3Scale.x(rectX)}
-	y={myCanvas.d3Scale.y(rectY)}
-	width={myCanvas.d3Scale.x(rectX + rect.width) - myCanvas.d3Scale.x(rectX)}
-	height={myCanvas.d3Scale.y(rectY) - myCanvas.d3Scale.y(rectY + rect.height)}></rect>
+	d="M{point1XY.x} {point1XY.y} L{point2XY.x} {point2XY.y} L{point3XY.x} {point3XY.y} L{point4XY.x} {point4XY.y} Z" />
 
-<circle
-	class="point"
-	cx={myCanvas.d3Scale.x(rectX)}
-	cy={myCanvas.d3Scale.y(rectY)}
-	r={4 / myCanvas.scale}
-	role="none"
-	onmousedown={(event) => onDrag(event)}></circle>
-<circle
-	class="point"
-	cx={myCanvas.d3Scale.x(rectX)}
-	cy={myCanvas.d3Scale.y(rectY - rect.height)}
-	r={4 / myCanvas.scale}></circle>
-<circle
-	class="point"
-	cx={myCanvas.d3Scale.x(rectX + rect.width)}
-	cy={myCanvas.d3Scale.y(rectY)}
-	r={4 / myCanvas.scale}></circle>
-<circle
-	class="point"
-	cx={myCanvas.d3Scale.x(rectX + rect.width)}
-	cy={myCanvas.d3Scale.y(rectY - rect.height)}
-	r={4 / myCanvas.scale}></circle>
+{#if myCanvas.newShape === rect}
+	{#each pointsXY as pointXY}
+		<circle class="point" cx={pointXY.x} cy={pointXY.y} r={4 / myCanvas.scale} role="none"></circle>
+	{/each}
+{/if}

@@ -20,7 +20,7 @@
 	import { ui } from "$lib/runes/ui.svelte";
 	import NewRectangle from "$lib/components/canvas/shapes/Rectangle/NewRectangle.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte";
-	import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rectangleRune.svelte";
+	import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
 
 	let { children } = $props();
 
@@ -48,7 +48,7 @@
 	<MouseInfo></MouseInfo>
 
 	{#if myCanvas.newShape instanceof Rectangle}
-		<NewRectangle rect = {myCanvas.newShape} />
+		<NewRectangle rect={myCanvas.newShape} />
 	{/if}
 
 	{@render children()}

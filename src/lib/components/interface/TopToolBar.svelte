@@ -13,11 +13,11 @@
 	// Runes
 	import { ui } from "$lib/runes/ui.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte.js";
-	import { Rectangle } from "../canvas/shapes/Rectangle/rectangleRune.svelte.js";
+	import { Rectangle } from "../canvas/shapes/Rectangle/rune.svelte.js";
 
 	const createNewShape = (shepe: "rectangle") => {
 		if (shepe == "rectangle") {
-			myCanvas.newShape = new Rectangle();
+			myCanvas.newShape = new Rectangle(0, 0, 0, 0);
 		}
 	};
 </script>

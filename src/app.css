@@ -110,15 +110,17 @@
 	}
 
 	.point {
-		/* @apply stroke-2;
-		@apply stroke-transparent; */
+		@apply stroke-[3px];
+		@apply stroke-transparent;
 		@apply fill-shape;
-		/* @apply hover:stroke-shape; */
+	}
+
+	.point-hoverable {
 		@apply hover:cursor-pointer;
 		@apply hover:fill-shape-selected;
 	}
 
-	.point.selected {
+	.point-selected {
 		@apply fill-shape-selected;
 	}
 }

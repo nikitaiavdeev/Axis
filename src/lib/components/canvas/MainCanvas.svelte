@@ -8,10 +8,7 @@
 
 	// Shapes
 	import RectangleSVG from "$lib/components/canvas/shapes/Rectangle/RectangleSVG.svelte";
-	import {
-		Rectangle,
-		ReferencePoint,
-	} from "$lib/components/canvas/shapes/Rectangle/rectangleRune.svelte";
+	import { Rectangle, ReferencePoint } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
 </script>
 
 <svg id="main-canvas" class="h-screen w-screen" role="figure">

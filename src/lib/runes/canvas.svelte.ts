@@ -1,4 +1,4 @@
-import type { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rectangleRune.svelte";
+import type { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
 import * as d3 from "d3";
 
 export class Canvas {
@@ -45,6 +45,10 @@ export class Canvas {
 		posX = this.svg.node()!.getBoundingClientRect().width * 0.5,
 		posY = this.svg.node()!.getBoundingClientRect().height * 0.5
 	) {
+		if (this.scale * zoomScale < 0.1) zoomScale = 0.1 / this.scale;
+
+		if (this.scale * zoomScale > 3) zoomScale = 3 / this.scale;
+
 		this.offsetX -= (posX - this.offsetX) * (zoomScale - 1);
 		this.offsetY -= (posY - this.offsetY) * (zoomScale - 1);
 		this.scale *= zoomScale;

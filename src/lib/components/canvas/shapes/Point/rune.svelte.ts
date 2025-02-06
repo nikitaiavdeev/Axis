@@ -4,7 +4,6 @@ import * as d3 from "d3";
 export class Point {
 	x = () => 0;
 	y = () => 0;
-	id = $state(0);
 	isMagnet = $state(false);
 	d3Coord = $derived({
 		x: myCanvas.d3Scale.x(this.x()),
@@ -15,10 +14,12 @@ export class Point {
 		this.x = x;
 		this.y = y;
 
-		this.id = points.addToList(this);
+		points.addToList(this);
 	}
 
-	delete() {}
+	clean() {
+		points.removeFromList(this);
+	}
 }
 
 export const points = (() => {
@@ -36,12 +37,11 @@ export const points = (() => {
 	);
 
 	return {
-		addToList(point: Point): number {
-			const idx = __list.length;
-			__list[idx] = point;
-			return idx;
+		addToList(point: Point) {
+			__list[__list.length] = point;
 		},
-		removeFromList(idx: number) {
+		removeFromList(point: Point) {
+			const idx = __list.findIndex((p) => p === point);
 			__list.splice(idx, 1);
 		},
 		get list() {

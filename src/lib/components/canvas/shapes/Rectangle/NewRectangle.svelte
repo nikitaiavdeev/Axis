@@ -112,26 +112,26 @@
 		},
 		createShape = () => {
 			if (
-				myCanvas.newShape &&
+				myCanvas.newShape.shape &&
 				refX !== undefined &&
 				refY !== undefined &&
 				width !== undefined &&
 				height !== undefined
 			) {
 				// Register new shape
-				myCanvas.newShape.countourPoints.forEach((point) => (point.isMagnet = true));
-				myCanvas.shapes.push(myCanvas.newShape);
+				myCanvas.newShape.shape.countourPoints.forEach((point) => (point.isMagnet = true));
+				myCanvas.shapes.push(myCanvas.newShape.shape);
 
 				// Clean and start creating new shape
 				refX = undefined;
 				refY = undefined;
 				width = undefined;
 				height = undefined;
-				myCanvas.newShape = myCanvas.newShape = new Rectangle(0, 0, 0, 0);
+				myCanvas.newShape.createNew(new Rectangle(0, 0, 0, 0));
 			}
 		},
 		closeMenu = () => {
-			myCanvas.newShape = undefined;
+			myCanvas.newShape.clean();
 		};
 </script>
 

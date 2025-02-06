@@ -95,6 +95,10 @@ export class Rectangle {
 		this.isHole = isHole;
 	}
 
+	clean() {
+		this.countourPoints.forEach((point) => point.clean());
+	}
+
 	get area(): number {
 		return this.width * this.height;
 	}

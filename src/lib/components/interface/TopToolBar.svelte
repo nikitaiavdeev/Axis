@@ -8,7 +8,16 @@
 	import { buttonVariants } from "../ui/button/index.js";
 
 	// Icons
-	import { DiamondPlus, Grab, Grid3x3, Magnet, MousePointer, Square, Circle } from "lucide-svelte";
+	import {
+		DiamondPlus,
+		Grab,
+		Grid3x3,
+		Magnet,
+		MousePointer,
+		Square,
+		Circle,
+		Expand,
+	} from "lucide-svelte";
 
 	// Runes
 	import { ui } from "$lib/runes/ui.svelte";
@@ -17,7 +26,7 @@
 
 	const createNewShape = (shepe: "rectangle") => {
 		if (shepe == "rectangle") {
-			myCanvas.newShape = new Rectangle(0, 0, 0, 0);
+			myCanvas.newShape.createNew(new Rectangle(0, 0, 0, 0));
 		}
 	};
 </script>
@@ -47,6 +56,17 @@
 		</Tooltip.Root>
 
 		<Separator orientation="vertical" />
+
+		<Tooltip.Root>
+			<Tooltip.Trigger
+				class={buttonVariants({ variant: "ghost", size: "icon" })}
+				onclick={() => myCanvas.fitView()}>
+				<Expand />
+			</Tooltip.Trigger>
+			<Tooltip.Content>
+				<p>Fit View ⌘F</p>
+			</Tooltip.Content>
+		</Tooltip.Root>
 
 		<Tooltip.Root>
 			<Tooltip.Trigger>

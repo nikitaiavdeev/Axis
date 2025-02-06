@@ -17,7 +17,6 @@
 
 	import "../app.css";
 	import { onMount } from "svelte";
-	import { ui } from "$lib/runes/ui.svelte";
 	import NewRectangle from "$lib/components/canvas/shapes/Rectangle/NewRectangle.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
@@ -47,8 +46,8 @@
 	<LightDarkMode></LightDarkMode>
 	<MouseInfo></MouseInfo>
 
-	{#if myCanvas.newShape instanceof Rectangle}
-		<NewRectangle rect={myCanvas.newShape} />
+	{#if myCanvas.newShape.shape instanceof Rectangle}
+		<NewRectangle rect={myCanvas.newShape.shape} />
 	{/if}
 
 	{@render children()}

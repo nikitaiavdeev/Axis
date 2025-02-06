@@ -15,7 +15,7 @@
 	class="shape"
 	d="M{point1XY.x} {point1XY.y} L{point2XY.x} {point2XY.y} L{point3XY.x} {point3XY.y} L{point4XY.x} {point4XY.y} Z" />
 
-{#if myCanvas.newShape === rect}
+{#if myCanvas.newShape.shape === rect}
 	{#each pointsXY as pointXY}
 		<circle class="point" cx={pointXY.x} cy={pointXY.y} r={4 / myCanvas.scale} role="none"></circle>
 	{/each}

@@ -8,7 +8,7 @@
 
 	// Shapes
 	import RectangleSVG from "$lib/components/canvas/shapes/Rectangle/RectangleSVG.svelte";
-	import { Rectangle, ReferencePoint } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
+	import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
 </script>
 
 <svg id="main-canvas" class="h-screen w-screen" role="figure">
@@ -24,8 +24,8 @@
 			{/if}
 		{/each}
 
-		{#if myCanvas.newShape instanceof Rectangle}
-			<RectangleSVG rect={myCanvas.newShape} />
+		{#if myCanvas.newShape.shape instanceof Rectangle}
+			<RectangleSVG rect={myCanvas.newShape.shape} />
 		{/if}
 	</g>
 </svg>

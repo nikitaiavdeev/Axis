@@ -20,6 +20,13 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 			myCanvas.zoomOut();
 			return;
 		}
+
+		// Canvas fit view
+		if (event.ctrlKey && event.key == "f") {
+			event.preventDefault();
+			myCanvas.fitView();
+			return;
+		}
 	},
 	onWheel = (event: WheelEvent) => {
 		// if (event.ctrlKey) {

@@ -137,7 +137,11 @@
 
 {#snippet marker(refPoint: ReferencePoint, cx: number, cy: number, r: number)}
 	<circle
-		class={cn("point point-hoverable", rect.referencePoint == refPoint ? "point-selected" : "")}
+		class={cn(
+			"point-hoverable",
+			rect.isHole ? "point-hole" : "point",
+			rect.referencePoint == refPoint ? "point-selected" : ""
+		)}
 		{cx}
 		{cy}
 		{r}
@@ -152,7 +156,8 @@
 	<div class="flex flex-col gap-1.5">
 		<Label>Reference Point</Label>
 		<svg class="w-full" width="100" height="100" viewBox="0 0 100 100">
-			<rect class="shape" x="10" y="10" width="80" height="80"></rect>
+			<rect class={rect.isHole ? "shape-hole" : "shape"} x="10" y="10" width="80" height="80"
+			></rect>
 
 			{@render marker(ReferencePoint.leftLower, 10, 90, 6)}
 			{@render marker(ReferencePoint.middleLeft, 10, 50, 4)}

@@ -32,6 +32,7 @@ const config: Config = {
 				shape: {
 					DEFAULT: "hsl(var(--shape) / <alpha-value>)",
 					selected: "hsl(var(--shape-selected) / <alpha-value>)",
+					hole: "hsl(var(--shape-hole) / <alpha-value>)",
 				},
 				grid: {
 					DEFAULT: "hsl(var(--grid) / <alpha-value>)",

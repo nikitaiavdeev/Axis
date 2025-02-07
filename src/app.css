@@ -29,6 +29,7 @@
 		--destructive-foreground: 0 0% 98%;
 
 		--shape: 173 58% 39%;
+		--shape-hole: 43 58% 39%;
 		--shape-selected: 12 76% 61%;
 
 		--grid: 0 0% 60%;
@@ -65,6 +66,7 @@
 		--destructive-foreground: 0 0% 98%;
 
 		--shape: 220 70% 50%;
+		--shape-hole: 30 80% 55%;
 		--shape-selected: 340 75% 55%;
 
 		--grid: 0 0% 30%;
@@ -109,10 +111,22 @@
 		vector-effect: non-scaling-stroke;
 	}
 
+	.shape-hole {
+		@apply fill-shape-hole/40;
+		@apply stroke-shape-hole;
+		vector-effect: non-scaling-stroke;
+	}
+
 	.point {
 		@apply stroke-[3px];
 		@apply stroke-transparent;
 		@apply fill-shape;
+	}
+
+	.point-hole {
+		@apply stroke-[3px];
+		@apply stroke-transparent;
+		@apply fill-shape-hole;
 	}
 
 	.point-hoverable {

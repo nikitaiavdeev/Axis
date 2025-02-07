@@ -1,4 +1,7 @@
 <script lang="ts">
+	// Icons
+	import { Trash2 } from "lucide-svelte";
+
 	// UI
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
@@ -12,28 +15,35 @@
 	import { Rectangle, ReferencePoint } from "./rune.svelte";
 	import { ui } from "$lib/runes/ui.svelte";
 	import { onMount } from "svelte";
+	import { roundFloat } from "$lib/scripts/helpers.svelte";
 
 	let { rect }: { rect: Rectangle } = $props();
 
-	let refX = $state(undefined as undefined | number),
-		refY = $state(undefined as undefined | number),
-		width = $state(undefined as undefined | number),
-		height = $state(undefined as undefined | number);
+	let refX = $state(
+			(myCanvas.editShape.shape == rect ? rect.refX : undefined) as undefined | number
+		),
+		refY = $state((myCanvas.editShape.shape == rect ? rect.refY : undefined) as undefined | number),
+		width = $state(
+			(myCanvas.editShape.shape == rect ? rect.width : undefined) as undefined | number
+		),
+		height = $state(
+			(myCanvas.editShape.shape == rect ? rect.height : undefined) as undefined | number
+		);
 
 	$effect(() => {
 		if (refX !== undefined) {
 			rect.refX = refX;
 		} else {
-			rect.refX = ui.mouse.x;
+			rect.refX = roundFloat(ui.mouse.x);
 		}
 
 		if (refY !== undefined) {
 			rect.refY = refY;
 		} else {
-			rect.refY = ui.mouse.y;
+			rect.refY = roundFloat(ui.mouse.y);
 		}
 
-		if (width) {
+		if (width !== undefined) {
 			rect.width = width;
 		} else if (refX !== undefined) {
 			if (
@@ -41,19 +51,19 @@
 					rect.referencePoint
 				)
 			) {
-				rect.width = 2 * (ui.mouse.x - refX);
+				rect.width = roundFloat(2 * (ui.mouse.x - refX));
 			} else if (
 				[ReferencePoint.rightLower, ReferencePoint.middleRight, ReferencePoint.rightUpper].includes(
 					rect.referencePoint
 				)
 			) {
-				rect.width = refX - ui.mouse.x;
+				rect.width = roundFloat(refX - ui.mouse.x);
 			} else {
-				rect.width = ui.mouse.x - refX;
+				rect.width = roundFloat(ui.mouse.x - refX);
 			}
 		}
 
-		if (height) {
+		if (height !== undefined) {
 			rect.height = height;
 		} else if (refY !== undefined) {
 			if (
@@ -61,15 +71,15 @@
 					rect.referencePoint
 				)
 			) {
-				rect.height = 2 * (ui.mouse.y - refY);
+				rect.height = roundFloat(2 * (ui.mouse.y - refY));
 			} else if (
 				[ReferencePoint.leftUpper, ReferencePoint.middleUpper, ReferencePoint.rightUpper].includes(
 					rect.referencePoint
 				)
 			) {
-				rect.height = refY - ui.mouse.y;
+				rect.height = roundFloat(refY - ui.mouse.y);
 			} else {
-				rect.height = ui.mouse.y - refY;
+				rect.height = roundFloat(ui.mouse.y - refY);
 			}
 		}
 	});
@@ -81,15 +91,15 @@
 
 		const handleClick = () => {
 			if (refX === undefined) {
-				refX = Number(rect.refX.toFixed(3));
+				refX = rect.refX;
 			} else if (width === undefined) {
-				width = Number(rect.width.toFixed(3));
+				width = roundFloat(rect.width);
 			}
 
 			if (refY === undefined) {
-				refY = Number(rect.refY.toFixed(3));
+				refY = roundFloat(rect.refY);
 			} else if (height === undefined) {
-				height = Number(rect.height.toFixed(3));
+				height = roundFloat(rect.height);
 			}
 
 			createShape();
@@ -130,8 +140,13 @@
 				myCanvas.newShape.createNew(new Rectangle(0, 0, 0, 0));
 			}
 		},
+		deleteShape = () => {
+			rect.clean();
+			myCanvas.editShape.clean();
+		},
 		closeMenu = () => {
 			myCanvas.newShape.clean();
+			myCanvas.editShape.clean();
 		};
 </script>
 
@@ -178,7 +193,7 @@
 				type="number"
 				id="width"
 				bind:value={width}
-				placeholder={refX !== undefined ? rect.width.toFixed(2) : "width"} />
+				placeholder={refX !== undefined ? rect.width.toFixed(3) : "width"} />
 		</div>
 
 		<div class="flex-1 flex-col gap-1.5">
@@ -187,19 +202,19 @@
 				type="number"
 				id="height"
 				bind:value={height}
-				placeholder={refY !== undefined ? rect.height.toFixed(2) : "height"} />
+				placeholder={refY !== undefined ? rect.height.toFixed(3) : "height"} />
 		</div>
 	</div>
 
 	<div class="flex w-full flex-row gap-2">
 		<div class="flex-1 flex-col gap-1.5">
 			<Label for="x_loc">X loc, in</Label>
-			<Input type="number" id="x_loc" bind:value={refX} placeholder={rect.refX.toFixed(2)} />
+			<Input type="number" id="x_loc" bind:value={refX} placeholder={rect.refX.toFixed(3)} />
 		</div>
 
 		<div class="flex-1 flex-col gap-1.5">
 			<Label for="y_loc">Y loc, in</Label>
-			<Input type="number" id="y_loc" bind:value={refY} placeholder={rect.refY.toFixed(2)} />
+			<Input type="number" id="y_loc" bind:value={refY} placeholder={rect.refY.toFixed(3)} />
 		</div>
 	</div>
 
@@ -209,7 +224,11 @@
 	</div>
 
 	<div class="flex flex-row justify-end gap-2">
-		<Button onclick={createShape}>Create</Button>
+		{#if myCanvas.newShape.shape === rect}
+			<Button onclick={createShape}>Create</Button>
+		{:else if myCanvas.editShape.shape === rect}
+			<Button class="bg-destructive" onclick={deleteShape}><Trash2 />Delete</Button>
+		{/if}
 		<Button variant="secondary" onclick={closeMenu}>Cancel</Button>
 	</div>
 </Card.Root>

@@ -3,23 +3,43 @@ import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
 import * as d3 from "d3";
 
 const NewShape = () => {
-	let __shape = $state(undefined as undefined | Rectangle);
+		let __shape = $state(undefined as undefined | Rectangle);
 
-	return {
-		get shape() {
-			return __shape;
-		},
-		createNew(shape: Rectangle) {
-			__shape = shape;
-		},
-		clean() {
-			if (__shape) {
-				__shape.clean();
-				__shape = undefined;
-			}
-		},
+		return {
+			get shape() {
+				return __shape;
+			},
+			createNew(shape: Rectangle) {
+				myCanvas.editShape.clean()
+				__shape = shape;
+			},
+			clean() {
+				if (__shape) {
+					__shape.clean();
+					__shape = undefined;
+				}
+			},
+		};
+	},
+	EditShape = () => {
+		let __originalShape = $state(undefined as undefined | Rectangle);
+		let __shape = $state(undefined as undefined | Rectangle);
+
+		return {
+			get shape() {
+				return __shape;
+			},
+			editShape(shape: Rectangle) {
+				// __originalShape = structuredClone(shape);
+				__shape = shape;
+			},
+			clean() {
+				if (__shape) {
+					__shape = undefined;
+				}
+			},
+		};
 	};
-};
 
 export class Canvas {
 	offsetX = $state(0);
@@ -31,6 +51,7 @@ export class Canvas {
 	};
 
 	newShape = NewShape();
+	editShape = EditShape();
 
 	shapes = $state([] as Rectangle[]);
 

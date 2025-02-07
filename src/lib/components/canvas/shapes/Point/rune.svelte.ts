@@ -42,7 +42,9 @@ export const points = (() => {
 		},
 		removeFromList(point: Point) {
 			const idx = __list.findIndex((p) => p === point);
-			__list.splice(idx, 1);
+			if (idx >= 0) {
+				__list.splice(idx, 1);
+			}
 		},
 		get list() {
 			return __list;

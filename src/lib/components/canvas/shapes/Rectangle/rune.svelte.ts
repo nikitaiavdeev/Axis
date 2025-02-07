@@ -1,3 +1,4 @@
+import { myCanvas } from "$lib/runes/canvas.svelte";
 import { Point } from "../Point/rune.svelte";
 
 export enum ReferencePoint {
@@ -96,6 +97,13 @@ export class Rectangle {
 	}
 
 	clean() {
+		// Delete shape
+		const idx = myCanvas.shapes.findIndex((s) => s === this);
+		if (idx >= 0) {
+			myCanvas.shapes.splice(idx, 1);
+		}
+
+		// Delete all nodes
 		this.countourPoints.forEach((point) => point.clean());
 	}
 

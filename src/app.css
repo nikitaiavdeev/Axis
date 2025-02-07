@@ -111,6 +111,12 @@
 		vector-effect: non-scaling-stroke;
 	}
 
+	.shape-hoverable {
+		@apply hover:cursor-pointer;
+		@apply hover:stroke-shape-selected;
+		@apply hover:fill-shape-selected/30;
+	}
+
 	.shape-hole {
 		@apply fill-shape-hole/40;
 		@apply stroke-shape-hole;

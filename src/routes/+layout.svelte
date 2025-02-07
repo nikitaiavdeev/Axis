@@ -50,6 +50,10 @@
 		<NewRectangle rect={myCanvas.newShape.shape} />
 	{/if}
 
+	{#if myCanvas.editShape.shape instanceof Rectangle}
+		<NewRectangle rect={myCanvas.editShape.shape} />
+	{/if}
+
 	{@render children()}
 {/await}
 

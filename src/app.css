@@ -159,4 +159,28 @@
 			cursor: move !important;
 		}
 	}
+
+	.resize {
+		.point {
+			&.leftLower,
+			&.rightUpper {
+				cursor: nesw-resize !important;
+			}
+			&.middleLeft,
+			&.middleRight {
+				cursor: ew-resize !important;
+			}
+			&.leftUpper,
+			&.rightLower {
+				cursor: nwse-resize !important;
+			}
+			&.middleUpper,
+			&.middleLower {
+				cursor: ns-resize !important;
+			}
+			&.center {
+				cursor: move !important;
+			}
+		}
+	}
 }

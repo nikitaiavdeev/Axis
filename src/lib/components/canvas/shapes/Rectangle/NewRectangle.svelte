@@ -38,26 +38,26 @@
 	// Effect if Placeholders been changed or mouse moved
 	$effect(() => {
 		if (refX !== undefined) {
-			rect.refX = refX;
+			rect.refX = Number(refX);
 		} else {
 			rect.refX = roundFloat(ui.mouse.x);
 		}
 
 		if (refY !== undefined) {
-			rect.refY = refY;
+			rect.refY = Number(refY);
 		} else {
 			rect.refY = roundFloat(ui.mouse.y);
 		}
 
 		if (width !== undefined) {
-			rect.width = width;
+			rect.width = Number(width);
 		} else if (refX !== undefined) {
 			if (
 				[ReferencePoint.middleLower, ReferencePoint.center, ReferencePoint.middleUpper].includes(
 					rect.referencePoint
 				)
 			) {
-				rect.width = roundFloat(2 * (ui.mouse.x - refX));
+				rect.width = roundFloat(2 * Math.abs(ui.mouse.x - refX));
 			} else if (
 				[ReferencePoint.rightLower, ReferencePoint.middleRight, ReferencePoint.rightUpper].includes(
 					rect.referencePoint
@@ -70,14 +70,14 @@
 		}
 
 		if (height !== undefined) {
-			rect.height = height;
+			rect.height = Number(height);
 		} else if (refY !== undefined) {
 			if (
 				[ReferencePoint.middleLeft, ReferencePoint.center, ReferencePoint.middleRight].includes(
 					rect.referencePoint
 				)
 			) {
-				rect.height = roundFloat(2 * (ui.mouse.y - refY));
+				rect.height = roundFloat(2 * Math.abs(ui.mouse.y - refY));
 			} else if (
 				[ReferencePoint.leftUpper, ReferencePoint.middleUpper, ReferencePoint.rightUpper].includes(
 					rect.referencePoint
@@ -86,6 +86,64 @@
 				rect.height = roundFloat(refY - ui.mouse.y);
 			} else {
 				rect.height = roundFloat(ui.mouse.y - refY);
+			}
+		}
+
+		// Swap reference point if height is negative
+		if (rect.height < 0) {
+			switch (rect.referencePoint) {
+				case ReferencePoint.leftLower:
+					rect.referencePoint = ReferencePoint.leftUpper;
+					break;
+				case ReferencePoint.leftUpper:
+					rect.referencePoint = ReferencePoint.leftLower;
+					break;
+				case ReferencePoint.middleLower:
+					rect.referencePoint = ReferencePoint.middleUpper;
+					break;
+				case ReferencePoint.middleUpper:
+					rect.referencePoint = ReferencePoint.middleLower;
+					break;
+				case ReferencePoint.rightLower:
+					rect.referencePoint = ReferencePoint.rightUpper;
+					break;
+				case ReferencePoint.rightUpper:
+					rect.referencePoint = ReferencePoint.rightLower;
+					break;
+			}
+
+			if (height !== undefined) {
+				height *= -1;
+			} else {
+				rect.height *= -1;
+			}
+		}
+
+		if (rect.width < 0) {
+			switch (rect.referencePoint) {
+				case ReferencePoint.leftLower:
+					rect.referencePoint = ReferencePoint.rightLower;
+					break;
+				case ReferencePoint.rightLower:
+					rect.referencePoint = ReferencePoint.leftLower;
+					break;
+				case ReferencePoint.middleLeft:
+					rect.referencePoint = ReferencePoint.middleRight;
+					break;
+				case ReferencePoint.middleRight:
+					rect.referencePoint = ReferencePoint.middleLeft;
+					break;
+				case ReferencePoint.leftUpper:
+					rect.referencePoint = ReferencePoint.rightUpper;
+					break;
+				case ReferencePoint.rightUpper:
+					rect.referencePoint = ReferencePoint.leftUpper;
+					break;
+			}
+			if (width !== undefined) {
+				width *= -1;
+			} else {
+				rect.width *= -1;
 			}
 		}
 	});
@@ -191,6 +249,18 @@
 
 	<div class="flex w-full flex-row gap-2">
 		<div class="flex-1 flex-col gap-1.5">
+			<Label for="x_loc">X loc, in</Label>
+			<Input type="number" id="x_loc" bind:value={refX} placeholder={rect.refX.toFixed(3)} />
+		</div>
+
+		<div class="flex-1 flex-col gap-1.5">
+			<Label for="y_loc">Y loc, in</Label>
+			<Input type="number" id="y_loc" bind:value={refY} placeholder={rect.refY.toFixed(3)} />
+		</div>
+	</div>
+
+	<div class="flex w-full flex-row gap-2">
+		<div class="flex-1 flex-col gap-1.5">
 			<Label for="width">Width, in</Label>
 			<Input
 				type="number"
@@ -209,18 +279,6 @@
 		</div>
 	</div>
 
-	<div class="flex w-full flex-row gap-2">
-		<div class="flex-1 flex-col gap-1.5">
-			<Label for="x_loc">X loc, in</Label>
-			<Input type="number" id="x_loc" bind:value={refX} placeholder={rect.refX.toFixed(3)} />
-		</div>
-
-		<div class="flex-1 flex-col gap-1.5">
-			<Label for="y_loc">Y loc, in</Label>
-			<Input type="number" id="y_loc" bind:value={refY} placeholder={rect.refY.toFixed(3)} />
-		</div>
-	</div>
-
 	<div class="flex w-full items-center space-x-2">
 		<Checkbox id="is_hole" bind:checked={rect.isHole} />
 		<Label for="is_hole">Is Hole</Label>
@@ -228,7 +286,7 @@
 
 	<div class="flex flex-row justify-end gap-2">
 		{#if myCanvas.newShape.shape === rect}
-			<Button onclick={createShape}>Create</Button>
+			<Button onclick={() => createShape()}>Create</Button>
 		{:else if myCanvas.editShape.shape === rect}
 			<Button class="bg-destructive" onclick={deleteShape}><Trash2 />Delete</Button>
 		{/if}

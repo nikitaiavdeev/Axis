@@ -19,17 +19,23 @@
 
 	let { rect }: { rect: Rectangle } = $props();
 
-	let refX = $state(
-			(myCanvas.editShape.shape == rect ? rect.refX : undefined) as undefined | number
-		),
-		refY = $state((myCanvas.editShape.shape == rect ? rect.refY : undefined) as undefined | number),
-		width = $state(
-			(myCanvas.editShape.shape == rect ? rect.width : undefined) as undefined | number
-		),
-		height = $state(
-			(myCanvas.editShape.shape == rect ? rect.height : undefined) as undefined | number
-		);
+	// Placeholder values while user click screen or type manually
+	let refX = $state(undefined as undefined | number),
+		refY = $state(undefined as undefined | number),
+		width = $state(undefined as undefined | number),
+		height = $state(undefined as undefined | number);
 
+	// Effect if rectangle has changed
+	$effect(() => {
+		if (myCanvas.editShape.shape === rect) {
+			refX = myCanvas.editShape.shape.refX;
+			refY = myCanvas.editShape.shape.refY;
+			width = myCanvas.editShape.shape.width;
+			height = myCanvas.editShape.shape.height;
+		}
+	});
+
+	// Effect if Placeholders been changed or mouse moved
 	$effect(() => {
 		if (refX !== undefined) {
 			rect.refX = refX;
@@ -107,7 +113,7 @@
 
 		contentElm.addEventListener("click", handleClick);
 
-		// Optionally remove the listener on component unmount
+		// Remove the listener on component unmount
 		return () => {
 			contentElm.removeEventListener("click", handleClick);
 		};
@@ -129,7 +135,7 @@
 				height !== undefined
 			) {
 				// Register new shape
-				myCanvas.newShape.shape.countourPoints.forEach((point) => (point.isMagnet = true));
+				Object.values(myCanvas.newShape.shape.points).forEach((point) => (point.isMagnet = true));
 				myCanvas.shapes.push(myCanvas.newShape.shape);
 
 				// Clean and start creating new shape
@@ -152,11 +158,7 @@
 
 {#snippet marker(refPoint: ReferencePoint, cx: number, cy: number, r: number)}
 	<circle
-		class={cn(
-			"point-hoverable",
-			rect.isHole ? "point-hole" : "point",
-			rect.referencePoint == refPoint ? "point-selected" : ""
-		)}
+		class={cn("point hoverable", rect.referencePoint == refPoint ? "selected" : "")}
 		{cx}
 		{cy}
 		{r}
@@ -171,18 +173,19 @@
 	<div class="flex flex-col gap-1.5">
 		<Label>Reference Point</Label>
 		<svg class="w-full" width="100" height="100" viewBox="0 0 100 100">
-			<rect class={rect.isHole ? "shape-hole" : "shape"} x="10" y="10" width="80" height="80"
-			></rect>
+			<g class:hole={rect.isHole}>
+				<rect class="shape" x="10" y="10" width="80" height="80"></rect>
 
-			{@render marker(ReferencePoint.leftLower, 10, 90, 6)}
-			{@render marker(ReferencePoint.middleLeft, 10, 50, 4)}
-			{@render marker(ReferencePoint.leftUpper, 10, 10, 6)}
-			{@render marker(ReferencePoint.middleUpper, 50, 10, 4)}
-			{@render marker(ReferencePoint.rightUpper, 90, 10, 6)}
-			{@render marker(ReferencePoint.middleRight, 90, 50, 4)}
-			{@render marker(ReferencePoint.rightLower, 90, 90, 6)}
-			{@render marker(ReferencePoint.middleLower, 50, 90, 4)}
-			{@render marker(ReferencePoint.center, 50, 50, 6)}
+				{@render marker(ReferencePoint.leftLower, 10, 90, 6)}
+				{@render marker(ReferencePoint.middleLeft, 10, 50, 4)}
+				{@render marker(ReferencePoint.leftUpper, 10, 10, 6)}
+				{@render marker(ReferencePoint.middleUpper, 50, 10, 4)}
+				{@render marker(ReferencePoint.rightUpper, 90, 10, 6)}
+				{@render marker(ReferencePoint.middleRight, 90, 50, 4)}
+				{@render marker(ReferencePoint.rightLower, 90, 90, 6)}
+				{@render marker(ReferencePoint.middleLower, 50, 90, 4)}
+				{@render marker(ReferencePoint.center, 50, 50, 6)}
+			</g>
 		</svg>
 	</div>
 

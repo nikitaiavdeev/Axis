@@ -13,7 +13,7 @@
 	import { myIndexedDB } from "$lib/scripts/indexedDB/index.svelte";
 
 	// Global Events
-	import { keyPressEvent, onWheel, onMouseMove } from "$lib/scripts/globalEvents";
+	import { keyPressEvent, onWheel, onMouseMove, onMouseUp } from "$lib/scripts/globalEvents";
 
 	import "../app.css";
 	import { onMount } from "svelte";
@@ -63,4 +63,5 @@
 <svelte:window
 	onmousemove={(event) => onMouseMove(event)}
 	onwheel={(event) => onWheel(event)}
-	onkeydown={(event) => keyPressEvent(event)} />
+	onkeydown={(event) => keyPressEvent(event)}
+	onmouseup={(event) => onMouseUp(event)} />

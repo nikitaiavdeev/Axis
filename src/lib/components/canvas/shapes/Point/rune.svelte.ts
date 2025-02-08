@@ -23,7 +23,7 @@ export class Point {
 }
 
 export const points = (() => {
-	let __list = $state([] as Point[]);
+	const __list = $state([] as Point[]);
 
 	const __delaunay = $derived(
 		new d3.Delaunay(

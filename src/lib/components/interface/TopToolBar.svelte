@@ -2,6 +2,7 @@
 	// UI
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { Toggle } from "$lib/components/ui/toggle/index.js";
+	import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Separator } from "$lib/components/ui/separator/index.js";
@@ -10,10 +11,10 @@
 	// Icons
 	import {
 		DiamondPlus,
-		Grab,
+		Move,
 		Grid3x3,
 		Magnet,
-		MousePointer,
+		MoveDiagonal,
 		Square,
 		Circle,
 		Expand,
@@ -68,23 +69,27 @@
 			</Tooltip.Content>
 		</Tooltip.Root>
 
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				<Toggle bind:pressed={ui.options.showGrid}><Grab /></Toggle>
-			</Tooltip.Trigger>
-			<Tooltip.Content>
-				<p>Move shape</p>
-			</Tooltip.Content>
-		</Tooltip.Root>
+		<Separator orientation="vertical" />
 
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				<Toggle bind:pressed={ui.options.showGrid}><MousePointer /></Toggle>
-			</Tooltip.Trigger>
-			<Tooltip.Content>
-				<p>Move shape</p>
-			</Tooltip.Content>
-		</Tooltip.Root>
+		<ToggleGroup.Root type="single" bind:value={ui.options.editMode}>
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					<ToggleGroup.Item value="move"><Move /></ToggleGroup.Item>
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+					<p>Move mode</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+
+			<Tooltip.Root>
+				<Tooltip.Trigger>
+					<ToggleGroup.Item value="resize"><MoveDiagonal /></ToggleGroup.Item>
+				</Tooltip.Trigger>
+				<Tooltip.Content>
+					<p>Resize mode</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		</ToggleGroup.Root>
 
 		<Separator orientation="vertical" />
 

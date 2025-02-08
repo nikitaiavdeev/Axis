@@ -56,28 +56,44 @@ export class Rectangle {
 		}
 	});
 
-	leftLowerPoint = new Point(
-		() => this.leftLowerX,
-		() => this.leftLowerY
-	);
-	leftUpperPoint = new Point(
-		() => this.leftLowerX,
-		() => this.leftLowerY + this.height
-	);
-	rightUpperPoint = new Point(
-		() => this.leftLowerX + this.width,
-		() => this.leftLowerY + this.height
-	);
-	rightLowerPoint = new Point(
-		() => this.leftLowerX + this.width,
-		() => this.leftLowerY
-	);
-	countourPoints = [
-		this.leftLowerPoint,
-		this.leftUpperPoint,
-		this.rightUpperPoint,
-		this.rightLowerPoint,
-	];
+	points = {
+		leftLower: new Point(
+			() => this.leftLowerX,
+			() => this.leftLowerY
+		),
+		middleLeft: new Point(
+			() => this.leftLowerX,
+			() => this.leftLowerY + 0.5 * this.height
+		),
+		leftUpper: new Point(
+			() => this.leftLowerX,
+			() => this.leftLowerY + this.height
+		),
+		middleUpper: new Point(
+			() => this.leftLowerX + 0.5 * this.width,
+			() => this.leftLowerY + this.height
+		),
+		rightUpper: new Point(
+			() => this.leftLowerX + this.width,
+			() => this.leftLowerY + this.height
+		),
+		middleRight: new Point(
+			() => this.leftLowerX + this.width,
+			() => this.leftLowerY + 0.5 * this.height
+		),
+		rightLower: new Point(
+			() => this.leftLowerX + this.width,
+			() => this.leftLowerY
+		),
+		middleLower: new Point(
+			() => this.leftLowerX + 0.5 * this.width,
+			() => this.leftLowerY
+		),
+		center: new Point(
+			() => this.leftLowerX + 0.5 * this.width,
+			() => this.leftLowerY + 0.5 * this.height
+		),
+	};
 
 	constructor(
 		refX: number,
@@ -104,7 +120,7 @@ export class Rectangle {
 		}
 
 		// Delete all nodes
-		this.countourPoints.forEach((point) => point.clean());
+		Object.values(this.points).forEach((point) => point.clean());
 	}
 
 	get area(): number {

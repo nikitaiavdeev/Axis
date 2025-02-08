@@ -13,7 +13,7 @@
 
 <svg id="main-canvas" class="h-screen w-screen" role="figure">
 	{#if ui.options.showGrid}
-		<Grid></Grid>
+		<Grid />
 	{/if}
 	<g
 		id="canvas-content"

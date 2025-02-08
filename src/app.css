@@ -111,36 +111,52 @@
 		vector-effect: non-scaling-stroke;
 	}
 
-	.shape-hoverable {
-		@apply hover:cursor-pointer;
-		@apply hover:stroke-shape-selected;
-		@apply hover:fill-shape-selected/30;
-	}
-
-	.shape-hole {
-		@apply fill-shape-hole/40;
-		@apply stroke-shape-hole;
-		vector-effect: non-scaling-stroke;
-	}
-
 	.point {
 		@apply stroke-[3px];
 		@apply stroke-transparent;
 		@apply fill-shape;
 	}
 
-	.point-hole {
-		@apply stroke-[3px];
-		@apply stroke-transparent;
-		@apply fill-shape-hole;
+	.hole {
+		.shape {
+			@apply fill-shape-hole/40;
+			@apply stroke-shape-hole;
+		}
+
+		.point {
+			@apply fill-shape-hole;
+		}
 	}
 
-	.point-hoverable {
-		@apply hover:cursor-pointer;
-		@apply hover:fill-shape-selected;
+	.selected {
+		.shape {
+			@apply fill-shape-selected/40;
+			@apply stroke-shape-selected;
+		}
+
+		.point,
+		&.point {
+			@apply fill-shape-selected;
+		}
 	}
 
-	.point-selected {
-		@apply fill-shape-selected;
+	.hoverable {
+		.shape {
+			@apply hover:cursor-pointer;
+			@apply hover:stroke-shape-selected;
+			@apply hover:fill-shape-selected/30;
+		}
+
+		.point,
+		&.point {
+			@apply hover:cursor-pointer;
+			@apply hover:fill-shape-selected;
+		}
+	}
+
+	.move {
+		.point {
+			cursor: move !important;
+		}
 	}
 }

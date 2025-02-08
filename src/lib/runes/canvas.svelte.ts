@@ -1,6 +1,7 @@
 import { points } from "$lib/components/canvas/shapes/Point/rune.svelte";
 import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
 import * as d3 from "d3";
+import { ui } from "./ui.svelte";
 
 const NewShape = () => {
 		let __shape = $state(undefined as undefined | Rectangle);
@@ -10,7 +11,7 @@ const NewShape = () => {
 				return __shape;
 			},
 			createNew(shape: Rectangle) {
-				myCanvas.editShape.clean()
+				myCanvas.editShape.clean();
 				__shape = shape;
 			},
 			clean() {
@@ -22,15 +23,20 @@ const NewShape = () => {
 		};
 	},
 	EditShape = () => {
-		let __originalShape = $state(undefined as undefined | Rectangle);
 		let __shape = $state(undefined as undefined | Rectangle);
 
 		return {
 			get shape() {
 				return __shape;
 			},
+			toggleMode() {
+				if (ui.options.editMode === "move") {
+					ui.options.editMode = "resize";
+				} else {
+					ui.options.editMode = "move";
+				}
+			},
 			editShape(shape: Rectangle) {
-				// __originalShape = structuredClone(shape);
 				__shape = shape;
 			},
 			clean() {

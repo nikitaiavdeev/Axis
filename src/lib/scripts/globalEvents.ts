@@ -80,4 +80,9 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 				ui.mouse.y = closestY;
 			}
 		}
+	},
+	onMouseUp = (event: MouseEvent) => {
+		if (event.buttons == 0) {
+			ui.mouse.down = false;
+		}
 	};

@@ -127,7 +127,7 @@ export class Canvas {
 		// Adjust zoom
 		const svgElement = this.svg.node();
 		if (svgElement) {
-			const svgSize = (svgElement as SVGGraphicsElement).getBBox(),
+			const svgSize = this.svgSize,
 				fitZoom = Math.min(svgSize.width / size.width, svgSize.height / size.height) * 0.9;
 
 			this.zoomDelta(fitZoom / this.scale);

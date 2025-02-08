@@ -18,12 +18,26 @@
 	<g
 		id="canvas-content"
 		transform="translate({myCanvas.offsetX} {myCanvas.offsetY}) scale({myCanvas.scale})">
-		{#each myCanvas.shapes as shape}
+		<!-- Draw shapes which aren't holes first -->
+		{#each myCanvas.shapes.filter((s) => !s.isHole && s !== myCanvas.editShape.shape) as shape}
 			{#if shape instanceof Rectangle}
 				<RectangleSVG rect={shape} />
 			{/if}
 		{/each}
 
+		<!-- Draw shapes which are holes second so they be above -->
+		{#each myCanvas.shapes.filter((s) => s.isHole && s !== myCanvas.editShape.shape) as shape}
+			{#if shape instanceof Rectangle}
+				<RectangleSVG rect={shape} />
+			{/if}
+		{/each}
+
+		<!-- Draw edited shape above all -->
+		{#if myCanvas.editShape.shape instanceof Rectangle}
+			<RectangleSVG rect={myCanvas.editShape.shape} />
+		{/if}
+
+		<!-- Draw new shape above all -->
 		{#if myCanvas.newShape.shape instanceof Rectangle}
 			<RectangleSVG rect={myCanvas.newShape.shape} />
 		{/if}

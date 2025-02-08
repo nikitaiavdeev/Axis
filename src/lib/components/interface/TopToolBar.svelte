@@ -71,7 +71,22 @@
 
 		<Separator orientation="vertical" />
 
-		<ToggleGroup.Root type="single" bind:value={ui.options.editMode}>
+		<ToggleGroup.Root
+			type="single"
+			bind:value={
+				() => ui.options.editMode,
+				(newValue: typeof ui.options.editMode | "") => {
+					if (newValue === "") {
+						if (ui.options.editMode === "move") {
+							ui.options.editMode = "resize";
+						} else {
+							ui.options.editMode = "move";
+						}
+					} else {
+						ui.options.editMode = newValue;
+					}
+				}
+			}>
 			<Tooltip.Root>
 				<Tooltip.Trigger>
 					<ToggleGroup.Item value="move"><Move /></ToggleGroup.Item>

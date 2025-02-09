@@ -16,7 +16,7 @@
 		Magnet,
 		MoveDiagonal,
 		Square,
-		Circle,
+		Circle as CircleIcon,
 		Expand,
 	} from "lucide-svelte";
 
@@ -24,10 +24,16 @@
 	import { ui } from "$lib/runes/ui.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte.js";
 	import { Rectangle } from "../canvas/shapes/Rectangle/rune.svelte.js";
+	import { Circle } from "../canvas/shapes/Circle/rune.svelte.js";
 
-	const createNewShape = (shepe: "rectangle") => {
-		if (shepe == "rectangle") {
-			myCanvas.newShape.createNew(new Rectangle(0, 0, 0, 0));
+	const createNewShape = (shepe: "rectangle" | "circle") => {
+		switch (shepe) {
+			case "rectangle":
+				myCanvas.newShape.createNew(new Rectangle(0, 0, 0, 0));
+				break;
+			case "circle":
+				myCanvas.newShape.createNew(new Circle(0, 0, 0));
+				break;
 		}
 	};
 </script>
@@ -44,8 +50,8 @@
 							<Square class="mr-2 size-4" />
 							<span>Square</span>
 						</DropdownMenu.Item>
-						<DropdownMenu.Item>
-							<Circle class="mr-2 size-4" />
+						<DropdownMenu.Item onclick={() => createNewShape("circle")}>
+							<CircleIcon class="mr-2 size-4" />
 							<span>Circle</span>
 						</DropdownMenu.Item>
 					</DropdownMenu.Content>

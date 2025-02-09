@@ -9,6 +9,8 @@
 	// Shapes
 	import RectangleSVG from "$lib/components/canvas/shapes/Rectangle/RectangleSVG.svelte";
 	import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
+	import { Circle } from "$lib/components/canvas/shapes/Circle/rune.svelte";
+	import CircleSvg from "./shapes/Circle/CircleSVG.svelte";
 </script>
 
 <svg id="main-canvas" class="h-screen w-screen" role="figure">
@@ -21,25 +23,33 @@
 		<!-- Draw shapes which aren't holes first -->
 		{#each myCanvas.shapes.filter((s) => !s.isHole && s !== myCanvas.editShape.shape) as shape}
 			{#if shape instanceof Rectangle}
-				<RectangleSVG rect={shape} />
+				<RectangleSVG {shape} />
+			{:else if shape instanceof Circle}
+				<CircleSvg {shape} />
 			{/if}
 		{/each}
 
 		<!-- Draw shapes which are holes second so they be above -->
 		{#each myCanvas.shapes.filter((s) => s.isHole && s !== myCanvas.editShape.shape) as shape}
 			{#if shape instanceof Rectangle}
-				<RectangleSVG rect={shape} />
+				<RectangleSVG {shape} />
+			{:else if shape instanceof Circle}
+				<CircleSvg {shape} />
 			{/if}
 		{/each}
 
 		<!-- Draw edited shape above all -->
 		{#if myCanvas.editShape.shape instanceof Rectangle}
-			<RectangleSVG rect={myCanvas.editShape.shape} />
+			<RectangleSVG shape={myCanvas.editShape.shape} />
+		{:else if myCanvas.editShape.shape instanceof Circle}
+			<CircleSvg shape={myCanvas.editShape.shape} />
 		{/if}
 
 		<!-- Draw new shape above all -->
 		{#if myCanvas.newShape.shape instanceof Rectangle}
-			<RectangleSVG rect={myCanvas.newShape.shape} />
+			<RectangleSVG shape={myCanvas.newShape.shape} />
+		{:else if myCanvas.newShape.shape instanceof Circle}
+			<CircleSvg shape={myCanvas.newShape.shape} />
 		{/if}
 	</g>
 </svg>

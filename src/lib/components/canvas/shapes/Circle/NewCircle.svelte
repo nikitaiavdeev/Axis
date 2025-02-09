@@ -12,26 +12,24 @@
 
 	// Rune
 	import { myCanvas } from "$lib/runes/canvas.svelte";
-	import { Rectangle, ReferencePoint } from "./rune.svelte";
+	import { Circle, ReferencePoint } from "./rune.svelte";
 	import { ui } from "$lib/runes/ui.svelte";
 	import { onMount } from "svelte";
 	import { roundFloat } from "$lib/scripts/helpers.svelte";
 
-	let { shape }: { shape: Rectangle } = $props();
+	let { shape }: { shape: Circle } = $props();
 
 	// Placeholder values while user click screen or type manually
 	let refX = $state(undefined as undefined | number),
 		refY = $state(undefined as undefined | number),
-		width = $state(undefined as undefined | number),
-		height = $state(undefined as undefined | number);
+		radius = $state(undefined as undefined | number);
 
-	// Effect if rectangle has changed
+	// Effect if shapeangle has changed
 	$effect(() => {
 		if (myCanvas.editShape.shape === shape) {
 			refX = myCanvas.editShape.shape.refX;
 			refY = myCanvas.editShape.shape.refY;
-			width = myCanvas.editShape.shape.width;
-			height = myCanvas.editShape.shape.height;
+			radius = myCanvas.editShape.shape.radius;
 		}
 	});
 
@@ -49,54 +47,35 @@
 			shape.refY = roundFloat(ui.mouse.y);
 		}
 
-		if (width !== undefined) {
-			shape.width = Number(width);
-		} else if (refX !== undefined) {
-			if (
-				[ReferencePoint.middleLower, ReferencePoint.center, ReferencePoint.middleUpper].includes(
-					shape.referencePoint
-				)
-			) {
-				shape.width = roundFloat(2 * Math.abs(ui.mouse.x - refX));
-			} else if (
-				[ReferencePoint.rightLower, ReferencePoint.middleRight, ReferencePoint.rightUpper].includes(
-					shape.referencePoint
-				)
-			) {
-				shape.width = roundFloat(refX - ui.mouse.x);
-			} else {
-				shape.width = roundFloat(ui.mouse.x - refX);
-			}
-		}
-
-		if (height !== undefined) {
-			shape.height = Number(height);
-		} else if (refY !== undefined) {
-			if (
-				[ReferencePoint.middleLeft, ReferencePoint.center, ReferencePoint.middleRight].includes(
-					shape.referencePoint
-				)
-			) {
-				shape.height = roundFloat(2 * Math.abs(ui.mouse.y - refY));
-			} else if (
-				[ReferencePoint.leftUpper, ReferencePoint.middleUpper, ReferencePoint.rightUpper].includes(
-					shape.referencePoint
-				)
-			) {
-				shape.height = roundFloat(refY - ui.mouse.y);
-			} else {
-				shape.height = roundFloat(ui.mouse.y - refY);
+		if (radius !== undefined) {
+			shape.radius = Number(radius);
+		} else if (refX !== undefined && refY !== undefined) {
+			switch (shape.referencePoint) {
+				case ReferencePoint.middleLeft:
+					shape.radius = roundFloat(0.5 * (ui.mouse.x - refX));
+					break;
+				case ReferencePoint.middleRight:
+					shape.radius = roundFloat(0.5 * (refX - ui.mouse.x));
+					break;
+				case ReferencePoint.middleLower:
+					shape.radius = roundFloat(0.5 * (ui.mouse.y - refY));
+					break;
+				case ReferencePoint.middleUpper:
+					shape.radius = roundFloat(0.5 * (refY - ui.mouse.y));
+					break;
+				case ReferencePoint.center:
+					shape.radius = roundFloat(Math.sqrt((ui.mouse.x - refX) ** 2 + (ui.mouse.y - refY) ** 2));
 			}
 		}
 
 		// Swap reference point if height is negative
-		if (shape.height < 0) {
+		if (shape.radius < 0) {
 			switch (shape.referencePoint) {
-				case ReferencePoint.leftLower:
-					shape.referencePoint = ReferencePoint.leftUpper;
+				case ReferencePoint.middleLeft:
+					shape.referencePoint = ReferencePoint.middleRight;
 					break;
-				case ReferencePoint.leftUpper:
-					shape.referencePoint = ReferencePoint.leftLower;
+				case ReferencePoint.middleRight:
+					shape.referencePoint = ReferencePoint.middleLeft;
 					break;
 				case ReferencePoint.middleLower:
 					shape.referencePoint = ReferencePoint.middleUpper;
@@ -104,46 +83,12 @@
 				case ReferencePoint.middleUpper:
 					shape.referencePoint = ReferencePoint.middleLower;
 					break;
-				case ReferencePoint.rightLower:
-					shape.referencePoint = ReferencePoint.rightUpper;
-					break;
-				case ReferencePoint.rightUpper:
-					shape.referencePoint = ReferencePoint.rightLower;
-					break;
 			}
 
-			if (height !== undefined) {
-				height *= -1;
+			if (radius !== undefined) {
+				radius *= -1;
 			} else {
-				shape.height *= -1;
-			}
-		}
-
-		if (shape.width < 0) {
-			switch (shape.referencePoint) {
-				case ReferencePoint.leftLower:
-					shape.referencePoint = ReferencePoint.rightLower;
-					break;
-				case ReferencePoint.rightLower:
-					shape.referencePoint = ReferencePoint.leftLower;
-					break;
-				case ReferencePoint.middleLeft:
-					shape.referencePoint = ReferencePoint.middleRight;
-					break;
-				case ReferencePoint.middleRight:
-					shape.referencePoint = ReferencePoint.middleLeft;
-					break;
-				case ReferencePoint.leftUpper:
-					shape.referencePoint = ReferencePoint.rightUpper;
-					break;
-				case ReferencePoint.rightUpper:
-					shape.referencePoint = ReferencePoint.leftUpper;
-					break;
-			}
-			if (width !== undefined) {
-				width *= -1;
-			} else {
-				shape.width *= -1;
+				shape.radius *= -1;
 			}
 		}
 	});
@@ -154,16 +99,16 @@
 		if (!contentElm) return;
 
 		const handleClick = () => {
+			if (refX !== undefined && refY !== undefined) {
+				radius = roundFloat(shape.radius);
+			}
+
 			if (refX === undefined) {
 				refX = roundFloat(shape.refX);
-			} else if (width === undefined) {
-				width = roundFloat(shape.width);
 			}
 
 			if (refY === undefined) {
 				refY = roundFloat(shape.refY);
-			} else if (height === undefined) {
-				height = roundFloat(shape.height);
 			}
 
 			createShape();
@@ -189,8 +134,7 @@
 				myCanvas.newShape.shape &&
 				refX !== undefined &&
 				refY !== undefined &&
-				width !== undefined &&
-				height !== undefined
+				radius !== undefined
 			) {
 				// Register new shape
 				Object.values(myCanvas.newShape.shape.points).forEach((point) => (point.isMagnet = true));
@@ -199,9 +143,8 @@
 				// Clean and start creating new shape
 				refX = undefined;
 				refY = undefined;
-				width = undefined;
-				height = undefined;
-				myCanvas.newShape.createNew(new Rectangle(0, 0, 0, 0));
+				radius = undefined;
+				myCanvas.newShape.createNew(new Circle(0, 0, 0));
 			}
 		},
 		deleteShape = () => {
@@ -232,15 +175,11 @@
 		<Label>Reference Point</Label>
 		<svg class="w-full" width="100" height="100" viewBox="0 0 100 100">
 			<g class:hole={shape.isHole}>
-				<rect class="shape" x="10" y="10" width="80" height="80"></rect>
+				<circle class="shape" cx="50" cy="50" r="40"></circle>
 
-				{@render marker(ReferencePoint.leftLower, 10, 90, 6)}
 				{@render marker(ReferencePoint.middleLeft, 10, 50, 4)}
-				{@render marker(ReferencePoint.leftUpper, 10, 10, 6)}
 				{@render marker(ReferencePoint.middleUpper, 50, 10, 4)}
-				{@render marker(ReferencePoint.rightUpper, 90, 10, 6)}
 				{@render marker(ReferencePoint.middleRight, 90, 50, 4)}
-				{@render marker(ReferencePoint.rightLower, 90, 90, 6)}
 				{@render marker(ReferencePoint.middleLower, 50, 90, 4)}
 				{@render marker(ReferencePoint.center, 50, 50, 6)}
 			</g>
@@ -261,21 +200,14 @@
 
 	<div class="flex w-full flex-row gap-2">
 		<div class="flex-1 flex-col gap-1.5">
-			<Label for="width">Width, in</Label>
+			<Label for="width">Radius, in</Label>
 			<Input
 				type="number"
-				id="width"
-				bind:value={width}
-				placeholder={refX !== undefined ? shape.width.toFixed(3) : "width"} />
-		</div>
-
-		<div class="flex-1 flex-col gap-1.5">
-			<Label for="height">Height, in</Label>
-			<Input
-				type="number"
-				id="height"
-				bind:value={height}
-				placeholder={refY !== undefined ? shape.height.toFixed(3) : "height"} />
+				id="radius"
+				bind:value={radius}
+				placeholder={refX !== undefined && refY !== undefined
+					? shape.radius.toFixed(3)
+					: "radius"} />
 		</div>
 	</div>
 

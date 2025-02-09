@@ -2,14 +2,9 @@
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { ui } from "$lib/runes/ui.svelte";
 	import { roundFloat } from "$lib/scripts/helpers.svelte";
-	import { Rectangle, ReferencePoint } from "./rune.svelte";
+	import { Circle, ReferencePoint } from "./rune.svelte";
 
-	let { shape }: { shape: Rectangle } = $props();
-
-	const leftLowerPointXY = $derived(shape.points.leftLower.d3Coord),
-		leftUpperPointXY = $derived(shape.points.leftUpper.d3Coord),
-		rightUpperPointXY = $derived(shape.points.rightUpper.d3Coord),
-		rightLowerPointXY = $derived(shape.points.rightLower.d3Coord);
+	let { shape }: { shape: Circle } = $props();
 
 	let moveStart = $state({
 		pointName: "leftLower" as keyof typeof shape.points,
@@ -45,30 +40,14 @@
 				newRightUpper.y += ui.mouse.y - moveStart.clicked.y;
 			} else {
 				switch (moveStart.pointName) {
-					case "leftLower":
-						newLeftLower.x = ui.mouse.x;
-						newLeftLower.y = ui.mouse.y;
-						break;
 					case "middleLeft":
 						newLeftLower.x = ui.mouse.x;
-						break;
-					case "leftUpper":
-						newLeftLower.x = ui.mouse.x;
-						newRightUpper.y = ui.mouse.y;
 						break;
 					case "middleUpper":
 						newRightUpper.y = ui.mouse.y;
 						break;
-					case "rightUpper":
-						newRightUpper.x = ui.mouse.x;
-						newRightUpper.y = ui.mouse.y;
-						break;
 					case "middleRight":
 						newRightUpper.x = ui.mouse.x;
-						break;
-					case "rightLower":
-						newRightUpper.x = ui.mouse.x;
-						newLeftLower.y = ui.mouse.y;
 						break;
 					case "middleLower":
 						newLeftLower.y = ui.mouse.y;
@@ -83,18 +62,17 @@
 				[newLeftLower.y, newRightUpper.y] = [newRightUpper.y, newLeftLower.y];
 			}
 
-			shape.width = roundFloat(newRightUpper.x - newLeftLower.x);
-			shape.height = roundFloat(newRightUpper.y - newLeftLower.y);
+			if (["middleLeft", "middleRight"].includes(moveStart.pointName)) {
+				shape.radius = roundFloat(0.5 * (newRightUpper.x - newLeftLower.x));
+			} else if (["middleUpper", "middleLower"].includes(moveStart.pointName)) {
+				shape.radius = roundFloat(0.5 * (newRightUpper.y - newLeftLower.y));
+			}
 
 			switch (shape.referencePoint) {
-				case ReferencePoint.leftLower:
 				case ReferencePoint.middleLeft:
-				case ReferencePoint.leftUpper:
 					shape.refX = roundFloat(newLeftLower.x);
 					break;
-				case ReferencePoint.rightLower:
 				case ReferencePoint.middleRight:
-				case ReferencePoint.rightUpper:
 					shape.refX = roundFloat(newRightUpper.x);
 					break;
 				case ReferencePoint.middleLower:
@@ -105,14 +83,10 @@
 			}
 
 			switch (shape.referencePoint) {
-				case ReferencePoint.leftLower:
 				case ReferencePoint.middleLower:
-				case ReferencePoint.rightLower:
 					shape.refY = roundFloat(newLeftLower.y);
 					break;
-				case ReferencePoint.leftUpper:
 				case ReferencePoint.middleUpper:
-				case ReferencePoint.rightUpper:
 					shape.refY = roundFloat(newRightUpper.y);
 					break;
 				case ReferencePoint.middleLeft:
@@ -140,12 +114,12 @@
 					y: y,
 				},
 				leftLower: {
-					x: shape.leftLowerX,
-					y: shape.leftLowerY,
+					x: shape.centerX - shape.radius,
+					y: shape.centerY - shape.radius,
 				},
 				rightUpper: {
-					x: shape.leftLowerX + shape.width,
-					y: shape.leftLowerY + shape.height,
+					x: shape.centerX + shape.radius,
+					y: shape.centerY + shape.radius,
 				},
 			};
 
@@ -159,16 +133,14 @@
 	class:selected={myCanvas.editShape.shape === shape}
 	class:move={myCanvas.editShape.shape === shape && ui.options.editMode === "move"}
 	class:resize={myCanvas.editShape.shape === shape && ui.options.editMode === "resize"}>
-	<path
+	<circle
 		class="shape"
-		d="
-	M{leftLowerPointXY.x} {leftLowerPointXY.y}
-	L{leftUpperPointXY.x} {leftUpperPointXY.y}	
-	L{rightUpperPointXY.x} {rightUpperPointXY.y}
-	L{rightLowerPointXY.x} {rightLowerPointXY.y}
-	Z"
+		cx={shape.points.center.d3Coord.x}
+		cy={shape.points.center.d3Coord.y}
+		r={shape.radiusD3scale}
 		onclick={editShape}
-		role="none" />
+		role="none">
+	</circle>
 
 	{#if myCanvas.editShape.shape === shape && ui.options.editMode === "resize"}
 		{#each Object.entries(shape.points) as [pointName, point]}

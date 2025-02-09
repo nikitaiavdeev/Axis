@@ -1,16 +1,19 @@
 import { points } from "$lib/components/canvas/shapes/Point/rune.svelte";
-import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
 import * as d3 from "d3";
 import { ui } from "./ui.svelte";
 
+// Shapes
+import type { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
+import type { Circle } from "$lib/components/canvas/shapes/Circle/rune.svelte";
+
 const NewShape = () => {
-		let __shape = $state(undefined as undefined | Rectangle);
+		let __shape = $state(undefined as undefined | Rectangle | Circle);
 
 		return {
 			get shape() {
 				return __shape;
 			},
-			createNew(shape: Rectangle) {
+			createNew(shape: Rectangle | Circle) {
 				myCanvas.editShape.clean();
 				__shape = shape;
 			},
@@ -23,7 +26,7 @@ const NewShape = () => {
 		};
 	},
 	EditShape = () => {
-		let __shape = $state(undefined as undefined | Rectangle);
+		let __shape = $state(undefined as undefined | Rectangle | Circle);
 
 		return {
 			get shape() {
@@ -36,7 +39,7 @@ const NewShape = () => {
 					ui.options.editMode = "move";
 				}
 			},
-			editShape(shape: Rectangle) {
+			editShape(shape: Rectangle | Circle) {
 				__shape = shape;
 			},
 			clean() {
@@ -59,7 +62,7 @@ export class Canvas {
 	newShape = NewShape();
 	editShape = EditShape();
 
-	shapes = $state([] as Rectangle[]);
+	shapes = $state([] as (Rectangle | Circle)[]);
 
 	private __svg: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 	private __gridPattern: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;

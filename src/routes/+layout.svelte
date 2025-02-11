@@ -5,12 +5,13 @@
 	import LightDarkMode from "$lib/components/interface/LightDarkMode.svelte";
 	import MouseInfo from "$lib/components/interface/MouseInfo.svelte";
 	import TopToolBar from "$lib/components/interface/TopToolBar.svelte";
+	import * as Tooltip from "$lib/components/ui/tooltip/index";
 
 	// Light/Dark theme
 	import { ModeWatcher } from "mode-watcher";
 
 	// IndexedDB
-	import { myIndexedDB } from "$lib/scripts/indexedDB/index.svelte";
+	import { myIndexedDB } from "$lib/scripts/index.svelte";
 
 	// Global Events
 	import { keyPressEvent, onWheel, onMouseMove, onMouseUp } from "$lib/scripts/globalEvents";
@@ -40,27 +41,29 @@
 
 <!-- Light/Dark theme -->
 <ModeWatcher></ModeWatcher>
-<TopToolBar></TopToolBar>
 
 {#await myIndexedDB.init() then}
-	<!-- Interface -->
-	<FileMenu></FileMenu>
-	<LightDarkMode></LightDarkMode>
-	<MouseInfo></MouseInfo>
+	<Tooltip.Provider>
+		<!-- Interface -->
+		<FileMenu></FileMenu>
+		<LightDarkMode></LightDarkMode>
+		<TopToolBar></TopToolBar>
+		<MouseInfo></MouseInfo>
 
-	{#if myCanvas.newShape.shape instanceof Rectangle}
-		<NewRectangle shape={myCanvas.newShape.shape} />
-	{:else if myCanvas.newShape.shape instanceof Circle}
-		<NewCircle shape={myCanvas.newShape.shape} />
-	{/if}
+		{#if myCanvas.newShape.shape instanceof Rectangle}
+			<NewRectangle shape={myCanvas.newShape.shape} />
+		{:else if myCanvas.newShape.shape instanceof Circle}
+			<NewCircle shape={myCanvas.newShape.shape} />
+		{/if}
 
-	{#if myCanvas.editShape.shape instanceof Rectangle}
-		<NewRectangle shape={myCanvas.editShape.shape} />
-	{:else if myCanvas.editShape.shape instanceof Circle}
-		<NewCircle shape={myCanvas.editShape.shape} />
-	{/if}
+		{#if myCanvas.editShape.shape instanceof Rectangle}
+			<NewRectangle shape={myCanvas.editShape.shape} />
+		{:else if myCanvas.editShape.shape instanceof Circle}
+			<NewCircle shape={myCanvas.editShape.shape} />
+		{/if}
 
-	{@render children()}
+		{@render children()}
+	</Tooltip.Provider>
 {/await}
 
 <Toaster />

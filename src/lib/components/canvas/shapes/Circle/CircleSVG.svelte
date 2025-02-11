@@ -64,8 +64,14 @@
 
 			if (["middleLeft", "middleRight"].includes(moveStart.pointName)) {
 				shape.radius = roundFloat(0.5 * (newRightUpper.x - newLeftLower.x));
-			} else if (["middleUpper", "middleLower"].includes(moveStart.pointName)) {
+				newLeftLower.y = 0.5 * (moveStart.leftLower.y + moveStart.rightUpper.y) - shape.radius;
+				newRightUpper.y = 0.5 * (moveStart.leftLower.y + moveStart.rightUpper.y) + shape.radius;
+			}
+
+			if (["middleUpper", "middleLower"].includes(moveStart.pointName)) {
 				shape.radius = roundFloat(0.5 * (newRightUpper.y - newLeftLower.y));
+				newLeftLower.x = 0.5 * (moveStart.leftLower.x + moveStart.rightUpper.x) - shape.radius;
+				newRightUpper.x = 0.5 * (moveStart.leftLower.x + moveStart.rightUpper.x) + shape.radius;
 			}
 
 			switch (shape.referencePoint) {
@@ -143,7 +149,7 @@
 	</circle>
 
 	{#if myCanvas.editShape.shape === shape && ui.options.editMode === "resize"}
-		{#each Object.entries(shape.points) as [pointName, point]}
+		{#each Object.entries(shape.points) as [pointName, point] (pointName)}
 			<rect
 				class="point {pointName}"
 				x={point.d3Coord.x - 5 / myCanvas.scale}
@@ -155,7 +161,7 @@
 			</rect>
 		{/each}
 	{:else if myCanvas.newShape.shape === shape || myCanvas.editShape.shape === shape}
-		{#each Object.entries(shape.points) as [pointName, point]}
+		{#each Object.entries(shape.points) as [pointName, point] (pointName)}
 			<circle
 				class="point"
 				cx={point.d3Coord.x}

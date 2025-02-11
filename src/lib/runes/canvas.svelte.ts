@@ -5,9 +5,10 @@ import { ui } from "./ui.svelte";
 // Shapes
 import type { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
 import type { Circle } from "$lib/components/canvas/shapes/Circle/rune.svelte";
+import type { Polygon } from "$lib/components/canvas/shapes/Polygon/rune.svelte";
 
 const NewShape = () => {
-		let __shape = $state(undefined as undefined | Rectangle | Circle);
+		let __shape = $state(undefined as undefined | Rectangle | Circle | Polygon);
 
 		return {
 			get shape() {
@@ -26,7 +27,7 @@ const NewShape = () => {
 		};
 	},
 	EditShape = () => {
-		let __shape = $state(undefined as undefined | Rectangle | Circle);
+		let __shape = $state(undefined as undefined | Rectangle | Circle | Polygon);
 
 		return {
 			get shape() {
@@ -62,7 +63,7 @@ export class Canvas {
 	newShape = NewShape();
 	editShape = EditShape();
 
-	shapes = $state([] as (Rectangle | Circle)[]);
+	shapes = $state([] as (Rectangle | Circle | Polygon)[]);
 
 	private __svg: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 	private __gridPattern: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
@@ -98,6 +99,23 @@ export class Canvas {
 		this.offsetX -= (posX - this.offsetX) * (zoomScale - 1);
 		this.offsetY -= (posY - this.offsetY) * (zoomScale - 1);
 		this.scale *= zoomScale;
+	}
+
+	move(direction: "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown") {
+		switch (direction) {
+			case "ArrowLeft":
+				this.offsetX += 0.5 * this.scale * this.consts.GRID_SIZE;
+				break;
+			case "ArrowRight":
+				this.offsetX -= 0.5 * this.scale * this.consts.GRID_SIZE;
+				break;
+			case "ArrowUp":
+				this.offsetY += 0.5 * this.scale * this.consts.GRID_SIZE;
+				break;
+			case "ArrowDown":
+				this.offsetY -= 0.5 * this.scale * this.consts.GRID_SIZE;
+				break;
+		}
 	}
 
 	fitView() {

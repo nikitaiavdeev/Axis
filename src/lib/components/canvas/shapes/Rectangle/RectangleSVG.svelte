@@ -171,7 +171,7 @@
 		role="none" />
 
 	{#if myCanvas.editShape.shape === shape && ui.options.editMode === "resize"}
-		{#each Object.entries(shape.points) as [pointName, point]}
+		{#each Object.entries(shape.points) as [pointName, point] (pointName)}
 			<rect
 				class="point {pointName}"
 				x={point.d3Coord.x - 5 / myCanvas.scale}
@@ -183,7 +183,7 @@
 			</rect>
 		{/each}
 	{:else if myCanvas.newShape.shape === shape || myCanvas.editShape.shape === shape}
-		{#each Object.entries(shape.points) as [pointName, point]}
+		{#each Object.entries(shape.points) as [pointName, point] (pointName)}
 			<circle
 				class="point"
 				cx={point.d3Coord.x}

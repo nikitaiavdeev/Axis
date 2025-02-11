@@ -11,6 +11,8 @@
 	import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
 	import { Circle } from "$lib/components/canvas/shapes/Circle/rune.svelte";
 	import CircleSvg from "./shapes/Circle/CircleSVG.svelte";
+	import { Polygon } from "./shapes/Polygon/rune.svelte";
+	import PolygonSvg from "./shapes/Polygon/PolygonSVG.svelte";
 </script>
 
 <svg id="main-canvas" class="h-screen w-screen" role="figure">
@@ -21,20 +23,24 @@
 		id="canvas-content"
 		transform="translate({myCanvas.offsetX} {myCanvas.offsetY}) scale({myCanvas.scale})">
 		<!-- Draw shapes which aren't holes first -->
-		{#each myCanvas.shapes.filter((s) => !s.isHole && s !== myCanvas.editShape.shape) as shape}
+		{#each myCanvas.shapes.filter((s) => !s.isHole && s !== myCanvas.editShape.shape) as shape, idx (idx)}
 			{#if shape instanceof Rectangle}
 				<RectangleSVG {shape} />
 			{:else if shape instanceof Circle}
 				<CircleSvg {shape} />
+			{:else if shape instanceof Polygon}
+				<PolygonSvg {shape} />
 			{/if}
 		{/each}
 
 		<!-- Draw shapes which are holes second so they be above -->
-		{#each myCanvas.shapes.filter((s) => s.isHole && s !== myCanvas.editShape.shape) as shape}
+		{#each myCanvas.shapes.filter((s) => s.isHole && s !== myCanvas.editShape.shape) as shape, idx (idx)}
 			{#if shape instanceof Rectangle}
 				<RectangleSVG {shape} />
 			{:else if shape instanceof Circle}
 				<CircleSvg {shape} />
+			{:else if shape instanceof Polygon}
+				<PolygonSvg {shape} />
 			{/if}
 		{/each}
 

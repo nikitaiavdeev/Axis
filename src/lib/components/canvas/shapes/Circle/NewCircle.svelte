@@ -166,7 +166,8 @@
 		role="none"
 		onclick={() => {
 			shape.referencePoint = refPoint;
-		}}></circle>
+		}}>
+	</circle>
 {/snippet}
 
 <Card.Root

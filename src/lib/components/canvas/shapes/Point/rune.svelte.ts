@@ -10,9 +10,10 @@ export class Point {
 		y: myCanvas.d3Scale.y(this.y()),
 	});
 
-	constructor(x: () => number, y: () => number) {
+	constructor(x: () => number, y: () => number, isMagnet = false) {
 		this.x = x;
 		this.y = y;
+		this.isMagnet = isMagnet;
 
 		points.addToList(this);
 	}

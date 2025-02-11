@@ -8,17 +8,11 @@ import { ui } from "$lib/runes/ui.svelte";
 import { roundFloat } from "./helpers.svelte";
 
 export const keyPressEvent = (event: KeyboardEvent) => {
-		// Canvas zoom in
-		if (event.ctrlKey && event.key == "+") {
+		// Canvas zoom
+		if (event.ctrlKey && ["+", "-"].includes(event.key)) {
 			event.preventDefault();
-			myCanvas.zoomIn();
-			return;
-		}
-
-		// Canvas zoom out
-		if (event.ctrlKey && event.key == "-") {
-			event.preventDefault();
-			myCanvas.zoomOut();
+			if (event.key == "+") myCanvas.zoomIn();
+			if (event.key == "-") myCanvas.zoomOut();
 			return;
 		}
 
@@ -26,6 +20,13 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 		if (event.ctrlKey && event.key == "f") {
 			event.preventDefault();
 			myCanvas.fitView();
+			return;
+		}
+
+		// Canvas move
+		if (event.ctrlKey && ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
+			event.preventDefault();
+			myCanvas.move(event.key as "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown");
 			return;
 		}
 	},
@@ -37,6 +38,11 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 	},
 	onMouseMove = (event: MouseEvent) => {
 		event.preventDefault();
+
+		// Prevent selection while edeting elemetns
+		if (ui.mouse.down) {
+			window.getSelection()?.removeAllRanges();
+		}
 
 		if (event.buttons == 4) {
 			document.body.style.cursor = "grabbing";
@@ -66,6 +72,7 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 				if (distance * distanceToPixelsScale < 20) {
 					ui.mouse.x = closestPointXY[0];
 					ui.mouse.y = closestPointXY[1];
+					return;
 				}
 			}
 

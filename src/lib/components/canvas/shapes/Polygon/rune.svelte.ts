@@ -4,19 +4,24 @@ import { vec3 } from "gl-matrix";
 
 export class Polygon {
 	isHole = $state(false);
+	pointCoords = $state([] as { x: number; y: number }[]);
+	points = $state([]) as Point[];
 
-	points = [] as Point[];
+	constructor(pointCoords: { x: number; y: number }[], isHole = false) {
+		this.pointCoords = pointCoords;
 
-	constructor(pointsCoord: { x: number; y: number }[], isHole = false) {
-		for (const pointCoord of pointsCoord) {
-			this.points[this.points.length] = new Point(
-				() => pointCoord.x,
-				() => pointCoord.y,
-				true
-			);
+		for (let idx = 0; idx < pointCoords.length; idx++) {
+			this.appendPoint(idx);
 		}
 
 		this.isHole = isHole;
+	}
+
+	appendPoint(idx: number) {
+		this.points[idx] = new Point(
+			() => this.pointCoords[idx].x,
+			() => this.pointCoords[idx].y
+		);
 	}
 
 	static createFromImport(coords: number[], indices: number[], normals: number[]) {

@@ -23,6 +23,8 @@
 	import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
 	import { Circle } from "$lib/components/canvas/shapes/Circle/rune.svelte";
 	import NewCircle from "$lib/components/canvas/shapes/Circle/NewCircle.svelte";
+	import { Polygon } from "$lib/components/canvas/shapes/Polygon/rune.svelte";
+	import NewPolygon from "$lib/components/canvas/shapes/Polygon/NewPolygon.svelte";
 
 	let { children } = $props();
 
@@ -54,12 +56,16 @@
 			<NewRectangle shape={myCanvas.newShape.shape} />
 		{:else if myCanvas.newShape.shape instanceof Circle}
 			<NewCircle shape={myCanvas.newShape.shape} />
+		{:else if myCanvas.newShape.shape instanceof Polygon}
+			<NewPolygon shape={myCanvas.newShape.shape} />
 		{/if}
 
 		{#if myCanvas.editShape.shape instanceof Rectangle}
 			<NewRectangle shape={myCanvas.editShape.shape} />
 		{:else if myCanvas.editShape.shape instanceof Circle}
 			<NewCircle shape={myCanvas.editShape.shape} />
+		{:else if myCanvas.editShape.shape instanceof Polygon}
+			<NewPolygon shape={myCanvas.editShape.shape} />
 		{/if}
 
 		{@render children()}

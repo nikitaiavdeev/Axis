@@ -14,7 +14,7 @@ const NewShape = () => {
 			get shape() {
 				return __shape;
 			},
-			createNew(shape: Rectangle | Circle) {
+			createNew(shape: Rectangle | Circle | Polygon) {
 				myCanvas.editShape.clean();
 				__shape = shape;
 			},

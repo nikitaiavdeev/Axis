@@ -17,6 +17,7 @@
 		MoveDiagonal,
 		Square,
 		Circle as CircleIcon,
+		Waypoints,
 		Expand,
 	} from "lucide-svelte";
 
@@ -25,14 +26,18 @@
 	import { myCanvas } from "$lib/runes/canvas.svelte.js";
 	import { Rectangle } from "../canvas/shapes/Rectangle/rune.svelte.js";
 	import { Circle } from "../canvas/shapes/Circle/rune.svelte.js";
+	import { Polygon } from "../canvas/shapes/Polygon/rune.svelte.js";
 
-	const createNewShape = (shepe: "rectangle" | "circle") => {
+	const createNewShape = (shepe: "rectangle" | "circle" | "polygon") => {
 		switch (shepe) {
 			case "rectangle":
 				myCanvas.newShape.createNew(new Rectangle(0, 0, 0, 0));
 				break;
 			case "circle":
 				myCanvas.newShape.createNew(new Circle(0, 0, 0));
+				break;
+			case "polygon":
+				myCanvas.newShape.createNew(new Polygon([{ x: 0, y: 0 }]));
 				break;
 		}
 	};
@@ -54,6 +59,10 @@
 					<DropdownMenu.Item onclick={() => createNewShape("circle")}>
 						<CircleIcon class="mr-2 size-4" />
 						<span>Circle</span>
+					</DropdownMenu.Item>
+					<DropdownMenu.Item onclick={() => createNewShape("polygon")}>
+						<Waypoints class="mr-2 size-4" />
+						<span>Polygon</span>
 					</DropdownMenu.Item>
 				</DropdownMenu.Content>
 			</DropdownMenu.Root>

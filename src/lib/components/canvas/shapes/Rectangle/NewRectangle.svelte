@@ -169,32 +169,28 @@
 			createShape();
 		};
 
-		contentElm.addEventListener("click", handleClick);
+		if (myCanvas.newShape.shape === shape) {
+			contentElm.addEventListener("click", handleClick);
 
-		// Remove the listener on component unmount
-		return () => {
-			contentElm.removeEventListener("click", handleClick);
-		};
+			// Remove the listener on component unmount
+			return () => {
+				contentElm.removeEventListener("click", handleClick);
+			};
+		}
 	});
 
 	const onKeyDown = (event: KeyboardEvent) => {
 			if (event.key === "Escape") {
 				closeMenu();
-			} else if (event.key === "Enter") {
+			} else if (myCanvas.newShape.shape === shape && event.key === "Enter") {
 				createShape();
 			}
 		},
 		createShape = () => {
-			if (
-				myCanvas.newShape.shape &&
-				refX !== undefined &&
-				refY !== undefined &&
-				width !== undefined &&
-				height !== undefined
-			) {
+			if (refX !== undefined && refY !== undefined && width !== undefined && height !== undefined) {
 				// Register new shape
-				Object.values(myCanvas.newShape.shape.points).forEach((point) => (point.isMagnet = true));
-				myCanvas.shapes.push(myCanvas.newShape.shape);
+				Object.values(shape.points).forEach((point) => (point.isMagnet = true));
+				myCanvas.shapes.push(shape);
 
 				// Clean and start creating new shape
 				refX = undefined;

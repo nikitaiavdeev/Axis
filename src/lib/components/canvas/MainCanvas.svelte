@@ -49,6 +49,8 @@
 			<RectangleSVG shape={myCanvas.editShape.shape} />
 		{:else if myCanvas.editShape.shape instanceof Circle}
 			<CircleSvg shape={myCanvas.editShape.shape} />
+		{:else if myCanvas.editShape.shape instanceof Polygon}
+			<PolygonSvg shape={myCanvas.editShape.shape} />
 		{/if}
 
 		<!-- Draw new shape above all -->
@@ -56,6 +58,8 @@
 			<RectangleSVG shape={myCanvas.newShape.shape} />
 		{:else if myCanvas.newShape.shape instanceof Circle}
 			<CircleSvg shape={myCanvas.newShape.shape} />
+		{:else if myCanvas.newShape.shape instanceof Polygon}
+			<PolygonSvg shape={myCanvas.newShape.shape} />
 		{/if}
 	</g>
 </svg>

@@ -6,7 +6,7 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { buttonVariants } from "$lib/components/ui/button/index.js";
 	import { cn } from "$lib/utils.js";
-	import { Polygon } from "../canvas/shapes/Polygon/rune.svelte";
+	import { Polygon } from "../../canvas/shapes/Polygon/rune.svelte";
 
 	const importIges = async () => {
 			// @ts-expect-error occt-import-js library doesn't have typing

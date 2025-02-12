@@ -18,13 +18,15 @@
 
 	import "../app.css";
 	import { onMount } from "svelte";
-	import NewRectangle from "$lib/components/canvas/shapes/Rectangle/NewRectangle.svelte";
+	import NewRectangle from "$lib/canvas/shapes/Rectangle/NewRectangle.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte";
-	import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
-	import { Circle } from "$lib/components/canvas/shapes/Circle/rune.svelte";
-	import NewCircle from "$lib/components/canvas/shapes/Circle/NewCircle.svelte";
-	import { Polygon } from "$lib/components/canvas/shapes/Polygon/rune.svelte";
-	import NewPolygon from "$lib/components/canvas/shapes/Polygon/NewPolygon.svelte";
+	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
+	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
+	import NewCircle from "$lib/canvas/shapes/Circle/NewCircle.svelte";
+	import { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
+	import NewPolygon from "$lib/canvas/shapes/Polygon/NewPolygon.svelte";
+	import { ui } from "$lib/runes/ui.svelte";
+	import Results from "$lib/components/interface/Results.svelte";
 
 	let { children } = $props();
 
@@ -51,6 +53,10 @@
 		<LightDarkMode></LightDarkMode>
 		<TopToolBar></TopToolBar>
 		<MouseInfo></MouseInfo>
+
+		{#if ui.options.showResults}
+			<Results></Results>
+		{/if}
 
 		{#if myCanvas.newShape.shape instanceof Rectangle}
 			<NewRectangle shape={myCanvas.newShape.shape} />

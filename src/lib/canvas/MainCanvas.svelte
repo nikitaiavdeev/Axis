@@ -7,9 +7,9 @@
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 
 	// Shapes
-	import RectangleSVG from "$lib/components/canvas/shapes/Rectangle/RectangleSVG.svelte";
-	import { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
-	import { Circle } from "$lib/components/canvas/shapes/Circle/rune.svelte";
+	import RectangleSVG from "$lib/canvas/shapes/Rectangle/RectangleSVG.svelte";
+	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
+	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
 	import CircleSvg from "./shapes/Circle/CircleSVG.svelte";
 	import { Polygon } from "./shapes/Polygon/rune.svelte";
 	import PolygonSvg from "./shapes/Polygon/PolygonSVG.svelte";

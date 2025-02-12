@@ -17,6 +17,7 @@
 		MoveDiagonal,
 		Square,
 		Circle as CircleIcon,
+		Calculator,
 		Waypoints,
 		Expand,
 	} from "lucide-svelte";
@@ -24,9 +25,9 @@
 	// Runes
 	import { ui } from "$lib/runes/ui.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte.js";
-	import { Rectangle } from "../canvas/shapes/Rectangle/rune.svelte.js";
-	import { Circle } from "../canvas/shapes/Circle/rune.svelte.js";
-	import { Polygon } from "../canvas/shapes/Polygon/rune.svelte.js";
+	import { Rectangle } from "../../canvas/shapes/Rectangle/rune.svelte.js";
+	import { Circle } from "../../canvas/shapes/Circle/rune.svelte.js";
+	import { Polygon } from "../../canvas/shapes/Polygon/rune.svelte.js";
 
 	const createNewShape = (shepe: "rectangle" | "circle" | "polygon") => {
 		switch (shepe) {
@@ -139,6 +140,15 @@
 		</Tooltip.Trigger>
 		<Tooltip.Content>
 			<p>Toggle Snap to Grid</p>
+		</Tooltip.Content>
+	</Tooltip.Root>
+
+	<Tooltip.Root>
+		<Tooltip.Trigger>
+			<Toggle bind:pressed={ui.options.showResults}><Calculator /></Toggle>
+		</Tooltip.Trigger>
+		<Tooltip.Content>
+			<p>Show cross section calculation</p>
 		</Tooltip.Content>
 	</Tooltip.Root>
 </Card.Root>

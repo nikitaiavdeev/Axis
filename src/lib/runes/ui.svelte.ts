@@ -3,6 +3,7 @@ export const ui = $state({
 		showGrid: true,
 		magnet: true,
 		editMode: "move" as "move" | "resize",
+		showResults: false,
 	},
 	mouse: {
 		x: 0,

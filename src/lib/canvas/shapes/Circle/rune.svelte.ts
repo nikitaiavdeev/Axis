@@ -94,7 +94,12 @@ export class Circle {
 		Object.values(this.points).forEach((point) => point.clean());
 	}
 
-	get area(): number {
-		return Math.PI * this.radius * this.radius;
-	}
+	properties = $derived({
+		area: Math.PI * this.radius ** 2,
+		cX: this.centerX,
+		cY: this.centerY,
+		iX: 0.25 * Math.PI * this.radius ** 4,
+		iY: 0.25 * Math.PI * this.radius ** 4,
+		iXY: 0,
+	});
 }

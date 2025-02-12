@@ -35,16 +35,6 @@
 				: "Delta Y"
 		);
 
-	// Effect if rectangle has changed
-	$effect(() => {
-		// if (myCanvas.editShape.shape === shape) {
-		// 	refX = myCanvas.editShape.shape.refX;
-		// 	refY = myCanvas.editShape.shape.refY;
-		// 	width = myCanvas.editShape.shape.width;
-		// 	height = myCanvas.editShape.shape.height;
-		// }
-	});
-
 	// Effect if Placeholders been changed or mouse moved
 	$effect(() => {
 		if (refX !== undefined) {
@@ -58,110 +48,6 @@
 		} else {
 			shape.pointCoords.at(-1)!.y = roundFloat(ui.mouse.y);
 		}
-
-		// if (refX !== undefined) {
-		// 	shape.refX = Number(refX);
-		// } else {
-		// 	shape.refX = roundFloat(ui.mouse.x);
-		// }
-		// if (refY !== undefined) {
-		// 	shape.refY = Number(refY);
-		// } else {
-		// 	shape.refY = roundFloat(ui.mouse.y);
-		// }
-		// if (width !== undefined) {
-		// 	shape.width = Number(width);
-		// } else if (refX !== undefined) {
-		// 	if (
-		// 		[ReferencePoint.middleLower, ReferencePoint.center, ReferencePoint.middleUpper].includes(
-		// 			shape.referencePoint
-		// 		)
-		// 	) {
-		// 		shape.width = roundFloat(2 * Math.abs(ui.mouse.x - refX));
-		// 	} else if (
-		// 		[ReferencePoint.rightLower, ReferencePoint.middleRight, ReferencePoint.rightUpper].includes(
-		// 			shape.referencePoint
-		// 		)
-		// 	) {
-		// 		shape.width = roundFloat(refX - ui.mouse.x);
-		// 	} else {
-		// 		shape.width = roundFloat(ui.mouse.x - refX);
-		// 	}
-		// }
-		// if (height !== undefined) {
-		// 	shape.height = Number(height);
-		// } else if (refY !== undefined) {
-		// 	if (
-		// 		[ReferencePoint.middleLeft, ReferencePoint.center, ReferencePoint.middleRight].includes(
-		// 			shape.referencePoint
-		// 		)
-		// 	) {
-		// 		shape.height = roundFloat(2 * Math.abs(ui.mouse.y - refY));
-		// 	} else if (
-		// 		[ReferencePoint.leftUpper, ReferencePoint.middleUpper, ReferencePoint.rightUpper].includes(
-		// 			shape.referencePoint
-		// 		)
-		// 	) {
-		// 		shape.height = roundFloat(refY - ui.mouse.y);
-		// 	} else {
-		// 		shape.height = roundFloat(ui.mouse.y - refY);
-		// 	}
-		// }
-		// // Swap reference point if height is negative
-		// if (shape.height < 0) {
-		// 	switch (shape.referencePoint) {
-		// 		case ReferencePoint.leftLower:
-		// 			shape.referencePoint = ReferencePoint.leftUpper;
-		// 			break;
-		// 		case ReferencePoint.leftUpper:
-		// 			shape.referencePoint = ReferencePoint.leftLower;
-		// 			break;
-		// 		case ReferencePoint.middleLower:
-		// 			shape.referencePoint = ReferencePoint.middleUpper;
-		// 			break;
-		// 		case ReferencePoint.middleUpper:
-		// 			shape.referencePoint = ReferencePoint.middleLower;
-		// 			break;
-		// 		case ReferencePoint.rightLower:
-		// 			shape.referencePoint = ReferencePoint.rightUpper;
-		// 			break;
-		// 		case ReferencePoint.rightUpper:
-		// 			shape.referencePoint = ReferencePoint.rightLower;
-		// 			break;
-		// 	}
-		// 	if (height !== undefined) {
-		// 		height *= -1;
-		// 	} else {
-		// 		shape.height *= -1;
-		// 	}
-		// }
-		// if (shape.width < 0) {
-		// 	switch (shape.referencePoint) {
-		// 		case ReferencePoint.leftLower:
-		// 			shape.referencePoint = ReferencePoint.rightLower;
-		// 			break;
-		// 		case ReferencePoint.rightLower:
-		// 			shape.referencePoint = ReferencePoint.leftLower;
-		// 			break;
-		// 		case ReferencePoint.middleLeft:
-		// 			shape.referencePoint = ReferencePoint.middleRight;
-		// 			break;
-		// 		case ReferencePoint.middleRight:
-		// 			shape.referencePoint = ReferencePoint.middleLeft;
-		// 			break;
-		// 		case ReferencePoint.leftUpper:
-		// 			shape.referencePoint = ReferencePoint.rightUpper;
-		// 			break;
-		// 		case ReferencePoint.rightUpper:
-		// 			shape.referencePoint = ReferencePoint.leftUpper;
-		// 			break;
-		// 	}
-		// 	if (width !== undefined) {
-		// 		width *= -1;
-		// 	} else {
-		// 		shape.width *= -1;
-		// 	}
-		// }
 	});
 
 	onMount(() => {
@@ -195,7 +81,7 @@
 			if (event.key === "Escape") {
 				closeMenu();
 			} else if (event.key === "Enter") {
-				createShape();
+				appendPoint();
 			}
 		},
 		appendPoint = () => {
@@ -298,6 +184,7 @@
 	<div class="flex flex-row justify-end gap-2">
 		{#if myCanvas.newShape.shape === shape}
 			<Button onclick={() => createShape()}>Create</Button>
+			<Button variant="outline" onclick={() => appendPoint()}>Add Point</Button>
 		{:else if myCanvas.editShape.shape === shape}
 			<Button class="bg-destructive" onclick={deleteShape}><Trash2 />Delete</Button>
 		{/if}

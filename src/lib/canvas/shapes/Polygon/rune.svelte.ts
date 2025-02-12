@@ -53,6 +53,9 @@ export class Polygon {
 
 		vec3.cross(projectionVecY, normal, projectionVecX);
 
+		vec3.normalize(projectionVecX, projectionVecX);
+		vec3.normalize(projectionVecY, projectionVecY);
+
 		const vertexCount = coords.length / 3,
 			edges = {} as Record<string, number>,
 			addEdge = (idxN: number, idxNp1: number) => {
@@ -126,15 +129,44 @@ export class Polygon {
 		this.points.forEach((point) => point.clean());
 	}
 
-	get area(): number {
-		let area = 0;
+	properties = $derived.by(() => {
+		const properties = {
+				area: 0,
+				cX: 0,
+				cY: 0,
+				iX: 0,
+				iY: 0,
+				iXY: 0,
+			},
+			pCoords = this.pointCoords;
 
-		for (let idx = 0; idx < this.points.length - 1; idx++) {
-			area +=
-				this.points[idx].x() * this.points[idx + 1].y() -
-				this.points[idx + 1].x() * this.points[idx].y();
+		for (let idx = 0; idx < pCoords.length; idx++) {
+			const idxP1 = idx == pCoords.length - 1 ? 0 : idx + 1,
+				ithArea = pCoords[idx].x * pCoords[idxP1].y - pCoords[idxP1].x * pCoords[idx].y;
+
+			properties.area += ithArea;
+			properties.cX += ithArea * (pCoords[idx].x + pCoords[idxP1].x);
+			properties.cY += ithArea * (pCoords[idx].y + pCoords[idxP1].y);
+
+			properties.iX +=
+				ithArea * (pCoords[idx].y ** 2 + pCoords[idx].y * pCoords[idxP1].y + pCoords[idxP1].y ** 2);
+			properties.iY +=
+				ithArea * (pCoords[idx].x ** 2 + pCoords[idx].x * pCoords[idxP1].x + pCoords[idxP1].x ** 2);
+			properties.iXY +=
+				ithArea *
+				(pCoords[idx].x * pCoords[idxP1].y +
+					2 * pCoords[idx].x * pCoords[idx].y +
+					2 * pCoords[idxP1].x * pCoords[idxP1].y +
+					pCoords[idxP1].x * pCoords[idx].y);
 		}
 
-		return 0.5 * area;
-	}
+		properties.area *= 0.5;
+		properties.cX /= 6 * properties.area;
+		properties.cY /= 6 * properties.area;
+		properties.iX = properties.iX / 12 - properties.area * properties.cY ** 2;
+		properties.iY = properties.iY / 12 - properties.area * properties.cX ** 2;
+		properties.iXY = properties.iXY / 24 - properties.area * properties.cX * properties.cY;
+
+		return properties;
+	});
 }

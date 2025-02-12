@@ -2,7 +2,7 @@
 import { vec2 } from "gl-matrix";
 
 // Runes
-import { points } from "$lib/components/canvas/shapes/Point/rune.svelte";
+import { points } from "$lib/canvas/shapes/Point/rune.svelte";
 import { myCanvas } from "$lib/runes/canvas.svelte";
 import { ui } from "$lib/runes/ui.svelte";
 import { roundFloat } from "./helpers.svelte";

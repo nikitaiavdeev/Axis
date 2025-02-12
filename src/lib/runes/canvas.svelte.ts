@@ -1,11 +1,11 @@
-import { points } from "$lib/components/canvas/shapes/Point/rune.svelte";
+import { points } from "$lib/canvas/shapes/Point/rune.svelte";
 import * as d3 from "d3";
 import { ui } from "./ui.svelte";
 
 // Shapes
-import type { Rectangle } from "$lib/components/canvas/shapes/Rectangle/rune.svelte";
-import type { Circle } from "$lib/components/canvas/shapes/Circle/rune.svelte";
-import type { Polygon } from "$lib/components/canvas/shapes/Polygon/rune.svelte";
+import type { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
+import type { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
+import type { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
 
 const NewShape = () => {
 		let __shape = $state(undefined as undefined | Rectangle | Circle | Polygon);

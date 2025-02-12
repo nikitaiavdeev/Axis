@@ -123,7 +123,12 @@ export class Rectangle {
 		Object.values(this.points).forEach((point) => point.clean());
 	}
 
-	get area(): number {
-		return this.width * this.height;
-	}
+	properties = $derived({
+		area: this.width * this.height,
+		cX: 0.5 * this.width,
+		cY: 0.5 * this.height,
+		iX: (this.width * this.height ** 3) / 12,
+		iY: (this.height * this.width ** 3) / 12,
+		iXY: 0,
+	});
 }

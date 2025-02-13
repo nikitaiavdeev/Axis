@@ -20,7 +20,7 @@
 		Calculator,
 		Waypoints,
 		Expand,
-		Ruler 
+		Ruler,
 	} from "lucide-svelte";
 
 	// Runes
@@ -31,7 +31,7 @@
 	import { Polygon } from "../../canvas/shapes/Polygon/rune.svelte.js";
 	import { Measure } from "$lib/canvas/measure/rune.svelte.js";
 
-	const createNewShape = (shepe: "rectangle" | "circle" | "polygon" | 'measure') => {
+	const createNewShape = (shepe: "rectangle" | "circle" | "polygon" | "measure") => {
 		switch (shepe) {
 			case "rectangle":
 				myCanvas.newShape.createNew(new Rectangle(0, 0, 0, 0));
@@ -42,7 +42,7 @@
 			case "polygon":
 				myCanvas.newShape.createNew(new Polygon([{ x: 0, y: 0 }]));
 				break;
-				case "measure":
+			case "measure":
 				myCanvas.newShape.createNew(new Measure());
 				break;
 		}

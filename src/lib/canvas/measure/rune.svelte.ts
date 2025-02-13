@@ -4,16 +4,16 @@ import { Point } from "../point/rune.svelte";
 export class Measure {
 	type = $state("free" as "horizontal" | "vertical" | "free");
 	point1 = $state({
-		x: 0,
-		y: 0,
+		x: NaN,
+		y: NaN,
 	});
 	point2 = $state({
-		x: 0,
-		y: 0,
+		x: NaN,
+		y: NaN,
 	});
 	point3 = $state({
-		x: 0,
-		y: 0,
+		x: NaN,
+		y: NaN,
 	});
 
 	points = {
@@ -33,6 +33,19 @@ export class Measure {
 			this
 		),
 	};
+
+	dimention = $derived.by(() => {
+		switch (this.type) {
+			case "free":
+				return Math.sqrt(
+					(this.point1.x - this.point2.x) ** 2 + (this.point1.y - this.point2.y) ** 2
+				).toFixed(3);
+			case "horizontal":
+				return Math.abs(this.point1.x - this.point2.x).toFixed(3);
+			case "vertical":
+				return Math.abs(this.point1.y - this.point2.y).toFixed(3);
+		}
+	});
 
 	constructor() {}
 

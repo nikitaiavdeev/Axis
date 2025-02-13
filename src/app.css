@@ -105,6 +105,11 @@
 		-moz-appearance: textfield;
 	}
 
+	text {
+		stroke: none;
+		@apply fill-primary;
+	}
+
 	.shape {
 		@apply fill-shape/40;
 		@apply stroke-shape;

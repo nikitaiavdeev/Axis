@@ -280,13 +280,13 @@
 		<Label for="is_hole">Is Hole</Label>
 	</div>
 
-	<div class="flex flex-row justify-end gap-2">
+	<div class="flex flex-row gap-2">
 		{#if myCanvas.newShape.shape === shape}
-			<Button onclick={() => createShape()}>Create</Button>
+			<Button class="grow" onclick={() => createShape()}>Create</Button>
 		{:else if myCanvas.editShape.shape === shape}
-			<Button class="bg-destructive" onclick={deleteShape}><Trash2 />Delete</Button>
+			<Button class="grow" variant="destructive" onclick={deleteShape}><Trash2 />Delete</Button>
 		{/if}
-		<Button variant="secondary" onclick={closeMenu}>Cancel</Button>
+		<Button class="grow" variant="secondary" onclick={closeMenu}>Cancel</Button>
 	</div>
 </Card.Root>
 

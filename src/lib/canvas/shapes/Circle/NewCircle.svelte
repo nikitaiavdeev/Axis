@@ -137,7 +137,6 @@
 				radius !== undefined
 			) {
 				// Register new shape
-				Object.values(myCanvas.newShape.shape.points).forEach((point) => (point.isMagnet = true));
 				myCanvas.shapes.push(myCanvas.newShape.shape);
 
 				// Clean and start creating new shape

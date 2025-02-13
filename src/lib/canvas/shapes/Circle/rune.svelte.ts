@@ -48,23 +48,28 @@ export class Circle {
 	points = {
 		middleLeft: new Point(
 			() => this.centerX - this.radius,
-			() => this.centerY
+			() => this.centerY,
+			this
 		),
 		middleUpper: new Point(
 			() => this.centerX,
-			() => this.centerY + this.radius
+			() => this.centerY + this.radius,
+			this
 		),
 		middleRight: new Point(
 			() => this.centerX + this.radius,
-			() => this.centerY
+			() => this.centerY,
+			this
 		),
 		middleLower: new Point(
 			() => this.centerX,
-			() => this.centerY - this.radius
+			() => this.centerY - this.radius,
+			this
 		),
 		center: new Point(
 			() => this.centerX,
-			() => this.centerY
+			() => this.centerY,
+			this
 		),
 	};
 

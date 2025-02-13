@@ -59,39 +59,48 @@ export class Rectangle {
 	points = {
 		leftLower: new Point(
 			() => this.leftLowerX,
-			() => this.leftLowerY
+			() => this.leftLowerY,
+			this
 		),
 		middleLeft: new Point(
 			() => this.leftLowerX,
-			() => this.leftLowerY + 0.5 * this.height
+			() => this.leftLowerY + 0.5 * this.height,
+			this
 		),
 		leftUpper: new Point(
 			() => this.leftLowerX,
-			() => this.leftLowerY + this.height
+			() => this.leftLowerY + this.height,
+			this
 		),
 		middleUpper: new Point(
 			() => this.leftLowerX + 0.5 * this.width,
-			() => this.leftLowerY + this.height
+			() => this.leftLowerY + this.height,
+			this
 		),
 		rightUpper: new Point(
 			() => this.leftLowerX + this.width,
-			() => this.leftLowerY + this.height
+			() => this.leftLowerY + this.height,
+			this
 		),
 		middleRight: new Point(
 			() => this.leftLowerX + this.width,
-			() => this.leftLowerY + 0.5 * this.height
+			() => this.leftLowerY + 0.5 * this.height,
+			this
 		),
 		rightLower: new Point(
 			() => this.leftLowerX + this.width,
-			() => this.leftLowerY
+			() => this.leftLowerY,
+			this
 		),
 		middleLower: new Point(
 			() => this.leftLowerX + 0.5 * this.width,
-			() => this.leftLowerY
+			() => this.leftLowerY,
+			this
 		),
 		center: new Point(
 			() => this.leftLowerX + 0.5 * this.width,
-			() => this.leftLowerY + 0.5 * this.height
+			() => this.leftLowerY + 0.5 * this.height,
+			this
 		),
 	};
 
@@ -125,8 +134,8 @@ export class Rectangle {
 
 	properties = $derived({
 		area: this.width * this.height,
-		cX: 0.5 * this.width,
-		cY: 0.5 * this.height,
+		cX: this.leftLowerX + 0.5 * this.width,
+		cY: this.leftLowerY + 0.5 * this.height,
 		iX: (this.width * this.height ** 3) / 12,
 		iY: (this.height * this.width ** 3) / 12,
 		iXY: 0,

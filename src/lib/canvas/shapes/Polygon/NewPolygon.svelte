@@ -3,6 +3,7 @@
 	import { Trash2 } from "lucide-svelte";
 
 	// UI
+	import { Separator } from "$lib/components/ui/separator/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
@@ -105,7 +106,6 @@
 				shape.pointCoords.splice(pointCount - 1, 1);
 
 				// Register new shape
-				Object.values(shape.points).forEach((point) => (point.isMagnet = true));
 				myCanvas.shapes.push(shape);
 
 				// Clean and start creating new shape
@@ -151,6 +151,15 @@
 		</div>
 	</div>
 
+	<div class="relative">
+		<div class="absolute inset-0 flex items-center">
+			<Separator class="flex-1" orientation="horizontal" />
+		</div>
+		<div class="relative flex justify-center text-xs uppercase">
+			<span class="bg-background text-muted-foreground">OR</span>
+		</div>
+	</div>
+
 	<div class="flex w-full flex-row gap-2">
 		<div class="flex-1 flex-col gap-1.5">
 			<Label for="width">Delta X, in</Label>
@@ -181,14 +190,17 @@
 		<Label for="is_hole">Is Hole</Label>
 	</div>
 
-	<div class="flex flex-row justify-end gap-2">
+	<div class="flex">
+		<Button class="grow" onclick={() => appendPoint()}>Add Point</Button>
+	</div>
+
+	<div class="flex flex-row gap-2">
 		{#if myCanvas.newShape.shape === shape}
-			<Button onclick={() => createShape()}>Create</Button>
-			<Button variant="outline" onclick={() => appendPoint()}>Add Point</Button>
+			<Button class="grow" variant="secondary" onclick={() => createShape()}>Create</Button>
 		{:else if myCanvas.editShape.shape === shape}
-			<Button class="bg-destructive" onclick={deleteShape}><Trash2 />Delete</Button>
+			<Button class="grow" variant="destructive" onclick={deleteShape}><Trash2 />Delete</Button>
 		{/if}
-		<Button variant="secondary" onclick={closeMenu}>Cancel</Button>
+		<Button class="grow" variant="secondary" onclick={closeMenu}>Cancel</Button>
 	</div>
 </Card.Root>
 

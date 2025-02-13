@@ -20,7 +20,8 @@ export class Polygon {
 	appendPoint(idx: number) {
 		this.points[idx] = new Point(
 			() => this.pointCoords[idx].x,
-			() => this.pointCoords[idx].y
+			() => this.pointCoords[idx].y,
+			this
 		);
 	}
 

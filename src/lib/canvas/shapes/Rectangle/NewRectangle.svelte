@@ -189,7 +189,6 @@
 		createShape = () => {
 			if (refX !== undefined && refY !== undefined && width !== undefined && height !== undefined) {
 				// Register new shape
-				Object.values(shape.points).forEach((point) => (point.isMagnet = true));
 				myCanvas.shapes.push(shape);
 
 				// Clean and start creating new shape

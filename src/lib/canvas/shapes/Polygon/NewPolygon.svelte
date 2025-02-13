@@ -38,16 +38,18 @@
 
 	// Effect if Placeholders been changed or mouse moved
 	$effect(() => {
-		if (refX !== undefined) {
-			shape.pointCoords.at(-1)!.x = Number(refX);
-		} else {
-			shape.pointCoords.at(-1)!.x = roundFloat(ui.mouse.x);
-		}
+		if (myCanvas.newShape.shape === shape) {
+			if (refX !== undefined) {
+				shape.pointCoords.at(-1)!.x = Number(refX);
+			} else {
+				shape.pointCoords.at(-1)!.x = roundFloat(ui.mouse.x);
+			}
 
-		if (refY !== undefined) {
-			shape.pointCoords.at(-1)!.y = Number(refY);
-		} else {
-			shape.pointCoords.at(-1)!.y = roundFloat(ui.mouse.y);
+			if (refY !== undefined) {
+				shape.pointCoords.at(-1)!.y = Number(refY);
+			} else {
+				shape.pointCoords.at(-1)!.y = roundFloat(ui.mouse.y);
+			}
 		}
 	});
 
@@ -191,7 +193,11 @@
 	</div>
 
 	<div class="flex">
-		<Button class="grow" onclick={() => appendPoint()}>Add Point</Button>
+		{#if myCanvas.newShape.shape === shape}
+			<Button class="grow" onclick={() => appendPoint()}>Add Point</Button>
+		{:else}
+			<Button class="grow" onclick={() => appendPoint()}>Edit Point</Button>
+		{/if}
 	</div>
 
 	<div class="flex flex-row gap-2">

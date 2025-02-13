@@ -40,7 +40,7 @@ const NewShape = () => {
 					ui.options.editMode = "move";
 				}
 			},
-			editShape(shape: Rectangle | Circle) {
+			editShape(shape: Rectangle | Circle | Polygon) {
 				__shape = shape;
 			},
 			clean() {

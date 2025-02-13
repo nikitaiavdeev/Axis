@@ -27,6 +27,8 @@
 	import NewPolygon from "$lib/canvas/shapes/Polygon/NewPolygon.svelte";
 	import { ui } from "$lib/runes/ui.svelte";
 	import Results from "$lib/components/interface/Results.svelte";
+	import { Measure } from "$lib/canvas/measure/rune.svelte";
+	import NewMeasure from "$lib/canvas/measure/NewMeasure.svelte";
 
 	let { children } = $props();
 
@@ -64,6 +66,8 @@
 			<NewCircle shape={myCanvas.newShape.shape} />
 		{:else if myCanvas.newShape.shape instanceof Polygon}
 			<NewPolygon shape={myCanvas.newShape.shape} />
+		{:else if myCanvas.newShape.shape instanceof Measure}
+			<NewMeasure shape={myCanvas.newShape.shape} />
 		{/if}
 
 		{#if myCanvas.editShape.shape instanceof Rectangle}
@@ -72,6 +76,8 @@
 			<NewCircle shape={myCanvas.editShape.shape} />
 		{:else if myCanvas.editShape.shape instanceof Polygon}
 			<NewPolygon shape={myCanvas.editShape.shape} />
+		{:else if myCanvas.editShape.shape instanceof Measure}
+			<NewMeasure shape={myCanvas.editShape.shape} />
 		{/if}
 
 		{@render children()}

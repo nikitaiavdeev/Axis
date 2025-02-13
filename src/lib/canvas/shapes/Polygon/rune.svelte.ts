@@ -1,5 +1,5 @@
 import { myCanvas } from "$lib/runes/canvas.svelte";
-import { Point } from "../Point/rune.svelte";
+import { Point } from "../../point/rune.svelte";
 import { vec3 } from "gl-matrix";
 
 export class Polygon {

@@ -1,5 +1,5 @@
 import { myCanvas } from "$lib/runes/canvas.svelte";
-import { Point } from "../Point/rune.svelte";
+import { Point } from "../../point/rune.svelte";
 
 export enum ReferencePoint {
 	middleLeft,

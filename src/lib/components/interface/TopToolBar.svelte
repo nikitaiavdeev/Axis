@@ -20,6 +20,7 @@
 		Calculator,
 		Waypoints,
 		Expand,
+		Ruler 
 	} from "lucide-svelte";
 
 	// Runes
@@ -28,8 +29,9 @@
 	import { Rectangle } from "../../canvas/shapes/Rectangle/rune.svelte.js";
 	import { Circle } from "../../canvas/shapes/Circle/rune.svelte.js";
 	import { Polygon } from "../../canvas/shapes/Polygon/rune.svelte.js";
+	import { Measure } from "$lib/canvas/measure/rune.svelte.js";
 
-	const createNewShape = (shepe: "rectangle" | "circle" | "polygon") => {
+	const createNewShape = (shepe: "rectangle" | "circle" | "polygon" | 'measure') => {
 		switch (shepe) {
 			case "rectangle":
 				myCanvas.newShape.createNew(new Rectangle(0, 0, 0, 0));
@@ -39,6 +41,9 @@
 				break;
 			case "polygon":
 				myCanvas.newShape.createNew(new Polygon([{ x: 0, y: 0 }]));
+				break;
+				case "measure":
+				myCanvas.newShape.createNew(new Measure());
 				break;
 		}
 	};
@@ -70,6 +75,17 @@
 		</Tooltip.Trigger>
 		<Tooltip.Content>
 			<p>Create new shape</p>
+		</Tooltip.Content>
+	</Tooltip.Root>
+
+	<Tooltip.Root>
+		<Tooltip.Trigger
+			class={buttonVariants({ variant: "ghost", size: "icon" })}
+			onclick={() => createNewShape("measure")}>
+			<Ruler />
+		</Tooltip.Trigger>
+		<Tooltip.Content>
+			<p>Create new measurment</p>
 		</Tooltip.Content>
 	</Tooltip.Root>
 

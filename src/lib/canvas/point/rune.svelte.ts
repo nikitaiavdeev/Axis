@@ -1,26 +1,29 @@
 import { myCanvas } from "$lib/runes/canvas.svelte";
 import * as d3 from "d3";
-import type { Polygon } from "../Polygon/rune.svelte";
-import type { Rectangle } from "../Rectangle/rune.svelte";
-import type { Circle } from "../Circle/rune.svelte";
+import type { Polygon } from "../shapes/Polygon/rune.svelte";
+import type { Rectangle } from "../shapes/Rectangle/rune.svelte";
+import type { Circle } from "../shapes/Circle/rune.svelte";
+import { Measure } from "../measure/rune.svelte";
 
 export class Point {
 	x = () => 0;
 	y = () => 0;
 
-	parent: Circle | Polygon | Rectangle;
+	parent: Circle | Polygon | Rectangle | Measure;
 
 	d3Coord = $derived({
 		x: myCanvas.d3Scale.x(this.x()),
 		y: myCanvas.d3Scale.y(this.y()),
 	});
 
-	constructor(x: () => number, y: () => number, parent: Circle | Polygon | Rectangle) {
+	constructor(x: () => number, y: () => number, parent: Circle | Polygon | Rectangle | Measure) {
 		this.x = x;
 		this.y = y;
 		this.parent = parent;
 
-		points.addToList(this);
+		if (!(parent instanceof Measure)) {
+			points.addToList(this);
+		}
 	}
 
 	clean() {

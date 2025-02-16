@@ -62,7 +62,7 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 			const closestPointID = points.delaunay.find(ui.mouse.x, ui.mouse.y),
 				distanceToPixelsScale = 2 * myCanvas.consts.GRID_SIZE * myCanvas.scale;
 
-			if (closestPointID) {
+			if (closestPointID>-1) {
 				const closestPointXY = vec2.fromValues(
 						points.list[closestPointID].x(),
 						points.list[closestPointID].y()

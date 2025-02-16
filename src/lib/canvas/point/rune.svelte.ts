@@ -9,21 +9,25 @@ export class Point {
 	x = () => 0;
 	y = () => 0;
 
-	parent: Circle | Polygon | Rectangle | Measure;
+	parent: Circle | Polygon | Rectangle | Measure | "CG";
 
 	d3Coord = $derived({
 		x: myCanvas.d3Scale.x(this.x()),
 		y: myCanvas.d3Scale.y(this.y()),
 	});
 
-	constructor(x: () => number, y: () => number, parent: Circle | Polygon | Rectangle | Measure) {
+	constructor(
+		x: () => number,
+		y: () => number,
+		parent: Circle | Polygon | Rectangle | Measure | "CG"
+	) {
 		this.x = x;
 		this.y = y;
 		this.parent = parent;
 
 		if (!(parent instanceof Measure)) {
 			points.addToList(this);
-		}
+		} 
 	}
 
 	clean() {

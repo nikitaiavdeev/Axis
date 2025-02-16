@@ -116,6 +116,12 @@
 		vector-effect: non-scaling-stroke;
 	}
 
+	.measure {
+		@apply fill-none;
+		@apply stroke-primary;
+		vector-effect: non-scaling-stroke;
+	}
+
 	.point {
 		@apply stroke-[3px];
 		@apply stroke-transparent;
@@ -157,6 +163,13 @@
 			@apply hover:cursor-pointer;
 			@apply hover:fill-shape-selected;
 		}
+	}
+
+	g.measure.hoverable:has(text:hover),
+	g.measure.selected {
+		@apply cursor-pointer;
+		@apply stroke-shape-selected;
+		@apply fill-shape-selected/30;
 	}
 
 	.move {

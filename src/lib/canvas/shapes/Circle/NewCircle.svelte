@@ -130,14 +130,9 @@
 			}
 		},
 		createShape = () => {
-			if (
-				myCanvas.newShape.shape &&
-				refX !== undefined &&
-				refY !== undefined &&
-				radius !== undefined
-			) {
+			if (shape && refX !== undefined && refY !== undefined && radius !== undefined) {
 				// Register new shape
-				myCanvas.shapes.push(myCanvas.newShape.shape);
+				myCanvas.shapes.push(shape);
 
 				// Clean and start creating new shape
 				refX = undefined;

@@ -5,39 +5,6 @@
 
 	// Runes
 	import { myCanvas } from "$lib/runes/canvas.svelte";
-
-	const properties = $derived.by(() => {
-		const properties = {
-			area: 0,
-			cX: 0,
-			cY: 0,
-			iX: 0,
-			iY: 0,
-			iXY: 0,
-		};
-
-		for (const shape of myCanvas.shapes) {
-			properties.area += shape.properties.area;
-			properties.cX += shape.properties.cX * shape.properties.area;
-			properties.cY += shape.properties.cY * shape.properties.area;
-		}
-
-		if (properties.area !== 0) {
-			properties.cX /= properties.area;
-			properties.cY /= properties.area;
-		}
-
-		for (const shape of myCanvas.shapes) {
-			const dX = properties.cX - shape.properties.cX,
-				dY = properties.cY - shape.properties.cY;
-
-			properties.iX += shape.properties.iX + shape.properties.area * dY ** 2;
-			properties.iY += shape.properties.iY + shape.properties.area * dX ** 2;
-			properties.iXY += shape.properties.iXY + shape.properties.area * dX * dY;
-		}
-
-		return properties;
-	});
 </script>
 
 <Card.Root
@@ -54,7 +21,7 @@
 		<Table.Body>
 			<Table.Row>
 				<Table.Cell>Area</Table.Cell>
-				<Table.Cell>{properties.area.toPrecision(4)}</Table.Cell>
+				<Table.Cell>{myCanvas.properties.area.toPrecision(4)}</Table.Cell>
 				<Table.Cell>
 					in
 					<sup>2</sup>
@@ -62,12 +29,12 @@
 			</Table.Row>
 			<Table.Row>
 				<Table.Cell>Centroid, X</Table.Cell>
-				<Table.Cell>{properties.cX.toPrecision(4)}</Table.Cell>
+				<Table.Cell>{myCanvas.properties.cX.toPrecision(4)}</Table.Cell>
 				<Table.Cell>in</Table.Cell>
 			</Table.Row>
 			<Table.Row>
 				<Table.Cell>Centroid, Y</Table.Cell>
-				<Table.Cell>{properties.cY.toPrecision(4)}</Table.Cell>
+				<Table.Cell>{myCanvas.properties.cY.toPrecision(4)}</Table.Cell>
 				<Table.Cell>in</Table.Cell>
 			</Table.Row>
 			<Table.Row>
@@ -75,7 +42,7 @@
 					Inertia, I
 					<sub>x</sub>
 				</Table.Cell>
-				<Table.Cell>{properties.iX.toPrecision(4)}</Table.Cell>
+				<Table.Cell>{myCanvas.properties.iX.toPrecision(4)}</Table.Cell>
 				<Table.Cell>
 					in
 					<sup>4</sup>
@@ -86,7 +53,7 @@
 					Inertia, I
 					<sub>y</sub>
 				</Table.Cell>
-				<Table.Cell>{properties.iY.toPrecision(4)}</Table.Cell>
+				<Table.Cell>{myCanvas.properties.iY.toPrecision(4)}</Table.Cell>
 				<Table.Cell>
 					in
 					<sup>4</sup>
@@ -97,7 +64,7 @@
 					Inertia, I
 					<sub>xy</sub>
 				</Table.Cell>
-				<Table.Cell>{properties.iXY.toPrecision(4)}</Table.Cell>
+				<Table.Cell>{myCanvas.properties.iXY.toPrecision(4)}</Table.Cell>
 				<Table.Cell>
 					in
 					<sup>4</sup>

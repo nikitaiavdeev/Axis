@@ -7,6 +7,7 @@
 	import { buttonVariants } from "$lib/components/ui/button/index.js";
 	import { cn } from "$lib/utils.js";
 	import { Polygon } from "../../canvas/shapes/Polygon/rune.svelte";
+	import { myCanvas } from "$lib/runes/canvas.svelte";
 
 	const importIges = async () => {
 			// @ts-expect-error occt-import-js library doesn't have typing
@@ -34,6 +35,8 @@
 					mesh.attributes.normal.array
 				);
 			}
+
+			myCanvas.fitView();
 		},
 		importStep = async () => {
 			// @ts-expect-error occt-import-js library doesn't have typing
@@ -61,6 +64,7 @@
 					mesh.attributes.normal.array
 				);
 			}
+			myCanvas.fitView();
 		};
 </script>
 

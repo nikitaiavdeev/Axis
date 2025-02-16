@@ -19,6 +19,10 @@
 	let creationStage = $state("point1" as "point1" | "point2" | "point3");
 
 	$effect(() => {
+		if (myCanvas.editShape.shape === shape) {
+			return;
+		}
+
 		if (creationStage == "point1") {
 			shape.point1.x = roundFloat(ui.mouse.x);
 			shape.point1.y = roundFloat(ui.mouse.y);

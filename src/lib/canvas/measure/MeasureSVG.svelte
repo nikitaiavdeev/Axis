@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { ui } from "$lib/runes/ui.svelte";
+	import { roundFloat } from "$lib/scripts/helpers.svelte";
 	import { Measure } from "./rune.svelte";
 
 	let { measure }: { measure: Measure } = $props();
@@ -38,24 +39,34 @@
 		});
 
 	let moveStart = $state({
-		pointName: "leftLower" as keyof typeof measure.points,
-		clicked: {
-			x: 0,
-			y: 0,
-		},
-		leftLower: {
-			x: 0,
-			y: 0,
-		},
-		rightUpper: {
-			x: 0,
-			y: 0,
+		pointName: "point1" as keyof typeof measure.points,
+		initPointsCorrds: {
+			point1: $state.snapshot(measure.point1),
+			point2: $state.snapshot(measure.point2),
+			point3: $state.snapshot(measure.point3),
 		},
 	});
 
-	$effect(() => {});
+	$effect(() => {
+		if (myCanvas.editShape.shape === measure && ui.mouse.down) {
+			if (ui.options.editMode === "move") {
+				const dX = ui.mouse.x - moveStart.initPointsCorrds[moveStart.pointName].x,
+					dY = ui.mouse.y - moveStart.initPointsCorrds[moveStart.pointName].y;
 
-	const editmeasure = () => {
+				measure.point1.x = roundFloat(moveStart.initPointsCorrds.point1.x + dX);
+				measure.point1.y = roundFloat(moveStart.initPointsCorrds.point1.y + dY);
+				measure.point2.x = roundFloat(moveStart.initPointsCorrds.point2.x + dX);
+				measure.point2.y = roundFloat(moveStart.initPointsCorrds.point2.y + dY);
+				measure.point3.x = roundFloat(moveStart.initPointsCorrds.point3.x + dX);
+				measure.point3.y = roundFloat(moveStart.initPointsCorrds.point3.y + dY);
+			} else {
+				measure[moveStart.pointName].x = roundFloat(ui.mouse.x);
+				measure[moveStart.pointName].y = roundFloat(ui.mouse.y);
+			}
+		}
+	});
+
+	const editMeasure = () => {
 			// Togle mode if measure already selected
 			if (myCanvas.editShape.shape === measure) {
 				myCanvas.editShape.toggleMode();
@@ -63,27 +74,21 @@
 				myCanvas.editShape.editShape(measure);
 			}
 		},
-		startMove = (x: number, y: number, pointName: string) => {
-			// moveStart = {
-			// 	pointName: pointName as keyof typeof measure.points,
-			// 	clicked: {
-			// 		x: x,
-			// 		y: y,
-			// 	},
-			// 	leftLower: {
-			// 		x: measure.leftLowerX,
-			// 		y: measure.leftLowerY,
-			// 	},
-			// 	rightUpper: {
-			// 		x: measure.leftLowerX + measure.width,
-			// 		y: measure.leftLowerY + measure.height,
-			// 	},
-			// };
-			// ui.mouse.down = true;
+		startMove = (pointName: string) => {
+			moveStart = {
+				pointName: pointName as keyof typeof measure.points,
+				initPointsCorrds: {
+					point1: $state.snapshot(measure.point1),
+					point2: $state.snapshot(measure.point2),
+					point3: $state.snapshot(measure.point3),
+				},
+			};
+			ui.mouse.down = true;
 		};
 </script>
 
 <g
+	class="measure"
 	class:hoverable={myCanvas.newShape.shape === undefined && !ui.mouse.down}
 	class:selected={myCanvas.editShape.shape === measure}
 	class:move={myCanvas.editShape.shape === measure && ui.options.editMode === "move"}
@@ -91,7 +96,6 @@
 	style="font-size-adjust:from-font">
 	{#if !isNaN(measure.point3.x)}
 		<line
-			class="shape"
 			x1={p1XY.x}
 			y1={p1XY.y}
 			x2={p1OffsetXY.x}
@@ -99,7 +103,6 @@
 			vector-effect="non-scaling-stroke">
 		</line>
 		<line
-			class="shape"
 			x1={p2XY.x}
 			y1={p2XY.y}
 			x2={p2OffsetXY.x}
@@ -108,7 +111,6 @@
 		</line>
 
 		<line
-			class="shape"
 			x1={p1OffsetXY.x}
 			y1={p1OffsetXY.y}
 			x2={p2OffsetXY.x}
@@ -123,7 +125,9 @@
 			y={0.5 * (p1OffsetXY.y + p2OffsetXY.y)}
 			text-anchor="middle"
 			alignment-baseline="middle"
-			filter="url(#solid)">
+			filter="url(#solid)"
+			onclick={editMeasure}
+			role="none">
 			&nbsp; {measure.dimention} in &nbsp;
 		</text>
 	{/if}
@@ -137,7 +141,7 @@
 				width={10 / myCanvas.scale}
 				height={10 / myCanvas.scale}
 				role="none"
-				onmousedown={() => startMove(point.x(), point.y(), pointName)}>
+				onmousedown={() => startMove(pointName)}>
 			</rect>
 		{/each}
 	{:else if myCanvas.newShape.shape === measure || myCanvas.editShape.shape === measure}
@@ -148,7 +152,7 @@
 				cy={point.d3Coord.y}
 				r={5 / myCanvas.scale}
 				role="none"
-				onmousedown={() => startMove(point.x(), point.y(), pointName)}>
+				onmousedown={() => startMove(pointName)}>
 			</circle>
 		{/each}
 	{/if}

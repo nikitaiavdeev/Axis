@@ -1,4 +1,4 @@
-import { points } from "$lib/canvas/point/rune.svelte";
+import { Point, points } from "$lib/canvas/point/rune.svelte";
 import * as d3 from "d3";
 import { ui } from "./ui.svelte";
 
@@ -156,6 +156,45 @@ export class Canvas {
 			this.zoomDelta(fitZoom / this.scale);
 		}
 	}
+
+	properties = $derived.by(() => {
+		const properties = {
+			area: 0,
+			cX: 0,
+			cY: 0,
+			iX: 0,
+			iY: 0,
+			iXY: 0,
+		};
+
+		for (const shape of myCanvas.shapes) {
+			properties.area += shape.properties.area;
+			properties.cX += shape.properties.cX * shape.properties.area;
+			properties.cY += shape.properties.cY * shape.properties.area;
+		}
+
+		if (properties.area !== 0) {
+			properties.cX /= properties.area;
+			properties.cY /= properties.area;
+		}
+
+		for (const shape of myCanvas.shapes) {
+			const dX = properties.cX - shape.properties.cX,
+				dY = properties.cY - shape.properties.cY;
+
+			properties.iX += shape.properties.iX + shape.properties.area * dY ** 2;
+			properties.iY += shape.properties.iY + shape.properties.area * dX ** 2;
+			properties.iXY += shape.properties.iXY + shape.properties.area * dX * dY;
+		}
+
+		return properties;
+	});
+
+	cgPoint = new Point(
+		() => this.properties.cX,
+		() => this.properties.cY,
+		"CG"
+	);
 
 	get svgSize(): DOMRect {
 		return this.svg.node()!.getBoundingClientRect();

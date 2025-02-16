@@ -68,7 +68,7 @@
 			{/if}
 		{/each}
 
-		{#each myCanvas.measures as measure, idx (idx)}
+		{#each myCanvas.measures.filter((m) => m !== myCanvas.editShape.shape) as measure, idx (idx)}
 			<MeasureSvg {measure} />
 		{/each}
 
@@ -92,6 +92,32 @@
 			<PolygonSvg shape={myCanvas.newShape.shape} />
 		{:else if myCanvas.newShape.shape instanceof Measure}
 			<MeasureSvg measure={myCanvas.newShape.shape} />
+		{/if}
+
+		<!-- C.G. -->
+		{#if ui.options.showResults}
+			<g class="fill-none stroke-primary">
+				<line
+					x1={myCanvas.d3Scale.x(myCanvas.properties.cX)}
+					y1={myCanvas.d3Scale.y(myCanvas.properties.cY) - 7 / myCanvas.scale}
+					x2={myCanvas.d3Scale.x(myCanvas.properties.cX)}
+					y2={myCanvas.d3Scale.y(myCanvas.properties.cY) + 7 / myCanvas.scale}
+					vector-effect="non-scaling-stroke">
+				</line>
+				<line
+					x1={myCanvas.d3Scale.x(myCanvas.properties.cX) - 7 / myCanvas.scale}
+					y1={myCanvas.d3Scale.y(myCanvas.properties.cY)}
+					x2={myCanvas.d3Scale.x(myCanvas.properties.cX) + 7 / myCanvas.scale}
+					y2={myCanvas.d3Scale.y(myCanvas.properties.cY)}
+					vector-effect="non-scaling-stroke">
+				</line>
+				<circle
+					cx={myCanvas.d3Scale.x(myCanvas.properties.cX)}
+					cy={myCanvas.d3Scale.y(myCanvas.properties.cY)}
+					r={7 / myCanvas.scale}
+					vector-effect="non-scaling-stroke">
+				</circle>
+			</g>
 		{/if}
 	</g>
 </svg>

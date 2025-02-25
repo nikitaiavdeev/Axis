@@ -8,9 +8,13 @@ export class Point {
 	#y = $state(0);
 	parent: Shape | Measure | "CG";
 
+	// Getter functions
+	xGetter: () => number;
+	yGetter: () => number;
+
 	// Setter functions
-	xSetter: (value: number) => void;
-	ySetter: (value: number) => void;
+	xSetter: (value: number) => number;
+	ySetter: (value: number) => number;
 
 	// Derived properties
 	d3Coord = $derived({
@@ -19,22 +23,41 @@ export class Point {
 	});
 
 	constructor(
-		x: number,
-		y: number,
 		parent: Shape | Measure | "CG",
-		xSetter = (value: number) => {
-			this.#x = value;
-		},
-		ySetter = (value: number) => {
-			this.#x = value;
+		options: {
+			x?: number;
+			y?: number;
+			xGetter?: () => number;
+			yGetter?: () => number;
+			xSetter?: (value: number) => number;
+			ySetter?: (value: number) => number;
 		}
 	) {
+		const {
+			x = NaN,
+			y = NaN,
+			xGetter = () => {
+				return this.#x;
+			},
+			yGetter = () => {
+				return this.#y;
+			},
+			xSetter = (value: number) => {
+				return value;
+			},
+			ySetter = (value: number) => {
+				return value;
+			},
+		} = options;
+
 		this.#x = x;
 		this.#y = y;
 
 		this.parent = parent;
 
 		// Use custom setters if provided
+		this.xGetter = xGetter;
+		this.yGetter = yGetter;
 		this.xSetter = xSetter;
 		this.ySetter = ySetter;
 
@@ -43,21 +66,20 @@ export class Point {
 		}
 	}
 
-
 	get x() {
-		return this.#x;
+		return this.xGetter();
 	}
 
-	set x(value) {
-		this.xSetter(value);
+	set x(value: number) {
+		this.#y = this.xSetter(value);
 	}
 
 	get y() {
-		return this.#y;
+		return this.yGetter();
 	}
 
-	set y(value) {
-		this.ySetter(value);
+	set y(value: number) {
+		this.#y = this.ySetter(value);
 	}
 
 	remove() {
@@ -75,10 +97,7 @@ export class AnchorPoints {
 		new d3.Delaunay(
 			new Float32Array(
 				this.list
-					.filter(
-						(point) =>
-							point.parent !== myCanvas.newShape.shape && point.parent !== myCanvas.editShape.shape
-					)
+					.filter((point) => point.parent !== myCanvas.activeElement)
 					.map((point) => [point.x, point.y])
 					.flat()
 			)

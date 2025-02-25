@@ -1,88 +1,65 @@
-import { IndependentPoint, Point, anchorPoints } from "$lib/canvas/point/rune.svelte";
+import { anchorPoints, Point } from "$lib/canvas/point/rune.svelte";
 import * as d3 from "d3";
-import { ui } from "./ui.svelte";
 
 // Shapes
-import type { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
-import type { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
-import type { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
 import type { Measure } from "$lib/canvas/measure/rune.svelte";
 import type { Shape } from "$lib/canvas/shapes/index.svelte";
 
-const NewShape = () => {
-		let __shape = $state(undefined as undefined | Shape | Measure);
-
-		return {
-			get shape() {
-				return __shape;
-			},
-			createNew(shape: Shape | Measure) {
-				myCanvas.editShape.clean();
-				__shape = shape;
-			},
-			clean() {
-				if (__shape) {
-					__shape.remove();
-					__shape = undefined;
-				}
-			},
-		};
-	},
-	EditShape = () => {
-		let __shape = $state(undefined as undefined | Shape | Measure);
-
-		return {
-			get shape() {
-				return __shape;
-			},
-			toggleMode() {
-				if (ui.options.editMode === "move") {
-					ui.options.editMode = "resize";
-				} else {
-					ui.options.editMode = "move";
-				}
-			},
-			editShape(shape: Shape | Measure) {
-				__shape = shape;
-			},
-			clean() {
-				if (__shape) {
-					__shape = undefined;
-				}
-			},
-		};
-	};
-
 export class Canvas {
-	offsetX = $state(0);
-	offsetY = $state(0);
-	scale = $state(1);
+	// Private properties for svg elements
+	// Done this way because document isn't availabe during class construction
+	#svg: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
+	#gridPattern: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
+	#content: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 
+	// Canvas constants
 	consts = {
 		GRID_SIZE: 500,
 	};
 
-	newShape = NewShape();
-	editShape = EditShape();
+	// Canvas content position and scale
+	offsetX = $state(0);
+	offsetY = $state(0);
+	scale = $state(1);
 
+	// Active element of the canvas
+	activeElement = $state(undefined as undefined | Shape | Measure);
+	activeElementMode = $state(undefined as undefined | "new" | "move" | "resize");
+
+	// Shapes and measurments
 	shapes = $state([] as Shape[]);
 	measures = $state([] as Measure[]);
 
-	private __svg: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
-	private __gridPattern: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
-	private __content: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
-
-	mouseScale = $derived({
-		x: d3.scaleLinear([0, 0.5], [this.offsetX, this.offsetX + this.consts.GRID_SIZE * this.scale]),
-		y: d3.scaleLinear([0, 0.5], [this.offsetY + this.consts.GRID_SIZE * this.scale, this.offsetY]),
+	// UI options
+	uiOptions = $state({
+		showGrid: true,
+		magnet: true,
+		editMode: "move" as "move" | "resize",
+		showResults: false,
 	});
 
+	// Mouse state
+	mouse = $state({
+		x: 0,
+		y: 0,
+		down: false,
+	});
+
+	// Scale without account for canvas offset
 	d3Scale = {
 		x: d3.scaleLinear([0, 0.5], [0, this.consts.GRID_SIZE * this.scale]),
 		y: d3.scaleLinear([0, 0.5], [0 + this.consts.GRID_SIZE * this.scale, 0]),
 	};
 
 	// Derived properties
+	// Scale with account for canvas offset
+	mouseScale = $derived({
+		x: d3.scaleLinear([0, 0.5], [this.offsetX, this.offsetX + this.consts.GRID_SIZE * this.scale]),
+		y: d3.scaleLinear([0, 0.5], [this.offsetY + this.consts.GRID_SIZE * this.scale, this.offsetY]),
+	});
+
+	svgSize = $derived(this.svg.node()!.getBoundingClientRect());
+
 	properties = $derived.by(() => {
 		const properties = {
 			area: 0,
@@ -116,7 +93,10 @@ export class Canvas {
 		return properties;
 	});
 
-	cgPoint = new IndependentPoint(this.properties.cX, this.properties.cY, "CG");
+	cgPoint = new Point("CG", {
+		x: this.properties.cX,
+		y: this.properties.cY,
+	});
 
 	zoomIn() {
 		this.zoomDelta(1.1);
@@ -194,32 +174,28 @@ export class Canvas {
 		}
 	}
 
-	get svgSize(): DOMRect {
-		return this.svg.node()!.getBoundingClientRect();
-	}
-
 	get svg(): d3.Selection<Element, unknown, HTMLElement, HTMLElement> {
-		if (!this.__svg) {
-			this.__svg = d3.select("#main-canvas");
+		if (!this.#svg) {
+			this.#svg = d3.select("#main-canvas");
 		}
 
-		return this.__svg;
+		return this.#svg;
 	}
 
 	get gridPattern(): d3.Selection<Element, unknown, HTMLElement, HTMLElement> {
-		if (!this.__gridPattern) {
-			this.__gridPattern = d3.select("#grid-pattern");
+		if (!this.#gridPattern) {
+			this.#gridPattern = d3.select("#grid-pattern");
 		}
 
-		return this.__gridPattern;
+		return this.#gridPattern;
 	}
 
 	get content(): d3.Selection<Element, unknown, HTMLElement, HTMLElement> {
-		if (!this.__content) {
-			this.__content = d3.select("#canvas-content");
+		if (!this.#content) {
+			this.#content = d3.select("#canvas-content");
 		}
 
-		return this.__content;
+		return this.#content;
 	}
 }
 

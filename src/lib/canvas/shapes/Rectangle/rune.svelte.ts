@@ -1,28 +1,231 @@
 import { Shape } from "../index.svelte";
-import { DependendPoint, IndependentPoint, Point } from "../../point/rune.svelte";
+import { Point } from "../../point/rune.svelte";
+import { myCanvas } from "$lib/runes/canvas.svelte";
 
 export class Rectangle extends Shape {
+	// Rectangle center
+	cx = $state(0);
+	cy = $state(0);
+
+	// Rectangle width and height
 	#width = $state(0);
 	#height = $state(0);
 
-	// Points
-	points = {
-		center: new Point(0, 0, this),
-
-		leftLower: new DependendPoint(-0.5 * this.width, -0.5 * this.height, this.#center),
-		middleLeft: new DependendPoint(-0.5 * this.width, 0, this.#center),
-		leftUpper: new DependendPoint(-0.5 * this.width, 0.5 * this.height, this.#center),
-
-		rightLower: new DependendPoint(0.5 * this.width, -0.5 * this.height, this.#center),
-		middleRight: new DependendPoint(0.5 * this.width, 0, this.#center),
-		rightUpper: new DependendPoint(0.5 * this.width, 0.5 * this.height, this.#center),
-
-		middleUpper: new DependendPoint(0, 0.5 * this.height, this.#center),
-		middleLower: new DependendPoint(0, -0.5 * this.height, this.#center),
-	};
-
 	// Reference point
 	referencePoint = $state("leftLower" as keyof typeof this.points);
+
+	// Points
+	points = {
+		center: new Point(this, {
+			xGetter: () => {
+				return this.cx;
+			},
+			yGetter: () => {
+				return this.cy;
+			},
+			xSetter: (value) => {
+				this.cx = value;
+				return value;
+			},
+			ySetter: (value) => {
+				this.cy = value;
+				return value;
+			},
+		}),
+		leftLower: new Point(this, {
+			xGetter: () => {
+				return this.cx - 0.5 * this.#width;
+			},
+			yGetter: () => {
+				return this.cy - 0.5 * this.#height;
+			},
+			xSetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#width = 2 * (this.cx - value);
+				} else {
+					this.cx = value + 0.5 * this.#width;
+				}
+
+				return value;
+			},
+			ySetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#height = 2 * (this.cy - value);
+				} else {
+					this.cy = value + 0.5 * this.#height;
+				}
+				return value;
+			},
+		}),
+		middleLeft: new Point(this, {
+			xGetter: () => {
+				return this.cx - 0.5 * this.#width;
+			},
+			yGetter: () => {
+				return this.cy;
+			},
+			xSetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#width = 2 * (this.cx - value);
+				} else {
+					this.cx = value + 0.5 * this.#width;
+				}
+				return value;
+			},
+			ySetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					return value;
+				} else {
+					this.cy = value;
+					return value;
+				}
+			},
+		}),
+		leftUpper: new Point(this, {
+			xGetter: () => {
+				return this.cx - 0.5 * this.#width;
+			},
+			yGetter: () => {
+				return this.cy + 0.5 * this.#height;
+			},
+			xSetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#width = this.cx - value;
+				} else {
+					this.cx = value + 0.5 * this.#width;
+				}
+				return value;
+			},
+			ySetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#height = value - this.cy;
+				} else {
+					this.cy = value - 0.5 * this.#height;
+				}
+				return value;
+			},
+		}),
+		rightLower: new Point(this, {
+			xGetter: () => {
+				return this.cx + 0.5 * this.#width;
+			},
+			yGetter: () => {
+				return this.cy - 0.5 * this.#height;
+			},
+			xSetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#width = 2 * (value - this.cx);
+				} else {
+					this.cx = value - 0.5 * this.#width;
+				}
+				return value;
+			},
+			ySetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#height = 2 * (this.cy - value);
+				} else {
+					this.cy = value + 0.5 * this.#height;
+				}
+				return value;
+			},
+		}),
+		middleRight: new Point(this, {
+			xGetter: () => {
+				return this.cx + 0.5 * this.#width;
+			},
+			yGetter: () => {
+				return this.cy;
+			},
+			xSetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#width = 2 * (value - this.cx);
+				} else {
+					this.cx = value - 0.5 * this.#width;
+				}
+				return value;
+			},
+			ySetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					return value;
+				} else {
+					this.cy = value;
+					return value;
+				}
+			},
+		}),
+		rightUpper: new Point(this, {
+			xGetter: () => {
+				return this.cx + 0.5 * this.#width;
+			},
+			yGetter: () => {
+				return this.cy + 0.5 * this.#height;
+			},
+			xSetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#width = 2 * (value - this.cx);
+				} else {
+					this.cx = value - 0.5 * this.#width;
+				}
+				return value;
+			},
+			ySetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#height = 2 * (value - this.cy);
+				} else {
+					this.cy = value - 0.5 * this.#height;
+				}
+				return value;
+			},
+		}),
+		middleUpper: new Point(this, {
+			xGetter: () => {
+				return this.cx;
+			},
+			yGetter: () => {
+				return this.cy + 0.5 * this.#height;
+			},
+			xSetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					return value;
+				} else {
+					this.cx = value;
+					return value;
+				}
+			},
+			ySetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#height = 2 * (value - this.cy);
+				} else {
+					this.cy = value - 0.5 * this.#height;
+				}
+				return value;
+			},
+		}),
+		middleLower: new Point(this, {
+			xGetter: () => {
+				return this.cx;
+			},
+			yGetter: () => {
+				return this.cy - 0.5 * this.#height;
+			},
+			xSetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					return value;
+				} else {
+					this.cx = value;
+					return value;
+				}
+			},
+			ySetter: (value) => {
+				if (myCanvas.activeElementMode === "resize") {
+					this.#height = 2 * (this.cy - value);
+				} else {
+					this.cy = value + 0.5 * this.#height;
+				}
+				return value;
+			},
+		}),
+	} as Record<string, Point>;
 
 	// Derived properties
 	properties = $derived({
@@ -88,7 +291,7 @@ export class Rectangle extends Shape {
 		}
 	}
 
-	// height
+	// Height
 	get height() {
 		return this.#height;
 	}

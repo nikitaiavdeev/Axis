@@ -13,7 +13,6 @@
 	// Rune
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Rectangle } from "./rune.svelte";
-	import { ui } from "$lib/runes/ui.svelte";
 	import { onMount } from "svelte";
 	import { roundFloat } from "$lib/scripts/helpers.svelte";
 
@@ -27,7 +26,7 @@
 
 	// Effect if rectangle has changed
 	$effect(() => {
-		if (myCanvas.editShape.shape === shape) {
+		if (myCanvas.activeElementMode !== "new") {
 			refX = shape.refX;
 			refY = shape.refY;
 			width = shape.width;
@@ -40,24 +39,24 @@
 		if (refX !== undefined) {
 			shape.refX = Number(refX);
 		} else {
-			shape.refX = roundFloat(ui.mouse.x);
+			shape.refX = roundFloat(myCanvas.mouse.x);
 		}
 
 		if (refY !== undefined) {
 			shape.refY = Number(refY);
 		} else {
-			shape.refY = roundFloat(ui.mouse.y);
+			shape.refY = roundFloat(myCanvas.mouse.y);
 		}
 
 		if (width !== undefined) {
 			shape.width = Number(width);
 		} else if (refX !== undefined) {
 			if (["middleLower", "center", "middleUpper"].includes(shape.referencePoint)) {
-				shape.width = roundFloat(2 * Math.abs(ui.mouse.x - refX));
+				shape.width = roundFloat(2 * Math.abs(myCanvas.mouse.x - refX));
 			} else if (["rightLower", "middleRight", "rightUpper"].includes(shape.referencePoint)) {
-				shape.width = roundFloat(refX - ui.mouse.x);
+				shape.width = roundFloat(refX - myCanvas.mouse.x);
 			} else {
-				shape.width = roundFloat(ui.mouse.x - refX);
+				shape.width = roundFloat(myCanvas.mouse.x - refX);
 			}
 		}
 
@@ -65,15 +64,14 @@
 			shape.height = Number(height);
 		} else if (refY !== undefined) {
 			if (["middleLeft", "center", "middleRight"].includes(shape.referencePoint)) {
-				shape.height = roundFloat(2 * Math.abs(ui.mouse.y - refY));
+				shape.height = roundFloat(2 * Math.abs(myCanvas.mouse.y - refY));
 			} else if (["leftUpper", "middleUpper", "rightUpper"].includes(shape.referencePoint)) {
-				shape.height = roundFloat(refY - ui.mouse.y);
+				shape.height = roundFloat(refY - myCanvas.mouse.y);
 			} else {
-				shape.height = roundFloat(ui.mouse.y - refY);
+				shape.height = roundFloat(myCanvas.mouse.y - refY);
 			}
-		}});
-
-		
+		}
+	});
 
 	onMount(() => {
 		const contentElm = myCanvas.svg.node();
@@ -96,7 +94,7 @@
 			createShape();
 		};
 
-		if (myCanvas.newShape.shape === shape) {
+		if (myCanvas.activeElementMode === "new") {
 			contentElm.addEventListener("click", handleClick);
 
 			// Remove the listener on component unmount
@@ -109,7 +107,7 @@
 	const onKeyDown = (event: KeyboardEvent) => {
 			if (event.key === "Escape") {
 				closeMenu();
-			} else if (myCanvas.newShape.shape === shape && event.key === "Enter") {
+			} else if (myCanvas.activeElementMode === "new" && event.key === "Enter") {
 				createShape();
 			}
 		},
@@ -123,16 +121,18 @@
 				refY = undefined;
 				width = undefined;
 				height = undefined;
-				myCanvas.newShape.createNew(new Rectangle(0, 0, 0, 0));
+
+				myCanvas.activeElement = new Rectangle(0, 0, 0, 0);
 			}
 		},
 		deleteShape = () => {
 			shape.remove();
-			myCanvas.editShape.clean();
+			myCanvas.activeElement = undefined;
+			myCanvas.activeElementMode = undefined;
 		},
 		closeMenu = () => {
-			myCanvas.newShape.clean();
-			myCanvas.editShape.clean();
+			myCanvas.activeElement = undefined;
+			myCanvas.activeElementMode = undefined;
 		};
 </script>
 
@@ -208,9 +208,9 @@
 	</div>
 
 	<div class="flex flex-row gap-2">
-		{#if myCanvas.newShape.shape === shape}
+		{#if myCanvas.activeElementMode === "new"}
 			<Button class="grow" onclick={() => createShape()}>Create</Button>
-		{:else if myCanvas.editShape.shape === shape}
+		{:else}
 			<Button class="grow" variant="destructive" onclick={deleteShape}><Trash2 />Delete</Button>
 		{/if}
 		<Button class="grow" variant="secondary" onclick={closeMenu}>Cancel</Button>

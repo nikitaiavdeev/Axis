@@ -11,7 +11,7 @@
 	import { ModeWatcher } from "mode-watcher";
 
 	// IndexedDB
-	import { myIndexedDB } from "$lib/scripts/index.svelte";
+	import { myIndexedDB } from "$lib/scripts/indexedDB.svelte";
 
 	// Global Events
 	import { keyPressEvent, onWheel, onMouseMove, onMouseUp } from "$lib/scripts/globalEvents";
@@ -21,14 +21,13 @@
 	import NewRectangle from "$lib/canvas/shapes/Rectangle/NewRectangle.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
-	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
-	import NewCircle from "$lib/canvas/shapes/Circle/NewCircle.svelte";
-	import { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
-	import NewPolygon from "$lib/canvas/shapes/Polygon/NewPolygon.svelte";
-	import { ui } from "$lib/runes/ui.svelte";
+	// import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
+	// import NewCircle from "$lib/canvas/shapes/Circle/NewCircle.svelte";
+	// import { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
+	// import NewPolygon from "$lib/canvas/shapes/Polygon/NewPolygon.svelte";
+	// import { Measure } from "$lib/canvas/measure/rune.svelte";
+	// import NewMeasure from "$lib/canvas/measure/NewMeasure.svelte";
 	import Results from "$lib/components/interface/Results.svelte";
-	import { Measure } from "$lib/canvas/measure/rune.svelte";
-	import NewMeasure from "$lib/canvas/measure/NewMeasure.svelte";
 
 	let { children } = $props();
 
@@ -56,28 +55,18 @@
 		<TopToolBar></TopToolBar>
 		<MouseInfo></MouseInfo>
 
-		{#if ui.options.showResults}
+		{#if myCanvas.uiOptions.showResults}
 			<Results></Results>
 		{/if}
 
-		{#if myCanvas.newShape.shape instanceof Rectangle}
-			<NewRectangle shape={myCanvas.newShape.shape} />
-		{:else if myCanvas.newShape.shape instanceof Circle}
+		{#if myCanvas.activeElement instanceof Rectangle}
+			<NewRectangle shape={myCanvas.activeElement} />
+			<!-- {:else if myCanvas.newShape.shape instanceof Circle}
 			<NewCircle shape={myCanvas.newShape.shape} />
 		{:else if myCanvas.newShape.shape instanceof Polygon}
 			<NewPolygon shape={myCanvas.newShape.shape} />
-		{:else if myCanvas.newShape.shape instanceof Measure}
-			<NewMeasure shape={myCanvas.newShape.shape} />
-		{/if}
-
-		{#if myCanvas.editShape.shape instanceof Rectangle}
-			<NewRectangle shape={myCanvas.editShape.shape} />
-		{:else if myCanvas.editShape.shape instanceof Circle}
-			<NewCircle shape={myCanvas.editShape.shape} />
-		{:else if myCanvas.editShape.shape instanceof Polygon}
-			<NewPolygon shape={myCanvas.editShape.shape} />
-		{:else if myCanvas.editShape.shape instanceof Measure}
-			<NewMeasure shape={myCanvas.editShape.shape} />
+		{:else if myCanvas.activeElement instanceof Measure}
+			<NewMeasure shape={myCanvas.activeElement} /> -->
 		{/if}
 
 		{@render children()}

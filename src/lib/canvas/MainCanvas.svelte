@@ -3,18 +3,17 @@
 	import Grid from "./Grid.svelte";
 
 	// Runes
-	import { ui } from "$lib/runes/ui.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 
 	// Shapes
 	import RectangleSVG from "$lib/canvas/shapes/Rectangle/RectangleSVG.svelte";
 	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
-	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
-	import CircleSvg from "./shapes/Circle/CircleSVG.svelte";
-	import { Polygon } from "./shapes/Polygon/rune.svelte";
-	import PolygonSvg from "./shapes/Polygon/PolygonSVG.svelte";
-	import { Measure } from "./measure/rune.svelte";
-	import MeasureSvg from "./measure/MeasureSVG.svelte";
+	// import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
+	// import CircleSvg from "./shapes/Circle/CircleSVG.svelte";
+	// import { Polygon } from "./shapes/Polygon/rune.svelte";
+	// import PolygonSvg from "./shapes/Polygon/PolygonSVG.svelte";
+	// import { Measure } from "./measure/rune.svelte";
+	// import MeasureSvg from "./measure/MeasureSVG.svelte";
 	import { anchorPoints } from "./point/rune.svelte";
 </script>
 
@@ -53,62 +52,51 @@
 		</linearGradient>
 	</defs>
 
-	{#if ui.options.showGrid}
+	{#if myCanvas.uiOptions.showGrid}
 		<Grid />
 	{/if}
 	<g
 		id="canvas-content"
 		transform="translate({myCanvas.offsetX} {myCanvas.offsetY}) scale({myCanvas.scale})">
 		<!-- Draw shapes which aren't holes first -->
-		{#each myCanvas.shapes.filter((s) => !s.isHole && s !== myCanvas.editShape.shape) as shape, idx (idx)}
+		{#each myCanvas.shapes.filter((s) => !s.isHole && s !== myCanvas.activeElement) as shape, idx (idx)}
 			{#if shape instanceof Rectangle}
 				<RectangleSVG {shape} />
-			{:else if shape instanceof Circle}
+				<!-- {:else if shape instanceof Circle}
 				<CircleSvg {shape} />
 			{:else if shape instanceof Polygon}
-				<PolygonSvg {shape} />
+				<PolygonSvg {shape} /> -->
 			{/if}
 		{/each}
 
 		<!-- Draw shapes which are holes second so they be above -->
-		{#each myCanvas.shapes.filter((s) => s.isHole && s !== myCanvas.editShape.shape) as shape, idx (idx)}
+		{#each myCanvas.shapes.filter((s) => s.isHole && s !== myCanvas.activeElement) as shape, idx (idx)}
 			{#if shape instanceof Rectangle}
 				<RectangleSVG {shape} />
-			{:else if shape instanceof Circle}
+				<!-- {:else if shape instanceof Circle}
 				<CircleSvg {shape} />
 			{:else if shape instanceof Polygon}
-				<PolygonSvg {shape} />
+				<PolygonSvg {shape} /> -->
 			{/if}
 		{/each}
 
-		{#each myCanvas.measures.filter((m) => m !== myCanvas.editShape.shape) as measure, idx (idx)}
+		<!-- {#each myCanvas.measures.filter((m) => m !== myCanvas.activeElement) as measure, idx (idx)}
 			<MeasureSvg {measure} />
-		{/each}
+		{/each} -->
 
 		<!-- Draw edited shape above all -->
-		{#if myCanvas.editShape.shape instanceof Rectangle}
-			<RectangleSVG shape={myCanvas.editShape.shape} />
-		{:else if myCanvas.editShape.shape instanceof Circle}
-			<CircleSvg shape={myCanvas.editShape.shape} />
-		{:else if myCanvas.editShape.shape instanceof Polygon}
-			<PolygonSvg shape={myCanvas.editShape.shape} />
-		{:else if myCanvas.editShape.shape instanceof Measure}
-			<MeasureSvg measure={myCanvas.editShape.shape} />
-		{/if}
-
-		<!-- Draw new shape above all -->
-		{#if myCanvas.newShape.shape instanceof Rectangle}
-			<RectangleSVG shape={myCanvas.newShape.shape} />
-		{:else if myCanvas.newShape.shape instanceof Circle}
-			<CircleSvg shape={myCanvas.newShape.shape} />
-		{:else if myCanvas.newShape.shape instanceof Polygon}
-			<PolygonSvg shape={myCanvas.newShape.shape} />
-		{:else if myCanvas.newShape.shape instanceof Measure}
-			<MeasureSvg measure={myCanvas.newShape.shape} />
+		{#if myCanvas.activeElement instanceof Rectangle}
+			<RectangleSVG shape={myCanvas.activeElement} />
+			<!-- {:else if myCanvas.activeElement instanceof Circle}
+			<CircleSvg shape={myCanvas.activeElement} />
+		{:else if myCanvas.activeElement instanceof Polygon}
+			<PolygonSvg shape={myCanvas.activeElement} /> 
+		{:else if myCanvas.activeElement instanceof Measure}
+			<MeasureSvg measure={myCanvas.activeElement} />-->
 		{/if}
 
 		<!-- C.G. -->
-		{#if ui.options.showResults}
+		{#if myCanvas.uiOptions.showResults}
 			<g class="fill-none stroke-primary">
 				<line
 					x1={myCanvas.d3Scale.x(myCanvas.properties.cX)}

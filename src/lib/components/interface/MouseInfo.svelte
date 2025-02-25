@@ -3,7 +3,6 @@
 	import { Minus, Plus } from "lucide-svelte";
 
 	// Runes
-	import { ui } from "$lib/runes/ui.svelte.js";
 	import { myCanvas } from "$lib/runes/canvas.svelte.js";
 
 	// UI
@@ -57,10 +56,10 @@
 
 	<Card.Root class="ms-4 inline-flex select-none items-center justify-center rounded-md">
 		<div class="inline-flex h-9 w-[130px] items-center py-2 ps-4">
-			x: {ui.mouse.x.toFixed(2)} in
+			x: {myCanvas.mouse.x.toFixed(2)} in
 		</div>
 		<div class="inline-flex h-9 w-[130px] items-center py-2 pe-4">
-			y: {ui.mouse.y.toFixed(2)} in
+			y: {myCanvas.mouse.y.toFixed(2)} in
 		</div>
 	</Card.Root>
 </div>

@@ -24,7 +24,6 @@
 	} from "lucide-svelte";
 
 	// Runes
-	import { ui } from "$lib/runes/ui.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte.js";
 	import { Rectangle } from "../../canvas/shapes/Rectangle/rune.svelte.js";
 	import { Circle } from "../../canvas/shapes/Circle/rune.svelte.js";
@@ -34,18 +33,19 @@
 	const createNewShape = (shepe: "rectangle" | "circle" | "polygon" | "measure") => {
 		switch (shepe) {
 			case "rectangle":
-				myCanvas.newShape.createNew(new Rectangle(0, 0, 0, 0));
+				myCanvas.activeElement = new Rectangle(0, 0, 0, 0);
 				break;
 			case "circle":
-				myCanvas.newShape.createNew(new Circle(0, 0, 0));
+				myCanvas.activeElement = new Circle(0, 0, 0);
 				break;
 			case "polygon":
-				myCanvas.newShape.createNew(new Polygon([{ x: 0, y: 0 }]));
+				myCanvas.activeElement = new Polygon([{ x: 0, y: 0 }]);
 				break;
 			case "measure":
-				myCanvas.newShape.createNew(new Measure());
+				myCanvas.activeElement = new Measure();
 				break;
 		}
+		myCanvas.activeElementMode = "new";
 	};
 </script>
 
@@ -107,16 +107,16 @@
 	<ToggleGroup.Root
 		type="single"
 		bind:value={
-			() => ui.options.editMode,
-			(newValue: typeof ui.options.editMode | "") => {
+			() => myCanvas.uiOptions.editMode,
+			(newValue: typeof myCanvas.uiOptions.editMode | "") => {
 				if (newValue === "") {
-					if (ui.options.editMode === "move") {
-						ui.options.editMode = "resize";
+					if (myCanvas.uiOptions.editMode === "move") {
+						myCanvas.uiOptions.editMode = "resize";
 					} else {
-						ui.options.editMode = "move";
+						myCanvas.uiOptions.editMode = "move";
 					}
 				} else {
-					ui.options.editMode = newValue;
+					myCanvas.uiOptions.editMode = newValue;
 				}
 			}
 		}>
@@ -143,7 +143,7 @@
 
 	<Tooltip.Root>
 		<Tooltip.Trigger>
-			<Toggle bind:pressed={ui.options.showGrid}><Grid3x3 /></Toggle>
+			<Toggle bind:pressed={myCanvas.uiOptions.showGrid}><Grid3x3 /></Toggle>
 		</Tooltip.Trigger>
 		<Tooltip.Content>
 			<p>Toggle Grid</p>
@@ -152,7 +152,7 @@
 
 	<Tooltip.Root>
 		<Tooltip.Trigger>
-			<Toggle bind:pressed={ui.options.magnet}><Magnet /></Toggle>
+			<Toggle bind:pressed={myCanvas.uiOptions.magnet}><Magnet /></Toggle>
 		</Tooltip.Trigger>
 		<Tooltip.Content>
 			<p>Toggle Snap to Grid</p>
@@ -161,7 +161,7 @@
 
 	<Tooltip.Root>
 		<Tooltip.Trigger>
-			<Toggle bind:pressed={ui.options.showResults}><Calculator /></Toggle>
+			<Toggle bind:pressed={myCanvas.uiOptions.showResults}><Calculator /></Toggle>
 		</Tooltip.Trigger>
 		<Tooltip.Content>
 			<p>Show cross section calculation</p>

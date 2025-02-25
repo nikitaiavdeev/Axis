@@ -64,7 +64,7 @@
 	class:selected={myCanvas.editShape.shape === shape}
 	class:move={myCanvas.editShape.shape === shape && ui.options.editMode === "move"}
 	class:resize={myCanvas.editShape.shape === shape && ui.options.editMode === "resize"}>
-	<path class="shape" d={pathString} role="none" onclick={editShape} />
+	<path class="shape" d={pathString} role="none" onclick={editShape} fill="url(#stress-fringe)" />
 
 	{#if myCanvas.editShape.shape === shape && ui.options.editMode === "resize"}
 		{#each shape.points as point, idx (idx)}

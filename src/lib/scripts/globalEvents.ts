@@ -2,7 +2,7 @@
 import { vec2 } from "gl-matrix";
 
 // Runes
-import { points } from "$lib/canvas/point/rune.svelte";
+import { anchorPoints } from "$lib/canvas/point/rune.svelte";
 import { myCanvas } from "$lib/runes/canvas.svelte";
 import { ui } from "$lib/runes/ui.svelte";
 import { roundFloat } from "./helpers.svelte";
@@ -59,13 +59,13 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 		// Magnet mouse location
 		if (ui.options.magnet) {
 			// Magnet to points
-			const closestPointID = points.delaunay.find(ui.mouse.x, ui.mouse.y),
+			const closestPointID = anchorPoints.delaunay.find(ui.mouse.x, ui.mouse.y),
 				distanceToPixelsScale = 2 * myCanvas.consts.GRID_SIZE * myCanvas.scale;
 
-			if (closestPointID>-1) {
+			if (closestPointID > -1) {
 				const closestPointXY = vec2.fromValues(
-						points.list[closestPointID].x(),
-						points.list[closestPointID].y()
+						anchorPoints.list[closestPointID].x,
+						anchorPoints.list[closestPointID].y
 					),
 					distance = vec2.dist(vec2.fromValues(ui.mouse.x, ui.mouse.y), closestPointXY);
 

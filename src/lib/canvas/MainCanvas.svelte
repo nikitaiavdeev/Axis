@@ -15,6 +15,7 @@
 	import PolygonSvg from "./shapes/Polygon/PolygonSVG.svelte";
 	import { Measure } from "./measure/rune.svelte";
 	import MeasureSvg from "./measure/MeasureSVG.svelte";
+	import { anchorPoints } from "./point/rune.svelte";
 </script>
 
 <svg id="main-canvas" class="h-screen w-screen" role="figure">
@@ -38,6 +39,18 @@
 				<feMergeNode in="SourceGraphic" />
 			</feMerge>
 		</filter>
+
+		<linearGradient
+			x1={anchorPoints.maxMin.minX}
+			y1={anchorPoints.maxMin.minY}
+			x2={anchorPoints.maxMin.maxX}
+			y2={anchorPoints.maxMin.maxY}
+			id="stress-fringe"
+			gradientUnits="userSpaceOnUse">
+			{#each { length: 8 }, idx (idx)}
+				<stop offset="{(idx / 7) * 100}%" style="stop-color:hsl(var(--fringe-{idx}));" />
+			{/each}
+		</linearGradient>
 	</defs>
 
 	{#if ui.options.showGrid}

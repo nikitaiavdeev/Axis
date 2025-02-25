@@ -12,7 +12,7 @@
 
 	// Rune
 	import { myCanvas } from "$lib/runes/canvas.svelte";
-	import { Rectangle, ReferencePoint } from "./rune.svelte";
+	import { Rectangle } from "./rune.svelte";
 	import { ui } from "$lib/runes/ui.svelte";
 	import { onMount } from "svelte";
 	import { roundFloat } from "$lib/scripts/helpers.svelte";
@@ -28,10 +28,10 @@
 	// Effect if rectangle has changed
 	$effect(() => {
 		if (myCanvas.editShape.shape === shape) {
-			refX = myCanvas.editShape.shape.refX;
-			refY = myCanvas.editShape.shape.refY;
-			width = myCanvas.editShape.shape.width;
-			height = myCanvas.editShape.shape.height;
+			refX = shape.refX;
+			refY = shape.refY;
+			width = shape.width;
+			height = shape.height;
 		}
 	});
 
@@ -52,17 +52,9 @@
 		if (width !== undefined) {
 			shape.width = Number(width);
 		} else if (refX !== undefined) {
-			if (
-				[ReferencePoint.middleLower, ReferencePoint.center, ReferencePoint.middleUpper].includes(
-					shape.referencePoint
-				)
-			) {
+			if (["middleLower", "center", "middleUpper"].includes(shape.referencePoint)) {
 				shape.width = roundFloat(2 * Math.abs(ui.mouse.x - refX));
-			} else if (
-				[ReferencePoint.rightLower, ReferencePoint.middleRight, ReferencePoint.rightUpper].includes(
-					shape.referencePoint
-				)
-			) {
+			} else if (["rightLower", "middleRight", "rightUpper"].includes(shape.referencePoint)) {
 				shape.width = roundFloat(refX - ui.mouse.x);
 			} else {
 				shape.width = roundFloat(ui.mouse.x - refX);
@@ -72,81 +64,16 @@
 		if (height !== undefined) {
 			shape.height = Number(height);
 		} else if (refY !== undefined) {
-			if (
-				[ReferencePoint.middleLeft, ReferencePoint.center, ReferencePoint.middleRight].includes(
-					shape.referencePoint
-				)
-			) {
+			if (["middleLeft", "center", "middleRight"].includes(shape.referencePoint)) {
 				shape.height = roundFloat(2 * Math.abs(ui.mouse.y - refY));
-			} else if (
-				[ReferencePoint.leftUpper, ReferencePoint.middleUpper, ReferencePoint.rightUpper].includes(
-					shape.referencePoint
-				)
-			) {
+			} else if (["leftUpper", "middleUpper", "rightUpper"].includes(shape.referencePoint)) {
 				shape.height = roundFloat(refY - ui.mouse.y);
 			} else {
 				shape.height = roundFloat(ui.mouse.y - refY);
 			}
-		}
+		}});
 
-		// Swap reference point if height is negative
-		if (shape.height < 0) {
-			switch (shape.referencePoint) {
-				case ReferencePoint.leftLower:
-					shape.referencePoint = ReferencePoint.leftUpper;
-					break;
-				case ReferencePoint.leftUpper:
-					shape.referencePoint = ReferencePoint.leftLower;
-					break;
-				case ReferencePoint.middleLower:
-					shape.referencePoint = ReferencePoint.middleUpper;
-					break;
-				case ReferencePoint.middleUpper:
-					shape.referencePoint = ReferencePoint.middleLower;
-					break;
-				case ReferencePoint.rightLower:
-					shape.referencePoint = ReferencePoint.rightUpper;
-					break;
-				case ReferencePoint.rightUpper:
-					shape.referencePoint = ReferencePoint.rightLower;
-					break;
-			}
-
-			if (height !== undefined) {
-				height *= -1;
-			} else {
-				shape.height *= -1;
-			}
-		}
-
-		if (shape.width < 0) {
-			switch (shape.referencePoint) {
-				case ReferencePoint.leftLower:
-					shape.referencePoint = ReferencePoint.rightLower;
-					break;
-				case ReferencePoint.rightLower:
-					shape.referencePoint = ReferencePoint.leftLower;
-					break;
-				case ReferencePoint.middleLeft:
-					shape.referencePoint = ReferencePoint.middleRight;
-					break;
-				case ReferencePoint.middleRight:
-					shape.referencePoint = ReferencePoint.middleLeft;
-					break;
-				case ReferencePoint.leftUpper:
-					shape.referencePoint = ReferencePoint.rightUpper;
-					break;
-				case ReferencePoint.rightUpper:
-					shape.referencePoint = ReferencePoint.leftUpper;
-					break;
-			}
-			if (width !== undefined) {
-				width *= -1;
-			} else {
-				shape.width *= -1;
-			}
-		}
-	});
+		
 
 	onMount(() => {
 		const contentElm = myCanvas.svg.node();
@@ -200,7 +127,7 @@
 			}
 		},
 		deleteShape = () => {
-			shape.clean();
+			shape.remove();
 			myCanvas.editShape.clean();
 		},
 		closeMenu = () => {
@@ -209,7 +136,7 @@
 		};
 </script>
 
-{#snippet marker(refPoint: ReferencePoint, cx: number, cy: number, r: number)}
+{#snippet marker(refPoint: Rectangle["referencePoint"], cx: number, cy: number, r: number)}
 	<circle
 		class={cn("point hoverable", shape.referencePoint == refPoint ? "selected" : "")}
 		{cx}
@@ -230,15 +157,15 @@
 			<g class:hole={shape.isHole}>
 				<rect class="shape" x="10" y="10" width="80" height="80"></rect>
 
-				{@render marker(ReferencePoint.leftLower, 10, 90, 6)}
-				{@render marker(ReferencePoint.middleLeft, 10, 50, 4)}
-				{@render marker(ReferencePoint.leftUpper, 10, 10, 6)}
-				{@render marker(ReferencePoint.middleUpper, 50, 10, 4)}
-				{@render marker(ReferencePoint.rightUpper, 90, 10, 6)}
-				{@render marker(ReferencePoint.middleRight, 90, 50, 4)}
-				{@render marker(ReferencePoint.rightLower, 90, 90, 6)}
-				{@render marker(ReferencePoint.middleLower, 50, 90, 4)}
-				{@render marker(ReferencePoint.center, 50, 50, 6)}
+				{@render marker("leftLower", 10, 90, 6)}
+				{@render marker("middleLeft", 10, 50, 4)}
+				{@render marker("leftUpper", 10, 10, 6)}
+				{@render marker("middleUpper", 50, 10, 4)}
+				{@render marker("rightUpper", 90, 10, 6)}
+				{@render marker("middleRight", 90, 50, 4)}
+				{@render marker("rightLower", 90, 90, 6)}
+				{@render marker("middleLower", 50, 90, 4)}
+				{@render marker("center", 50, 50, 6)}
 			</g>
 		</svg>
 	</div>

@@ -49,7 +49,7 @@ export class Measure {
 
 	constructor() {}
 
-	clean() {
+	remove() {
 		// Delete shape
 		const idx = myCanvas.measures.findIndex((m) => m === this);
 		if (idx >= 0) {

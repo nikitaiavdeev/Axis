@@ -60,7 +60,7 @@
 				<DropdownMenu.Content>
 					<DropdownMenu.Item onclick={() => createNewShape("rectangle")}>
 						<Square class="mr-2 size-4" />
-						<span>Square</span>
+						<span>Rectangle</span>
 					</DropdownMenu.Item>
 					<DropdownMenu.Item onclick={() => createNewShape("circle")}>
 						<CircleIcon class="mr-2 size-4" />

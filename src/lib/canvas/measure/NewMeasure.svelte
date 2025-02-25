@@ -71,7 +71,7 @@
 			}
 		},
 		deleteShape = () => {
-			shape.clean();
+			shape.remove();
 			myCanvas.editShape.clean();
 		},
 		closeMenu = () => {

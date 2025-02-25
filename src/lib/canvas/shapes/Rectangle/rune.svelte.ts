@@ -1,143 +1,141 @@
-import { myCanvas } from "$lib/runes/canvas.svelte";
-import { Point } from "../../point/rune.svelte";
+import { Shape } from "../index.svelte";
+import { DependendPoint, IndependentPoint, Point } from "../../point/rune.svelte";
 
-export enum ReferencePoint {
-	leftLower,
-	middleLeft,
-	leftUpper,
-	middleUpper,
-	rightUpper,
-	middleRight,
-	rightLower,
-	middleLower,
-	center,
-}
+export class Rectangle extends Shape {
+	#width = $state(0);
+	#height = $state(0);
 
-export class Rectangle {
-	refX = $state(0);
-	refY = $state(0);
-	width = $state(0);
-	height = $state(0);
-
-	referencePoint = $state(ReferencePoint.leftLower);
-	isHole = $state(false);
-
-	leftLowerX = $derived.by(() => {
-		switch (this.referencePoint) {
-			case ReferencePoint.leftLower:
-			case ReferencePoint.middleLeft:
-			case ReferencePoint.leftUpper:
-				return this.refX;
-			case ReferencePoint.rightLower:
-			case ReferencePoint.middleRight:
-			case ReferencePoint.rightUpper:
-				return this.refX - this.width;
-			case ReferencePoint.middleLower:
-			case ReferencePoint.middleUpper:
-			case ReferencePoint.center:
-				return this.refX - 0.5 * this.width;
-		}
-	});
-
-	leftLowerY = $derived.by(() => {
-		switch (this.referencePoint) {
-			case ReferencePoint.leftLower:
-			case ReferencePoint.middleLower:
-			case ReferencePoint.rightLower:
-				return this.refY;
-			case ReferencePoint.leftUpper:
-			case ReferencePoint.middleUpper:
-			case ReferencePoint.rightUpper:
-				return this.refY - this.height;
-			case ReferencePoint.middleLeft:
-			case ReferencePoint.middleRight:
-			case ReferencePoint.center:
-				return this.refY - 0.5 * this.height;
-		}
-	});
-
+	// Points
 	points = {
-		leftLower: new Point(
-			() => this.leftLowerX,
-			() => this.leftLowerY,
-			this
-		),
-		middleLeft: new Point(
-			() => this.leftLowerX,
-			() => this.leftLowerY + 0.5 * this.height,
-			this
-		),
-		leftUpper: new Point(
-			() => this.leftLowerX,
-			() => this.leftLowerY + this.height,
-			this
-		),
-		middleUpper: new Point(
-			() => this.leftLowerX + 0.5 * this.width,
-			() => this.leftLowerY + this.height,
-			this
-		),
-		rightUpper: new Point(
-			() => this.leftLowerX + this.width,
-			() => this.leftLowerY + this.height,
-			this
-		),
-		middleRight: new Point(
-			() => this.leftLowerX + this.width,
-			() => this.leftLowerY + 0.5 * this.height,
-			this
-		),
-		rightLower: new Point(
-			() => this.leftLowerX + this.width,
-			() => this.leftLowerY,
-			this
-		),
-		middleLower: new Point(
-			() => this.leftLowerX + 0.5 * this.width,
-			() => this.leftLowerY,
-			this
-		),
-		center: new Point(
-			() => this.leftLowerX + 0.5 * this.width,
-			() => this.leftLowerY + 0.5 * this.height,
-			this
-		),
+		center: new Point(0, 0, this),
+
+		leftLower: new DependendPoint(-0.5 * this.width, -0.5 * this.height, this.#center),
+		middleLeft: new DependendPoint(-0.5 * this.width, 0, this.#center),
+		leftUpper: new DependendPoint(-0.5 * this.width, 0.5 * this.height, this.#center),
+
+		rightLower: new DependendPoint(0.5 * this.width, -0.5 * this.height, this.#center),
+		middleRight: new DependendPoint(0.5 * this.width, 0, this.#center),
+		rightUpper: new DependendPoint(0.5 * this.width, 0.5 * this.height, this.#center),
+
+		middleUpper: new DependendPoint(0, 0.5 * this.height, this.#center),
+		middleLower: new DependendPoint(0, -0.5 * this.height, this.#center),
 	};
+
+	// Reference point
+	referencePoint = $state("leftLower" as keyof typeof this.points);
+
+	// Derived properties
+	properties = $derived({
+		area: this.width * this.height,
+		cX: this.points.leftLower.x + 0.5 * this.width,
+		cY: this.points.leftLower.y + 0.5 * this.height,
+		iX: (this.width * this.height ** 3) / 12,
+		iY: (this.height * this.width ** 3) / 12,
+		iXY: 0,
+	});
 
 	constructor(
 		refX: number,
 		refY: number,
 		width: number,
 		height: number,
-		referencePoint = ReferencePoint.leftLower,
+		referencePoint = "leftLower" as Rectangle["referencePoint"],
 		isHole = false
 	) {
-		this.refX = refX;
-		this.refY = refY;
+		super(isHole);
+
 		this.width = width;
 		this.height = height;
 
 		this.referencePoint = referencePoint;
-		this.isHole = isHole;
+
+		// Set reference point coordinates
+		this.points[this.referencePoint].x = refX;
+		this.points[this.referencePoint].y = refY;
 	}
 
-	clean() {
-		// Delete shape
-		const idx = myCanvas.shapes.findIndex((s) => s === this);
-		if (idx >= 0) {
-			myCanvas.shapes.splice(idx, 1);
+	// Width
+	get width() {
+		return this.#width;
+	}
+
+	set width(value: number) {
+		if (value < 0) {
+			// Swap reference point if width is negative
+			switch (this.referencePoint) {
+				case "leftLower":
+					this.referencePoint = "rightLower";
+					break;
+				case "rightLower":
+					this.referencePoint = "leftLower";
+					break;
+				case "middleLeft":
+					this.referencePoint = "middleRight";
+					break;
+				case "middleRight":
+					this.referencePoint = "middleLeft";
+					break;
+				case "leftUpper":
+					this.referencePoint = "rightUpper";
+					break;
+				case "rightUpper":
+					this.referencePoint = "leftUpper";
+					break;
+			}
+			this.#width = -value;
+		} else {
+			this.#width = value;
 		}
-
-		// Delete all nodes
-		Object.values(this.points).forEach((point) => point.clean());
 	}
 
-	properties = $derived({
-		area: this.width * this.height,
-		cX: this.leftLowerX + 0.5 * this.width,
-		cY: this.leftLowerY + 0.5 * this.height,
-		iX: (this.width * this.height ** 3) / 12,
-		iY: (this.height * this.width ** 3) / 12,
-		iXY: 0,
-	});
+	// height
+	get height() {
+		return this.#height;
+	}
+
+	set height(value: number) {
+		if (value < 0) {
+			// Swap reference point if height is negative
+			switch (this.referencePoint) {
+				case "leftLower":
+					this.referencePoint = "leftUpper";
+					break;
+				case "leftUpper":
+					this.referencePoint = "leftLower";
+					break;
+				case "middleLower":
+					this.referencePoint = "middleUpper";
+					break;
+				case "middleUpper":
+					this.referencePoint = "middleLower";
+					break;
+				case "rightLower":
+					this.referencePoint = "rightUpper";
+					break;
+				case "rightUpper":
+					this.referencePoint = "rightLower";
+					break;
+			}
+			this.#height = -value;
+		} else {
+			this.#height = value;
+		}
+	}
+
+	// Reference point coordinates
+	get refX() {
+		return this.points[this.referencePoint].x;
+	}
+
+	set refX(value: number) {
+		this.points[this.referencePoint].x = value;
+	}
+
+	get refY() {
+		return this.points[this.referencePoint].y;
+	}
+
+	set refY(value: number) {
+		this.points[this.referencePoint].y = value;
+	}
 }

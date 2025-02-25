@@ -67,6 +67,16 @@ const config: Config = {
 					border: "hsl(var(--sidebar-border))",
 					ring: "hsl(var(--sidebar-ring))",
 				},
+				fringe: {
+					0: "hsl(var(--fringe-0))",
+					1: "hsl(var(--fringe-1))",
+					2: "hsl(var(--fringe-2))",
+					3: "hsl(var(--fringe-3))",
+					4: "hsl(var(--fringe-4))",
+					5: "hsl(var(--fringe-5))",
+					6: "hsl(var(--fringe-6))",
+					7: "hsl(var(--fringe-7))",
+				},
 			},
 			borderRadius: {
 				xl: "calc(var(--radius) + 4px)",

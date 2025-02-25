@@ -1,4 +1,4 @@
-import { Point, points } from "$lib/canvas/point/rune.svelte";
+import { IndependentPoint, Point, anchorPoints } from "$lib/canvas/point/rune.svelte";
 import * as d3 from "d3";
 import { ui } from "./ui.svelte";
 
@@ -7,28 +7,29 @@ import type { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
 import type { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
 import type { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
 import type { Measure } from "$lib/canvas/measure/rune.svelte";
+import type { Shape } from "$lib/canvas/shapes/index.svelte";
 
 const NewShape = () => {
-		let __shape = $state(undefined as undefined | Rectangle | Circle | Polygon | Measure);
+		let __shape = $state(undefined as undefined | Shape | Measure);
 
 		return {
 			get shape() {
 				return __shape;
 			},
-			createNew(shape: Rectangle | Circle | Polygon | Measure) {
+			createNew(shape: Shape | Measure) {
 				myCanvas.editShape.clean();
 				__shape = shape;
 			},
 			clean() {
 				if (__shape) {
-					__shape.clean();
+					__shape.remove();
 					__shape = undefined;
 				}
 			},
 		};
 	},
 	EditShape = () => {
-		let __shape = $state(undefined as undefined | Rectangle | Circle | Polygon | Measure);
+		let __shape = $state(undefined as undefined | Shape | Measure);
 
 		return {
 			get shape() {
@@ -41,7 +42,7 @@ const NewShape = () => {
 					ui.options.editMode = "move";
 				}
 			},
-			editShape(shape: Rectangle | Circle | Polygon | Measure) {
+			editShape(shape: Shape | Measure) {
 				__shape = shape;
 			},
 			clean() {
@@ -64,7 +65,7 @@ export class Canvas {
 	newShape = NewShape();
 	editShape = EditShape();
 
-	shapes = $state([] as (Rectangle | Circle | Polygon)[]);
+	shapes = $state([] as Shape[]);
 	measures = $state([] as Measure[]);
 
 	private __svg: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
@@ -80,6 +81,42 @@ export class Canvas {
 		x: d3.scaleLinear([0, 0.5], [0, this.consts.GRID_SIZE * this.scale]),
 		y: d3.scaleLinear([0, 0.5], [0 + this.consts.GRID_SIZE * this.scale, 0]),
 	};
+
+	// Derived properties
+	properties = $derived.by(() => {
+		const properties = {
+			area: 0,
+			cX: 0,
+			cY: 0,
+			iX: 0,
+			iY: 0,
+			iXY: 0,
+		};
+
+		for (const shape of this.shapes) {
+			properties.area += shape.properties.area;
+			properties.cX += shape.properties.cX * shape.properties.area;
+			properties.cY += shape.properties.cY * shape.properties.area;
+		}
+
+		if (properties.area !== 0) {
+			properties.cX /= properties.area;
+			properties.cY /= properties.area;
+		}
+
+		for (const shape of this.shapes) {
+			const dX = properties.cX - shape.properties.cX,
+				dY = properties.cY - shape.properties.cY;
+
+			properties.iX += shape.properties.iX + shape.properties.area * dY ** 2;
+			properties.iY += shape.properties.iY + shape.properties.area * dX ** 2;
+			properties.iXY += shape.properties.iXY + shape.properties.area * dX * dY;
+		}
+
+		return properties;
+	});
+
+	cgPoint = new IndependentPoint(this.properties.cX, this.properties.cY, "CG");
 
 	zoomIn() {
 		this.zoomDelta(1.1);
@@ -121,10 +158,10 @@ export class Canvas {
 	}
 
 	fitView() {
-		if (points.list.length < 1) return;
+		if (anchorPoints.list.length < 1) return;
 
 		// Find points max/min coordinates
-		const minMaxValues = points.list.reduce(
+		const minMaxValues = anchorPoints.list.reduce(
 				(acc, point) => ({
 					minX: Math.min(acc.minX, point.d3Coord.x),
 					maxX: Math.max(acc.maxX, point.d3Coord.x),
@@ -156,45 +193,6 @@ export class Canvas {
 			this.zoomDelta(fitZoom / this.scale);
 		}
 	}
-
-	properties = $derived.by(() => {
-		const properties = {
-			area: 0,
-			cX: 0,
-			cY: 0,
-			iX: 0,
-			iY: 0,
-			iXY: 0,
-		};
-
-		for (const shape of myCanvas.shapes) {
-			properties.area += shape.properties.area;
-			properties.cX += shape.properties.cX * shape.properties.area;
-			properties.cY += shape.properties.cY * shape.properties.area;
-		}
-
-		if (properties.area !== 0) {
-			properties.cX /= properties.area;
-			properties.cY /= properties.area;
-		}
-
-		for (const shape of myCanvas.shapes) {
-			const dX = properties.cX - shape.properties.cX,
-				dY = properties.cY - shape.properties.cY;
-
-			properties.iX += shape.properties.iX + shape.properties.area * dY ** 2;
-			properties.iY += shape.properties.iY + shape.properties.area * dX ** 2;
-			properties.iXY += shape.properties.iXY + shape.properties.area * dX * dY;
-		}
-
-		return properties;
-	});
-
-	cgPoint = new Point(
-		() => this.properties.cX,
-		() => this.properties.cY,
-		"CG"
-	);
 
 	get svgSize(): DOMRect {
 		return this.svg.node()!.getBoundingClientRect();

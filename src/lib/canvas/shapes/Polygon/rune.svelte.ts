@@ -127,7 +127,7 @@ export class Polygon {
 		}
 
 		// Delete all nodes
-		this.points.forEach((point) => point.clean());
+		this.points.forEach((point) => point.remove());
 	}
 
 	properties = $derived.by(() => {

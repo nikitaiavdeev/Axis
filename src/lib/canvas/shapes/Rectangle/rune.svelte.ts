@@ -1,6 +1,5 @@
 import { Shape } from "../index.svelte";
 import { Point } from "../../point/rune.svelte";
-import { myCanvas } from "$lib/runes/canvas.svelte";
 
 export class Rectangle extends Shape {
 	// Rectangle center
@@ -23,11 +22,19 @@ export class Rectangle extends Shape {
 			yGetter: () => {
 				return this.cy;
 			},
-			xSetter: (value) => {
+			xMover: (value) => {
 				this.cx = value;
 				return value;
 			},
-			ySetter: (value) => {
+			xResizer: (value) => {
+				this.cx = value;
+				return value;
+			},
+			yMover: (value) => {
+				this.cy = value;
+				return value;
+			},
+			yResizer: (value) => {
 				this.cy = value;
 				return value;
 			},
@@ -39,21 +46,20 @@ export class Rectangle extends Shape {
 			yGetter: () => {
 				return this.cy - 0.5 * this.#height;
 			},
-			xSetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#width = 2 * (this.cx - value);
-				} else {
-					this.cx = value + 0.5 * this.#width;
-				}
-
+			xMover: (value) => {
+				this.cx = value + 0.5 * this.#width;
 				return value;
 			},
-			ySetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#height = 2 * (this.cy - value);
-				} else {
-					this.cy = value + 0.5 * this.#height;
-				}
+			xResizer: (value) => {
+				this.width = 2 * (this.cx - value);
+				return value;
+			},
+			yMover: (value) => {
+				this.cy = value + 0.5 * this.#height;
+				return value;
+			},
+			yResizer: (value) => {
+				this.height = 2 * (this.cy - value);
 				return value;
 			},
 		}),
@@ -64,22 +70,19 @@ export class Rectangle extends Shape {
 			yGetter: () => {
 				return this.cy;
 			},
-			xSetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#width = 2 * (this.cx - value);
-				} else {
-					this.cx = value + 0.5 * this.#width;
-				}
+			xMover: (value) => {
+				this.cx = value + 0.5 * this.#width;
 				return value;
 			},
-			ySetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					return value;
-				} else {
-					this.cy = value;
-					return value;
-				}
+			xResizer: (value) => {
+				this.width = 2 * (this.cx - value);
+				return value;
 			},
+			yMover: (value) => {
+				this.cy = value;
+				return value;
+			},
+			// Standard Y resizing
 		}),
 		leftUpper: new Point(this, {
 			xGetter: () => {
@@ -88,20 +91,20 @@ export class Rectangle extends Shape {
 			yGetter: () => {
 				return this.cy + 0.5 * this.#height;
 			},
-			xSetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#width = this.cx - value;
-				} else {
-					this.cx = value + 0.5 * this.#width;
-				}
+			xMover: (value) => {
+				this.cx = value + 0.5 * this.#width;
 				return value;
 			},
-			ySetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#height = value - this.cy;
-				} else {
-					this.cy = value - 0.5 * this.#height;
-				}
+			xResizer: (value) => {
+				this.width = 2 * (this.cx - value);
+				return value;
+			},
+			yMover: (value) => {
+				this.cy = value - 0.5 * this.#height;
+				return value;
+			},
+			yResizer: (value) => {
+				this.height = 2 * (value - this.cy);
 				return value;
 			},
 		}),
@@ -112,20 +115,20 @@ export class Rectangle extends Shape {
 			yGetter: () => {
 				return this.cy - 0.5 * this.#height;
 			},
-			xSetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#width = 2 * (value - this.cx);
-				} else {
-					this.cx = value - 0.5 * this.#width;
-				}
+			xMover: (value) => {
+				this.cx = value - 0.5 * this.#width;
 				return value;
 			},
-			ySetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#height = 2 * (this.cy - value);
-				} else {
-					this.cy = value + 0.5 * this.#height;
-				}
+			xResizer: (value) => {
+				this.width = 2 * (value - this.cx);
+				return value;
+			},
+			yMover: (value) => {
+				this.cy = value + 0.5 * this.#height;
+				return value;
+			},
+			yResizer: (value) => {
+				this.height = 2 * (this.cy - value);
 				return value;
 			},
 		}),
@@ -136,22 +139,19 @@ export class Rectangle extends Shape {
 			yGetter: () => {
 				return this.cy;
 			},
-			xSetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#width = 2 * (value - this.cx);
-				} else {
-					this.cx = value - 0.5 * this.#width;
-				}
+			xMover: (value) => {
+				this.cx = value - 0.5 * this.#width;
 				return value;
 			},
-			ySetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					return value;
-				} else {
-					this.cy = value;
-					return value;
-				}
+			xResizer: (value) => {
+				this.width = 2 * (value - this.cx);
+				return value;
 			},
+			yMover: (value) => {
+				this.cy = value;
+				return value;
+			},
+			// Standard Y resizing
 		}),
 		rightUpper: new Point(this, {
 			xGetter: () => {
@@ -160,20 +160,20 @@ export class Rectangle extends Shape {
 			yGetter: () => {
 				return this.cy + 0.5 * this.#height;
 			},
-			xSetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#width = 2 * (value - this.cx);
-				} else {
-					this.cx = value - 0.5 * this.#width;
-				}
+			xMover: (value) => {
+				this.cx = value - 0.5 * this.#width;
 				return value;
 			},
-			ySetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#height = 2 * (value - this.cy);
-				} else {
-					this.cy = value - 0.5 * this.#height;
-				}
+			xResizer: (value) => {
+				this.width = 2 * (value - this.cx);
+				return value;
+			},
+			yMover: (value) => {
+				this.cy = value - 0.5 * this.#height;
+				return value;
+			},
+			yResizer: (value) => {
+				this.height = 2 * (value - this.cy);
 				return value;
 			},
 		}),
@@ -184,20 +184,17 @@ export class Rectangle extends Shape {
 			yGetter: () => {
 				return this.cy + 0.5 * this.#height;
 			},
-			xSetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					return value;
-				} else {
-					this.cx = value;
-					return value;
-				}
+			xMover: (value) => {
+				this.cx = value;
+				return value;
 			},
-			ySetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#height = 2 * (value - this.cy);
-				} else {
-					this.cy = value - 0.5 * this.#height;
-				}
+			// Standard X resizing
+			yMover: (value) => {
+				this.cy = value - 0.5 * this.#height;
+				return value;
+			},
+			yResizer: (value) => {
+				this.height = 2 * (value - this.cy);
 				return value;
 			},
 		}),
@@ -208,20 +205,17 @@ export class Rectangle extends Shape {
 			yGetter: () => {
 				return this.cy - 0.5 * this.#height;
 			},
-			xSetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					return value;
-				} else {
-					this.cx = value;
-					return value;
-				}
+			xMover: (value) => {
+				this.cx = value;
+				return value;
 			},
-			ySetter: (value) => {
-				if (myCanvas.activeElementMode === "resize") {
-					this.#height = 2 * (this.cy - value);
-				} else {
-					this.cy = value + 0.5 * this.#height;
-				}
+			// Standard X resizing
+			yMover: (value) => {
+				this.cy = value + 0.5 * this.#height;
+				return value;
+			},
+			yResizer: (value) => {
+				this.height = 2 * (this.cy - value);
 				return value;
 			},
 		}),
@@ -236,6 +230,34 @@ export class Rectangle extends Shape {
 		iY: (this.height * this.width ** 3) / 12,
 		iXY: 0,
 	});
+
+	// Getters & Setters
+	get width() {
+		return this.#width;
+	}
+
+	set width(value: number) {
+		if (value < 0) {
+			this.referencePoint = this.swapReferencePoint("width", this.referencePoint);
+			this.#width = -value;
+		} else {
+			this.#width = value;
+		}
+	}
+
+	// Height
+	get height() {
+		return this.#height;
+	}
+
+	set height(value: number) {
+		if (value < 0) {
+			this.referencePoint = this.swapReferencePoint("height", this.referencePoint);
+			this.#height = -value;
+		} else {
+			this.#height = value;
+		}
+	}
 
 	constructor(
 		refX: number,
@@ -253,92 +275,37 @@ export class Rectangle extends Shape {
 		this.referencePoint = referencePoint;
 
 		// Set reference point coordinates
-		this.points[this.referencePoint].x = refX;
-		this.points[this.referencePoint].y = refY;
+		this.points[this.referencePoint].xMove(refX);
+		this.points[this.referencePoint].yMove(refY);
 	}
 
-	// Width
-	get width() {
-		return this.#width;
-	}
+	// Reference point swapping logic
+	swapReferencePoint(
+		dimension: "width" | "height",
+		point: Rectangle["referencePoint"]
+	): Rectangle["referencePoint"] {
+		const swaps = {
+			width: {
+				leftLower: "rightLower",
+				rightLower: "leftLower",
+				middleLeft: "middleRight",
+				middleRight: "middleLeft",
+				leftUpper: "rightUpper",
+				rightUpper: "leftUpper",
+			},
+			height: {
+				leftLower: "leftUpper",
+				leftUpper: "leftLower",
+				middleLower: "middleUpper",
+				middleUpper: "middleLower",
+				rightLower: "rightUpper",
+				rightUpper: "rightLower",
+			},
+		} as {
+			width: Record<Rectangle["referencePoint"], Rectangle["referencePoint"]>;
+			height: Record<Rectangle["referencePoint"], Rectangle["referencePoint"]>;
+		};
 
-	set width(value: number) {
-		if (value < 0) {
-			// Swap reference point if width is negative
-			switch (this.referencePoint) {
-				case "leftLower":
-					this.referencePoint = "rightLower";
-					break;
-				case "rightLower":
-					this.referencePoint = "leftLower";
-					break;
-				case "middleLeft":
-					this.referencePoint = "middleRight";
-					break;
-				case "middleRight":
-					this.referencePoint = "middleLeft";
-					break;
-				case "leftUpper":
-					this.referencePoint = "rightUpper";
-					break;
-				case "rightUpper":
-					this.referencePoint = "leftUpper";
-					break;
-			}
-			this.#width = -value;
-		} else {
-			this.#width = value;
-		}
-	}
-
-	// Height
-	get height() {
-		return this.#height;
-	}
-
-	set height(value: number) {
-		if (value < 0) {
-			// Swap reference point if height is negative
-			switch (this.referencePoint) {
-				case "leftLower":
-					this.referencePoint = "leftUpper";
-					break;
-				case "leftUpper":
-					this.referencePoint = "leftLower";
-					break;
-				case "middleLower":
-					this.referencePoint = "middleUpper";
-					break;
-				case "middleUpper":
-					this.referencePoint = "middleLower";
-					break;
-				case "rightLower":
-					this.referencePoint = "rightUpper";
-					break;
-				case "rightUpper":
-					this.referencePoint = "rightLower";
-					break;
-			}
-			this.#height = -value;
-		} else {
-			this.#height = value;
-		}
-	}
-
-	// Reference point coordinates
-	get refX() {
-		return this.points[this.referencePoint].x;
-	}
-
-	set refX(value: number) {
-		this.points[this.referencePoint].x = value;
-	}
-
-	get refY() {
-		return this.points[this.referencePoint].y;
-	}
-
-	set refY(value: number) {
-		this.points[this.referencePoint].y = value;
+		return swaps[dimension][point];
 	}
 }

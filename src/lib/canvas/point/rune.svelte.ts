@@ -8,13 +8,13 @@ export class Point {
 	#y = $state(0);
 	parent: Shape | Measure | "CG";
 
-	// Getter functions
+	// Movement and resizing functions
 	xGetter: () => number;
 	yGetter: () => number;
-
-	// Setter functions
-	xSetter: (value: number) => number;
-	ySetter: (value: number) => number;
+	xMover: (value: number) => number;
+	yMover: (value: number) => number;
+	xResizer: (value: number) => number;
+	yResizer: (value: number) => number;
 
 	// Derived properties
 	d3Coord = $derived({
@@ -24,16 +24,7 @@ export class Point {
 
 	constructor(
 		parent: Shape | Measure | "CG",
-		options: {
-			x?: number;
-			y?: number;
-			xGetter?: () => number;
-			yGetter?: () => number;
-			xSetter?: (value: number) => number;
-			ySetter?: (value: number) => number;
-		}
-	) {
-		const {
+		{
 			x = NaN,
 			y = NaN,
 			xGetter = () => {
@@ -42,24 +33,31 @@ export class Point {
 			yGetter = () => {
 				return this.#y;
 			},
-			xSetter = (value: number) => {
+			xMover = (value: number) => {
 				return value;
 			},
-			ySetter = (value: number) => {
+			yMover = (value: number) => {
 				return value;
 			},
-		} = options;
-
+			xResizer = (value: number) => {
+				return value;
+			},
+			yResizer = (value: number) => {
+				return value;
+			},
+		}
+	) {
 		this.#x = x;
 		this.#y = y;
-
 		this.parent = parent;
 
-		// Use custom setters if provided
+		// Assign methods
 		this.xGetter = xGetter;
 		this.yGetter = yGetter;
-		this.xSetter = xSetter;
-		this.ySetter = ySetter;
+		this.xMover = xMover;
+		this.yMover = yMover;
+		this.xResizer = xResizer;
+		this.yResizer = yResizer;
 
 		if (!(this.parent instanceof Measure)) {
 			anchorPoints.addToList(this);
@@ -70,16 +68,24 @@ export class Point {
 		return this.xGetter();
 	}
 
-	set x(value: number) {
-		this.#y = this.xSetter(value);
+	xMove(value: number) {
+		this.#x = this.xMover(value);
+	}
+
+	xResize(value: number) {
+		this.#x = this.xResizer(value);
 	}
 
 	get y() {
 		return this.yGetter();
 	}
 
-	set y(value: number) {
-		this.#y = this.ySetter(value);
+	yMove(value: number) {
+		this.#y = this.yMover(value);
+	}
+
+	yResize(value: number) {
+		this.#y = this.yResizer(value);
 	}
 
 	remove() {
@@ -90,7 +96,7 @@ export class Point {
 }
 
 export class AnchorPoints {
-	list = $state([] as Point[]);
+	list = $state<Point[]>([]);
 
 	// Derived properties
 	delaunay = $derived(
@@ -98,42 +104,38 @@ export class AnchorPoints {
 			new Float32Array(
 				this.list
 					.filter((point) => point.parent !== myCanvas.activeElement)
-					.map((point) => [point.x, point.y])
-					.flat()
+					.flatMap((point) => [point.x, point.y])
 			)
 		)
 	);
 
-	maxMin = $derived(
-		this.list.reduce(
-			(acc, p) => {
-				if (p.d3Coord.x < acc.minX) acc.minX = p.d3Coord.x;
-				if (p.d3Coord.x > acc.maxX) acc.maxX = p.d3Coord.x;
+	maxMin = $derived.by(() => {
+		if (this.list.length === 0) {
+			return { minX: 0, maxX: 0, minY: 0, maxY: 0 };
+		}
 
-				if (p.d3Coord.y < acc.minY) acc.minY = p.d3Coord.y;
-				if (p.d3Coord.y > acc.maxY) acc.maxY = p.d3Coord.y;
-
-				return acc;
-			},
+		return this.list.reduce(
+			(acc, p) => ({
+				minX: Math.min(acc.minX, p.d3Coord.x),
+				maxX: Math.max(acc.maxX, p.d3Coord.x),
+				minY: Math.min(acc.minY, p.d3Coord.y),
+				maxY: Math.max(acc.maxY, p.d3Coord.y),
+			}),
 			{
 				minX: Infinity,
 				maxX: -Infinity,
-
 				minY: Infinity,
 				maxY: -Infinity,
 			}
-		)
-	);
+		);
+	});
 
 	addToList(point: Point) {
 		this.list[this.list.length] = point;
 	}
 
 	removeFromList(point: Point) {
-		const idx = this.list.findIndex((p) => p === point);
-		if (idx >= 0) {
-			this.list.splice(idx, 1);
-		}
+		this.list = this.list.filter((p) => p !== point);
 	}
 }
 

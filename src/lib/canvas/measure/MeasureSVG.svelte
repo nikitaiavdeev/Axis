@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { myCanvas } from "$lib/runes/canvas.svelte";
-	import { ui } from "$lib/runes/ui.svelte";
-	import { roundFloat } from "$lib/scripts/helpers.svelte";
 	import { Measure } from "./rune.svelte";
 
 	let { measure }: { measure: Measure } = $props();
@@ -53,15 +51,15 @@
 				const dX = ui.mouse.x - moveStart.initPointsCorrds[moveStart.pointName].x,
 					dY = ui.mouse.y - moveStart.initPointsCorrds[moveStart.pointName].y;
 
-				measure.point1.x = roundFloat(moveStart.initPointsCorrds.point1.x + dX);
-				measure.point1.y = roundFloat(moveStart.initPointsCorrds.point1.y + dY);
-				measure.point2.x = roundFloat(moveStart.initPointsCorrds.point2.x + dX);
-				measure.point2.y = roundFloat(moveStart.initPointsCorrds.point2.y + dY);
-				measure.point3.x = roundFloat(moveStart.initPointsCorrds.point3.x + dX);
-				measure.point3.y = roundFloat(moveStart.initPointsCorrds.point3.y + dY);
+				measure.point1.x = moveStart.initPointsCorrds.point1.x + dX;
+				measure.point1.y = moveStart.initPointsCorrds.point1.y + dY;
+				measure.point2.x = moveStart.initPointsCorrds.point2.x + dX;
+				measure.point2.y = moveStart.initPointsCorrds.point2.y + dY;
+				measure.point3.x = moveStart.initPointsCorrds.point3.x + dX;
+				measure.point3.y = moveStart.initPointsCorrds.point3.y + dY;
 			} else {
-				measure[moveStart.pointName].x = roundFloat(ui.mouse.x);
-				measure[moveStart.pointName].y = roundFloat(ui.mouse.y);
+				measure[moveStart.pointName].x = ui.mouse.x;
+				measure[moveStart.pointName].y = ui.mouse.y;
 			}
 		}
 	});

@@ -18,7 +18,7 @@
 
 	import "../app.css";
 	import { onMount } from "svelte";
-	import NewRectangle from "$lib/canvas/shapes/Rectangle/NewRectangle.svelte";
+	import NewRectangle from "$lib/canvas/shapes/Rectangle/RectangleForm.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
 	// import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";

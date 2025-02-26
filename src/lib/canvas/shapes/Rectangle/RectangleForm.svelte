@@ -14,81 +14,83 @@
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Rectangle } from "./rune.svelte";
 	import { onMount } from "svelte";
-	import { roundFloat } from "$lib/scripts/helpers.svelte";
 
 	let { shape }: { shape: Rectangle } = $props();
 
 	// Placeholder values while user click screen or type manually
-	let refX = $state(undefined as undefined | number),
-		refY = $state(undefined as undefined | number),
-		width = $state(undefined as undefined | number),
-		height = $state(undefined as undefined | number);
+	let refX = $state<number | undefined>(undefined),
+		refY = $state<number | undefined>(undefined),
+		width = $state<number | undefined>(undefined),
+		height = $state<number | undefined>(undefined);
 
-	// Effect if rectangle has changed
+	// Reference point
+	const referencePoint = $derived(shape.points[shape.referencePoint]);
+
+	// Effect: Update placeholders when rectangle changes
 	$effect(() => {
 		if (myCanvas.activeElementMode !== "new") {
-			refX = shape.refX;
-			refY = shape.refY;
-			width = shape.width;
-			height = shape.height;
+			refX = Number(referencePoint.x.toFixed(4));
+			refY = Number(referencePoint.y.toFixed(4));
+			width = Number(shape.width.toFixed(4));
+			height = Number(shape.height.toFixed(4));
 		}
 	});
 
-	// Effect if Placeholders been changed or mouse moved
+	// Effect: Update shape properties based on user input or mouse movement
 	$effect(() => {
-		if (refX !== undefined) {
-			shape.refX = Number(refX);
+		if (myCanvas.activeElementMode == "resize") {
+			referencePoint.xResize(Number(refX));
+			referencePoint.yResize(Number(refY));
+			return;
 		} else {
-			shape.refX = roundFloat(myCanvas.mouse.x);
-		}
-
-		if (refY !== undefined) {
-			shape.refY = Number(refY);
-		} else {
-			shape.refY = roundFloat(myCanvas.mouse.y);
+			referencePoint.xMove(refX === undefined ? myCanvas.mouse.x : Number(refX));
+			referencePoint.yMove(refY === undefined ? myCanvas.mouse.y : Number(refY));
 		}
 
 		if (width !== undefined) {
 			shape.width = Number(width);
+			// Update width to be sure it's positive
+			width = shape.width;
 		} else if (refX !== undefined) {
 			if (["middleLower", "center", "middleUpper"].includes(shape.referencePoint)) {
-				shape.width = roundFloat(2 * Math.abs(myCanvas.mouse.x - refX));
+				shape.width = 2 * Math.abs(myCanvas.mouse.x - refX);
 			} else if (["rightLower", "middleRight", "rightUpper"].includes(shape.referencePoint)) {
-				shape.width = roundFloat(refX - myCanvas.mouse.x);
+				shape.width = refX - myCanvas.mouse.x;
 			} else {
-				shape.width = roundFloat(myCanvas.mouse.x - refX);
+				shape.width = myCanvas.mouse.x - refX;
 			}
 		}
 
 		if (height !== undefined) {
 			shape.height = Number(height);
+			// Update height to be sure it's positive
+			height = shape.height;
 		} else if (refY !== undefined) {
 			if (["middleLeft", "center", "middleRight"].includes(shape.referencePoint)) {
-				shape.height = roundFloat(2 * Math.abs(myCanvas.mouse.y - refY));
+				shape.height = 2 * Math.abs(myCanvas.mouse.y - refY);
 			} else if (["leftUpper", "middleUpper", "rightUpper"].includes(shape.referencePoint)) {
-				shape.height = roundFloat(refY - myCanvas.mouse.y);
+				shape.height = refY - myCanvas.mouse.y;
 			} else {
-				shape.height = roundFloat(myCanvas.mouse.y - refY);
+				shape.height = myCanvas.mouse.y - refY;
 			}
 		}
 	});
 
 	onMount(() => {
 		const contentElm = myCanvas.svg.node();
-
 		if (!contentElm) return;
 
 		const handleClick = () => {
 			if (refX === undefined) {
-				refX = roundFloat(shape.refX);
+				refX = Number(referencePoint.x.toFixed(4));
 			} else if (width === undefined) {
-				width = roundFloat(shape.width);
+				width = Number(shape.width.toFixed(4));
 			}
 
 			if (refY === undefined) {
-				refY = roundFloat(shape.refY);
+				refY = Number(referencePoint.y.toFixed(4));
 			} else if (height === undefined) {
-				height = roundFloat(shape.height);
+				height = Number(shape.width.toFixed(4));
 			}
 
 			createShape();
@@ -105,35 +107,38 @@
 	});
 
 	const onKeyDown = (event: KeyboardEvent) => {
-			if (event.key === "Escape") {
-				closeMenu();
-			} else if (myCanvas.activeElementMode === "new" && event.key === "Enter") {
-				createShape();
-			}
-		},
-		createShape = () => {
-			if (refX !== undefined && refY !== undefined && width !== undefined && height !== undefined) {
-				// Register new shape
-				myCanvas.shapes.push(shape);
+		if (event.key === "Escape") {
+			closeMenu();
+		} else if (myCanvas.activeElementMode === "new" && event.key === "Enter") {
+			createShape();
+		}
+	};
+	const createShape = () => {
+		if (refX !== undefined && refY !== undefined && width !== undefined && height !== undefined) {
+			// Save current reference point and isHole
+			const currentReferencePoint = shape.referencePoint,
+				currentIsHole = shape.isHole;
 
-				// Clean and start creating new shape
-				refX = undefined;
-				refY = undefined;
-				width = undefined;
-				height = undefined;
+			// Register new shape
+			myCanvas.shapes.push(shape);
 
-				myCanvas.activeElement = new Rectangle(0, 0, 0, 0);
-			}
-		},
-		deleteShape = () => {
-			shape.remove();
-			myCanvas.activeElement = undefined;
-			myCanvas.activeElementMode = undefined;
-		},
-		closeMenu = () => {
-			myCanvas.activeElement = undefined;
-			myCanvas.activeElementMode = undefined;
-		};
+			// Clean and start creating new shape
+			refX = undefined;
+			refY = undefined;
+			width = undefined;
+			height = undefined;
+
+			myCanvas.activeElement = new Rectangle(0, 0, 0, 0, currentReferencePoint, currentIsHole);
+		}
+	};
+	const deleteShape = () => {
+		shape.remove();
+		closeMenu();
+	};
+	const closeMenu = () => {
+		myCanvas.activeElement = undefined;
+		myCanvas.activeElementMode = undefined;
+	};
 </script>
 
 {#snippet marker(refPoint: Rectangle["referencePoint"], cx: number, cy: number, r: number)}
@@ -173,12 +178,12 @@
 	<div class="flex w-full flex-row gap-2">
 		<div class="flex-1 flex-col gap-1.5">
 			<Label for="x_loc">X loc, in</Label>
-			<Input type="number" id="x_loc" bind:value={refX} placeholder={shape.refX.toFixed(3)} />
+			<Input type="number" id="x_loc" bind:value={refX} placeholder={referencePoint.x.toFixed(3)} />
 		</div>
 
 		<div class="flex-1 flex-col gap-1.5">
 			<Label for="y_loc">Y loc, in</Label>
-			<Input type="number" id="y_loc" bind:value={refY} placeholder={shape.refY.toFixed(3)} />
+			<Input type="number" id="y_loc" bind:value={refY} placeholder={referencePoint.y.toFixed(3)} />
 		</div>
 	</div>
 

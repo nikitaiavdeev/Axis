@@ -4,7 +4,6 @@ import { vec2 } from "gl-matrix";
 // Runes
 import { anchorPoints } from "$lib/canvas/point/rune.svelte";
 import { myCanvas } from "$lib/runes/canvas.svelte";
-import { roundFloat } from "./helpers.svelte";
 
 export const keyPressEvent = (event: KeyboardEvent) => {
 		// Canvas zoom
@@ -52,8 +51,8 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 
 		document.body.style.cursor = "auto";
 
-		myCanvas.mouse.x = roundFloat(myCanvas.mouseScale.x.invert(event.pageX), 3);
-		myCanvas.mouse.y = roundFloat(myCanvas.mouseScale.y.invert(event.pageY), 3);
+		myCanvas.mouse.x = myCanvas.mouseScale.x.invert(event.pageX);
+		myCanvas.mouse.y = myCanvas.mouseScale.y.invert(event.pageY);
 
 		// Magnet mouse location
 		if (myCanvas.uiOptions.magnet) {

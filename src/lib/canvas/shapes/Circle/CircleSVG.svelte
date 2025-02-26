@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { myCanvas } from "$lib/runes/canvas.svelte";
-	import { ui } from "$lib/runes/ui.svelte";
-	import { roundFloat } from "$lib/scripts/helpers.svelte";
 	import { Circle, ReferencePoint } from "./rune.svelte";
 
 	let { shape }: { shape: Circle } = $props();
@@ -63,42 +61,42 @@
 			}
 
 			if (["middleLeft", "middleRight"].includes(moveStart.pointName)) {
-				shape.radius = roundFloat(0.5 * (newRightUpper.x - newLeftLower.x));
+				shape.radius = 0.5 * (newRightUpper.x - newLeftLower.x);
 				newLeftLower.y = 0.5 * (moveStart.leftLower.y + moveStart.rightUpper.y) - shape.radius;
 				newRightUpper.y = 0.5 * (moveStart.leftLower.y + moveStart.rightUpper.y) + shape.radius;
 			}
 
 			if (["middleUpper", "middleLower"].includes(moveStart.pointName)) {
-				shape.radius = roundFloat(0.5 * (newRightUpper.y - newLeftLower.y));
+				shape.radius = 0.5 * (newRightUpper.y - newLeftLower.y);
 				newLeftLower.x = 0.5 * (moveStart.leftLower.x + moveStart.rightUpper.x) - shape.radius;
 				newRightUpper.x = 0.5 * (moveStart.leftLower.x + moveStart.rightUpper.x) + shape.radius;
 			}
 
 			switch (shape.referencePoint) {
 				case ReferencePoint.middleLeft:
-					shape.refX = roundFloat(newLeftLower.x);
+					shape.refX = newLeftLower.x;
 					break;
 				case ReferencePoint.middleRight:
-					shape.refX = roundFloat(newRightUpper.x);
+					shape.refX = newRightUpper.x;
 					break;
 				case ReferencePoint.middleLower:
 				case ReferencePoint.middleUpper:
 				case ReferencePoint.center:
-					shape.refX = roundFloat(0.5 * (newLeftLower.x + newRightUpper.x));
+					shape.refX = 0.5 * (newLeftLower.x + newRightUpper.x);
 					break;
 			}
 
 			switch (shape.referencePoint) {
 				case ReferencePoint.middleLower:
-					shape.refY = roundFloat(newLeftLower.y);
+					shape.refY = newLeftLower.y;
 					break;
 				case ReferencePoint.middleUpper:
-					shape.refY = roundFloat(newRightUpper.y);
+					shape.refY = newRightUpper.y;
 					break;
 				case ReferencePoint.middleLeft:
 				case ReferencePoint.middleRight:
 				case ReferencePoint.center:
-					shape.refY = roundFloat(0.5 * (newLeftLower.y + newRightUpper.y));
+					shape.refY = 0.5 * (newLeftLower.y + newRightUpper.y);
 					break;
 			}
 		}

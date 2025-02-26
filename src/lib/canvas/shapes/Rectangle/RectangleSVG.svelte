@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { myCanvas } from "$lib/runes/canvas.svelte";
-	import { roundFloat } from "$lib/scripts/helpers.svelte";
 	import { Rectangle } from "./rune.svelte";
 
 	let { shape }: { shape: Rectangle } = $props();
@@ -9,29 +8,57 @@
 
 	$effect(() => {
 		if (myCanvas.activeElement === shape && myCanvas.mouse.down) {
-			shape.points[editedPoint].x = myCanvas.mouse.x;
-			shape.points[editedPoint].y = myCanvas.mouse.y;
+			if (myCanvas.activeElementMode === "move") {
+				shape.points[editedPoint].xMove(myCanvas.mouse.x);
+				shape.points[editedPoint].yMove(myCanvas.mouse.y);
+			} else if (myCanvas.activeElementMode === "resize") {
+				shape.points[editedPoint].xResize(myCanvas.mouse.x);
+				shape.points[editedPoint].yResize(myCanvas.mouse.y);
+
+				// Swap reference point if resize caused to change it
+				if (
+					myCanvas.mouse.x < shape.cx &&
+					["rightLower", "rightUpper", "middleRight"].includes(editedPoint)
+				) {
+					editedPoint = shape.swapReferencePoint("width", editedPoint);
+				} else if (
+					myCanvas.mouse.x > shape.cx &&
+					["leftLower", "leftUpper", "middleLeft"].includes(editedPoint)
+				) {
+					editedPoint = shape.swapReferencePoint("width", editedPoint);
+				}
+
+				if (
+					myCanvas.mouse.y < shape.cy &&
+					["leftUpper", "rightUpper", "middleUpper"].includes(editedPoint)
+				) {
+					editedPoint = shape.swapReferencePoint("height", editedPoint);
+				} else if (
+					myCanvas.mouse.y > shape.cy &&
+					["leftLower", "rightLower", "middleLower"].includes(editedPoint)
+				) {
+					editedPoint = shape.swapReferencePoint("height", editedPoint);
+				}
+			}
 		}
 	});
 
 	const editShape = () => {
-			// Togle mode if shape already selected
-			if (myCanvas.activeElement === shape && myCanvas.activeElementMode !== "new") {
-				if (myCanvas.uiOptions.editMode === "move") {
-					myCanvas.uiOptions.editMode = "resize";
-				} else {
-					myCanvas.uiOptions.editMode = "move";
-				}
-			} else if (myCanvas.activeElement === undefined) {
-				myCanvas.activeElement = shape;
-			}
+		const { activeElement, activeElementMode, uiOptions } = myCanvas;
 
-			myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
-		},
-		startMove = (pointName: string) => {
-			editedPoint = pointName;
-			myCanvas.mouse.down = true;
-		};
+		// Togle mode if shape already selected
+		if (activeElement === shape && activeElementMode !== "new") {
+			uiOptions.editMode = uiOptions.editMode === "move" ? "resize" : "move";
+		} else if (activeElement === undefined) {
+			myCanvas.activeElement = shape;
+		}
+
+		myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
+	};
+	const startMove = (pointName: keyof typeof shape.points) => {
+		editedPoint = pointName;
+		myCanvas.mouse.down = true;
+	};
 </script>
 
 <g

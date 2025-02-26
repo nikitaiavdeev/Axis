@@ -11,9 +11,7 @@
 	// Rune
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Measure } from "./rune.svelte";
-	import { ui } from "$lib/runes/ui.svelte";
 	import { onMount } from "svelte";
-	import { roundFloat } from "$lib/scripts/helpers.svelte";
 
 	let { shape }: { shape: Measure } = $props();
 	let creationStage = $state("point1" as "point1" | "point2" | "point3");
@@ -24,14 +22,14 @@
 		}
 
 		if (creationStage == "point1") {
-			shape.point1.x = roundFloat(ui.mouse.x);
-			shape.point1.y = roundFloat(ui.mouse.y);
+			shape.point1.x = ui.mouse.x;
+			shape.point1.y = ui.mouse.y;
 		} else if (creationStage == "point2") {
-			shape.point2.x = roundFloat(ui.mouse.x);
-			shape.point2.y = roundFloat(ui.mouse.y);
+			shape.point2.x = ui.mouse.x;
+			shape.point2.y = ui.mouse.y;
 		} else if (creationStage == "point3") {
-			shape.point3.x = roundFloat(ui.mouse.x);
-			shape.point3.y = roundFloat(ui.mouse.y);
+			shape.point3.x = ui.mouse.x;
+			shape.point3.y = ui.mouse.y;
 		}
 	});
 

@@ -4,7 +4,7 @@
 
 	let { shape }: { shape: Rectangle } = $props();
 
-	let editedPoint = $state("leftLower" as keyof typeof shape.points);
+	let editedPoint = $state("leftLower" as Rectangle["referencePoint"]);
 
 	$effect(() => {
 		if (myCanvas.activeElement === shape && myCanvas.mouse.down) {
@@ -46,8 +46,11 @@
 	const editShape = () => {
 		const { activeElement, activeElementMode, uiOptions } = myCanvas;
 
+		// Ignore click if new shape is creating
+		if (activeElementMode === 'new') return
+
 		// Togle mode if shape already selected
-		if (activeElement === shape && activeElementMode !== "new") {
+		if (activeElement === shape) {
 			uiOptions.editMode = uiOptions.editMode === "move" ? "resize" : "move";
 		} else if (activeElement === undefined) {
 			myCanvas.activeElement = shape;
@@ -55,7 +58,7 @@
 
 		myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
 	};
-	const startMove = (pointName: keyof typeof shape.points) => {
+	const startMove = (pointName: Rectangle["referencePoint"]) => {
 		editedPoint = pointName;
 		myCanvas.mouse.down = true;
 	};
@@ -89,7 +92,7 @@
 				width={10 / myCanvas.scale}
 				height={10 / myCanvas.scale}
 				role="none"
-				onmousedown={() => startMove(pointName)}>
+				onmousedown={() => startMove(pointName as Rectangle["referencePoint"])}>
 			</rect>
 		{/each}
 	{:else if myCanvas.activeElement === shape && myCanvas.activeElementMode !== "resize"}
@@ -100,7 +103,7 @@
 				cy={point.d3Coord.y}
 				r={5 / myCanvas.scale}
 				role="none"
-				onmousedown={() => startMove(pointName)}>
+				onmousedown={() => startMove(pointName as Rectangle["referencePoint"])}>
 			</circle>
 		{/each}
 	{/if}

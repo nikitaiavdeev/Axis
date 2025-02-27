@@ -18,11 +18,13 @@
 
 	import "../app.css";
 	import { onMount } from "svelte";
-	import NewRectangle from "$lib/canvas/shapes/Rectangle/RectangleForm.svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte";
+
+	// Shapes
 	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
-	// import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
-	// import NewCircle from "$lib/canvas/shapes/Circle/NewCircle.svelte";
+	import RectangleForm from "$lib/canvas/shapes/Rectangle/RectangleForm.svelte";
+	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
+	import CircleForm from "$lib/canvas/shapes/Circle/CircleForm.svelte";
 	// import { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
 	// import NewPolygon from "$lib/canvas/shapes/Polygon/NewPolygon.svelte";
 	// import { Measure } from "$lib/canvas/measure/rune.svelte";
@@ -60,10 +62,10 @@
 		{/if}
 
 		{#if myCanvas.activeElement instanceof Rectangle}
-			<NewRectangle shape={myCanvas.activeElement} />
-			<!-- {:else if myCanvas.newShape.shape instanceof Circle}
-			<NewCircle shape={myCanvas.newShape.shape} />
-		{:else if myCanvas.newShape.shape instanceof Polygon}
+			<RectangleForm shape={myCanvas.activeElement} />
+		{:else if myCanvas.activeElement instanceof Circle}
+			<CircleForm shape={myCanvas.activeElement} />
+			<!-- {:else if myCanvas.newShape.shape instanceof Polygon}
 			<NewPolygon shape={myCanvas.newShape.shape} />
 		{:else if myCanvas.activeElement instanceof Measure}
 			<NewMeasure shape={myCanvas.activeElement} /> -->

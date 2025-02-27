@@ -1,3 +1,4 @@
+// Classes
 import { Shape } from "../index.svelte";
 import { Point } from "../../point/rune.svelte";
 
@@ -11,7 +12,7 @@ export class Rectangle extends Shape {
 	#height = $state(0);
 
 	// Reference point
-	referencePoint = $state("leftLower" as keyof typeof this.points);
+	referencePoint = $state<keyof typeof this.points>("leftLower");
 
 	// Points
 	points = {
@@ -219,17 +220,17 @@ export class Rectangle extends Shape {
 				return value;
 			},
 		}),
-	} as Record<string, Point>;
-
-	// Derived properties
-	properties = $derived({
-		area: this.width * this.height,
-		cX: this.points.leftLower.x + 0.5 * this.width,
-		cY: this.points.leftLower.y + 0.5 * this.height,
-		iX: (this.width * this.height ** 3) / 12,
-		iY: (this.height * this.width ** 3) / 12,
-		iXY: 0,
-	});
+	} as {
+		center: Point;
+		leftLower: Point;
+		middleLeft: Point;
+		leftUpper: Point;
+		rightLower: Point;
+		middleRight: Point;
+		rightUpper: Point;
+		middleUpper: Point;
+		middleLower: Point;
+	};
 
 	// Getters & Setters
 	get width() {
@@ -308,4 +309,14 @@ export class Rectangle extends Shape {
 
 		return swaps[dimension][point];
 	}
+
+	// Derived properties
+	properties = $derived({
+		area: this.width * this.height,
+		cX: this.points.leftLower.x + 0.5 * this.width,
+		cY: this.points.leftLower.y + 0.5 * this.height,
+		iX: (this.width * this.height ** 3) / 12,
+		iY: (this.height * this.width ** 3) / 12,
+		iXY: 0,
+	});
 }

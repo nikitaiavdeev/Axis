@@ -8,8 +8,8 @@
 	// Shapes
 	import RectangleSVG from "$lib/canvas/shapes/Rectangle/RectangleSVG.svelte";
 	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
-	// import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
-	// import CircleSvg from "./shapes/Circle/CircleSVG.svelte";
+	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
+	import CircleSvg from "./shapes/Circle/CircleSVG.svelte";
 	// import { Polygon } from "./shapes/Polygon/rune.svelte";
 	// import PolygonSvg from "./shapes/Polygon/PolygonSVG.svelte";
 	// import { Measure } from "./measure/rune.svelte";
@@ -62,9 +62,9 @@
 		{#each myCanvas.shapes.filter((s) => !s.isHole && s !== myCanvas.activeElement) as shape, idx (idx)}
 			{#if shape instanceof Rectangle}
 				<RectangleSVG {shape} />
-				<!-- {:else if shape instanceof Circle}
+			{:else if shape instanceof Circle}
 				<CircleSvg {shape} />
-			{:else if shape instanceof Polygon}
+				<!--{:else if shape instanceof Polygon}
 				<PolygonSvg {shape} /> -->
 			{/if}
 		{/each}
@@ -73,9 +73,9 @@
 		{#each myCanvas.shapes.filter((s) => s.isHole && s !== myCanvas.activeElement) as shape, idx (idx)}
 			{#if shape instanceof Rectangle}
 				<RectangleSVG {shape} />
-				<!-- {:else if shape instanceof Circle}
+			{:else if shape instanceof Circle}
 				<CircleSvg {shape} />
-			{:else if shape instanceof Polygon}
+				<!--{:else if shape instanceof Polygon}
 				<PolygonSvg {shape} /> -->
 			{/if}
 		{/each}
@@ -87,9 +87,9 @@
 		<!-- Draw edited shape above all -->
 		{#if myCanvas.activeElement instanceof Rectangle}
 			<RectangleSVG shape={myCanvas.activeElement} />
-			<!-- {:else if myCanvas.activeElement instanceof Circle}
+		{:else if myCanvas.activeElement instanceof Circle}
 			<CircleSvg shape={myCanvas.activeElement} />
-		{:else if myCanvas.activeElement instanceof Polygon}
+			<!--{:else if myCanvas.activeElement instanceof Polygon}
 			<PolygonSvg shape={myCanvas.activeElement} /> 
 		{:else if myCanvas.activeElement instanceof Measure}
 			<MeasureSvg measure={myCanvas.activeElement} />-->

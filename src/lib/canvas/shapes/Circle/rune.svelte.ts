@@ -1,110 +1,191 @@
-import { myCanvas } from "$lib/runes/canvas.svelte";
+// Classes
+import { Shape } from "../index.svelte";
 import { Point } from "../../point/rune.svelte";
+import { myCanvas } from "$lib/runes/canvas.svelte";
 
-export enum ReferencePoint {
-	middleLeft,
-	middleUpper,
-	middleRight,
-	middleLower,
-	center,
-}
+export class Circle extends Shape {
+	// Circle center
+	cx = $state(0);
+	cy = $state(0);
 
-export class Circle {
-	refX = $state(0);
-	refY = $state(0);
-	radius = $state(0);
+	// Circle radius
+	#radius = $state(0);
 
-	referencePoint = $state(ReferencePoint.center);
-	isHole = $state(false);
+	// Reference point
+	referencePoint = $state<keyof typeof this.points>("center");
 
-	centerX = $derived.by(() => {
-		switch (this.referencePoint) {
-			case ReferencePoint.middleLeft:
-				return this.refX + this.radius;
-			case ReferencePoint.middleRight:
-				return this.refX - this.radius;
-			case ReferencePoint.middleLower:
-			case ReferencePoint.middleUpper:
-			case ReferencePoint.center:
-				return this.refX;
-		}
-	});
-
-	centerY = $derived.by(() => {
-		switch (this.referencePoint) {
-			case ReferencePoint.middleLower:
-				return this.refY + this.radius;
-			case ReferencePoint.middleUpper:
-				return this.refY - this.radius;
-			case ReferencePoint.middleLeft:
-			case ReferencePoint.middleRight:
-			case ReferencePoint.center:
-				return this.refY;
-		}
-	});
-
-	radiusD3scale = $derived(myCanvas.d3Scale.x(this.radius));
-
+	// Points
 	points = {
-		middleLeft: new Point(
-			() => this.centerX - this.radius,
-			() => this.centerY,
-			this
-		),
-		middleUpper: new Point(
-			() => this.centerX,
-			() => this.centerY + this.radius,
-			this
-		),
-		middleRight: new Point(
-			() => this.centerX + this.radius,
-			() => this.centerY,
-			this
-		),
-		middleLower: new Point(
-			() => this.centerX,
-			() => this.centerY - this.radius,
-			this
-		),
-		center: new Point(
-			() => this.centerX,
-			() => this.centerY,
-			this
-		),
+		center: new Point(this, {
+			xGetter: () => {
+				return this.cx;
+			},
+			yGetter: () => {
+				return this.cy;
+			},
+			xMover: (value) => {
+				this.cx = value;
+				return value;
+			},
+			xResizer: (value) => {
+				this.cx = value;
+				return value;
+			},
+			yMover: (value) => {
+				this.cy = value;
+				return value;
+			},
+			yResizer: (value) => {
+				this.cy = value;
+				return value;
+			},
+		}),
+		middleLeft: new Point(this, {
+			xGetter: () => {
+				return this.cx - this.#radius;
+			},
+			yGetter: () => {
+				return this.cy;
+			},
+			xMover: (value) => {
+				this.cx = value + this.#radius;
+				return value;
+			},
+			xResizer: (value) => {
+				this.radius = this.cx - value;
+				return value;
+			},
+			yMover: (value) => {
+				this.cy = value;
+				return value;
+			},
+			// Standard Y resizing
+		}),
+		middleRight: new Point(this, {
+			xGetter: () => {
+				return this.cx + this.#radius;
+			},
+			yGetter: () => {
+				return this.cy;
+			},
+			xMover: (value) => {
+				this.cx = value - this.#radius;
+				return value;
+			},
+			xResizer: (value) => {
+				this.radius = value - this.cx;
+				return value;
+			},
+			yMover: (value) => {
+				this.cy = value;
+				return value;
+			},
+			// Standard Y resizing
+		}),
+		middleUpper: new Point(this, {
+			xGetter: () => {
+				return this.cx;
+			},
+			yGetter: () => {
+				return this.cy + this.#radius;
+			},
+			xMover: (value) => {
+				this.cx = value;
+				return value;
+			},
+			// Standard X resizing
+			yMover: (value) => {
+				this.cy = value - this.#radius;
+				return value;
+			},
+			yResizer: (value) => {
+				this.radius = value - this.cy;
+				return value;
+			},
+		}),
+		middleLower: new Point(this, {
+			xGetter: () => {
+				return this.cx;
+			},
+			yGetter: () => {
+				return this.cy - this.#radius;
+			},
+			xMover: (value) => {
+				this.cx = value;
+				return value;
+			},
+			// Standard X resizing
+			yMover: (value) => {
+				this.cy = value + this.#radius;
+				return value;
+			},
+			yResizer: (value) => {
+				this.radius = this.cy - value;
+				return value;
+			},
+		}),
+	} as {
+		center: Point;
+		middleLeft: Point;
+		middleRight: Point;
+		middleUpper: Point;
+		middleLower: Point;
 	};
+
+	// Getters & Setters
+	get radius() {
+		return this.#radius;
+	}
+
+	set radius(value: number) {
+		if (value < 0) {
+			this.referencePoint = this.swapReferencePoint(this.referencePoint);
+			this.#radius = -value;
+		} else {
+			this.#radius = value;
+		}
+	}
+
+	// Radius scaled to svg canvas scale
+	radiusD3scale = $derived(myCanvas.d3Scale.x(this.radius));
 
 	constructor(
 		refX: number,
 		refY: number,
 		radius: number,
-		referencePoint = ReferencePoint.center,
+		referencePoint = "center" as Circle["referencePoint"],
 		isHole = false
 	) {
-		this.refX = refX;
-		this.refY = refY;
+		super(isHole);
+
 		this.radius = radius;
 
 		this.referencePoint = referencePoint;
-		this.isHole = isHole;
+
+		// Set reference point coordinates
+		this.points[this.referencePoint].xMove(refX);
+		this.points[this.referencePoint].yMove(refY);
 	}
 
-	clean() {
-		// Delete shape
-		const idx = myCanvas.shapes.findIndex((s) => s === this);
-		if (idx >= 0) {
-			myCanvas.shapes.splice(idx, 1);
-		}
+	// Reference point swapping logic
+	swapReferencePoint(point: Circle["referencePoint"]): Circle["referencePoint"] {
+		const swaps = {
+			middleLeft: "middleRight",
+			middleRight: "middleLeft",
+			middleLower: "middleUpper",
+			middleUpper: "middleLower",
+		} as Record<Circle["referencePoint"], Circle["referencePoint"]>;
 
-		// Delete all nodes
-		Object.values(this.points).forEach((point) => point.clean());
+		return swaps[point];
 	}
 
+	// Derived properties
 	properties = $derived({
-		area: Math.PI * this.radius ** 2,
-		cX: this.centerX,
-		cY: this.centerY,
-		iX: 0.25 * Math.PI * this.radius ** 4,
-		iY: 0.25 * Math.PI * this.radius ** 4,
+		area: Math.PI * this.#radius ** 2,
+		cX: this.cx,
+		cY: this.cy,
+		iX: 0.25 * Math.PI * this.#radius ** 4,
+		iY: 0.25 * Math.PI * this.#radius ** 4,
 		iXY: 0,
 	});
 }

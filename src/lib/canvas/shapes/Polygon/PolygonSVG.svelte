@@ -1,29 +1,19 @@
 <script lang="ts">
 	import { myCanvas } from "$lib/runes/canvas.svelte";
-	import { ui } from "$lib/runes/ui.svelte";
-	import { roundFloat } from "$lib/scripts/helpers.svelte";
 	import { Polygon } from "./rune.svelte";
 
 	let { shape }: { shape: Polygon } = $props();
 
-	let moveStart = $state({
-		pointIdx: 0,
-		initPointsCorrds: [] as { x: number; y: number }[],
-	});
+	let editedPointID = $state(0);
 
 	$effect(() => {
-		if (myCanvas.editShape.shape === shape && ui.mouse.down) {
-			if (ui.options.editMode === "move") {
-				const dX = ui.mouse.x - moveStart.initPointsCorrds[moveStart.pointIdx].x,
-					dY = ui.mouse.y - moveStart.initPointsCorrds[moveStart.pointIdx].y;
-
-				for (let idx = 0; idx < shape.pointCoords.length; idx++) {
-					shape.pointCoords[idx].x = roundFloat(moveStart.initPointsCorrds[idx].x + dX);
-					shape.pointCoords[idx].y = roundFloat(moveStart.initPointsCorrds[idx].y + dY);
-				}
+		if (myCanvas.activeElement === shape && myCanvas.mouse.down && editedPointID) {
+			if (myCanvas.activeElementMode === "move") {
+				shape.points[editedPointID].xMove(myCanvas.mouse.x);
+				shape.points[editedPointID].yMove(myCanvas.mouse.y);
 			} else {
-				shape.pointCoords[moveStart.pointIdx].x = roundFloat(ui.mouse.x);
-				shape.pointCoords[moveStart.pointIdx].y = roundFloat(ui.mouse.y);
+				shape.points[editedPointID].xResize(myCanvas.mouse.x);
+				shape.points[editedPointID].yResize(myCanvas.mouse.y);
 			}
 		}
 	});
@@ -31,9 +21,8 @@
 	const pathString = $derived.by(() => {
 		let pathStr = "";
 
-		for (let idx = 0; idx < shape.points.length; idx++) {
-			const d3Coord = shape.points[idx].d3Coord;
-			pathStr += `${idx === 0 ? "M" : "L"}${d3Coord.x},${d3Coord.y}`;
+		for (const point of shape.points) {
+			pathStr += `${pathStr === "" ? "M" : "L"}${point.d3Coord.x},${point.d3Coord.y}`;
 		}
 		pathStr += "Z";
 
@@ -41,32 +30,34 @@
 	});
 
 	const editShape = () => {
-			// Togle mode if shape already selected
-			if (myCanvas.editShape.shape === shape) {
-				myCanvas.editShape.toggleMode();
-			} else if (myCanvas.newShape.shape === undefined) {
-				myCanvas.editShape.editShape(shape);
-			}
-		},
-		startMove = (pointIdx: number) => {
-			moveStart = {
-				pointIdx: pointIdx,
-				initPointsCorrds: $state.snapshot(shape.pointCoords),
-			};
+		const { activeElement, activeElementMode, uiOptions } = myCanvas;
 
-			ui.mouse.down = true;
-		};
+		// Ignore click if new shape is creating
+		if (activeElementMode === "new") return;
+
+		// Togle mode if shape already selected
+		if (activeElement === shape) {
+			uiOptions.editMode = uiOptions.editMode === "move" ? "resize" : "move";
+		} else if (activeElement === undefined) {
+			myCanvas.activeElement = shape;
+		}
+		myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
+	};
+	const startMove = (pointIdx: number) => {
+		editedPointID = pointIdx;
+		myCanvas.mouse.down = true;
+	};
 </script>
 
 <g
 	class:hole={shape.isHole}
-	class:hoverable={myCanvas.newShape.shape === undefined && !ui.mouse.down}
-	class:selected={myCanvas.editShape.shape === shape}
-	class:move={myCanvas.editShape.shape === shape && ui.options.editMode === "move"}
-	class:resize={myCanvas.editShape.shape === shape && ui.options.editMode === "resize"}>
+	class:hoverable={myCanvas.activeElement === undefined && !myCanvas.mouse.down}
+	class:selected={myCanvas.activeElement === shape}
+	class:move={myCanvas.activeElement === shape && myCanvas.uiOptions.editMode === "move"}
+	class:resize={myCanvas.activeElement === shape && myCanvas.uiOptions.editMode === "resize"}>
 	<path class="shape" d={pathString} role="none" onclick={editShape} fill="url(#stress-fringe)" />
 
-	{#if myCanvas.editShape.shape === shape && ui.options.editMode === "resize"}
+	{#if myCanvas.activeElement === shape && myCanvas.activeElementMode === "resize"}
 		{#each shape.points as point, idx (idx)}
 			<rect
 				class="point center"
@@ -78,7 +69,7 @@
 				onmousedown={() => startMove(idx)}>
 			</rect>
 		{/each}
-	{:else if myCanvas.newShape.shape === shape || myCanvas.editShape.shape === shape}
+	{:else if myCanvas.activeElement === shape && myCanvas.activeElementMode !== "resize"}
 		{#each shape.points as point, idx (idx)}
 			<circle
 				class="point"

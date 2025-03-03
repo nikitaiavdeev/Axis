@@ -13,9 +13,7 @@
 	// Rune
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Polygon } from "./rune.svelte";
-	import { ui } from "$lib/runes/ui.svelte";
 	import { onMount } from "svelte";
-	import { roundFloat } from "$lib/scripts/helpers.svelte";
 
 	let { shape }: { shape: Polygon } = $props();
 
@@ -27,28 +25,28 @@
 
 	const dXPlaceholder = $derived(
 			shape.points.length > 1
-				? (shape.points.at(-1)!.x() - shape.points.at(-2)!.x()).toFixed(3)
+				? (shape.points.at(-1)!.x - shape.points.at(-2)!.x).toFixed(3)
 				: "Delta X"
 		),
 		dYPlaceholder = $derived(
 			shape.points.length > 1
-				? (shape.points.at(-1)!.y() - shape.points.at(-2)!.y()).toFixed(3)
+				? (shape.points.at(-1)!.y - shape.points.at(-2)!.y).toFixed(3)
 				: "Delta Y"
 		);
 
 	// Effect if Placeholders been changed or mouse moved
 	$effect(() => {
-		if (myCanvas.newShape.shape === shape) {
+		if (myCanvas.activeElementMode === "new") {
 			if (refX !== undefined) {
-				shape.pointCoords.at(-1)!.x = Number(refX);
+				shape.points.at(-1)!.xResize(Number(refX));
 			} else {
-				shape.pointCoords.at(-1)!.x = roundFloat(ui.mouse.x);
+				shape.points.at(-1)!.xResize(myCanvas.mouse.x);
 			}
 
 			if (refY !== undefined) {
-				shape.pointCoords.at(-1)!.y = Number(refY);
+				shape.points.at(-1)!.yResize(Number(refY));
 			} else {
-				shape.pointCoords.at(-1)!.y = roundFloat(ui.mouse.y);
+				shape.points.at(-1)!.yResize(myCanvas.mouse.y);
 			}
 		}
 	});
@@ -60,9 +58,9 @@
 
 		const handleClick = () => {
 			if (
-				shape.pointCoords.length > 1 &&
-				shape.pointCoords.at(-1)!.x === shape.pointCoords[0].x &&
-				shape.pointCoords.at(-1)!.y === shape.pointCoords[0].y
+				shape.points.length > 1 &&
+				shape.points.at(-1)!.x === shape.points[0].x &&
+				shape.points.at(-1)!.y === shape.points[0].y
 			) {
 				createShape();
 			} else {
@@ -70,7 +68,7 @@
 			}
 		};
 
-		if (myCanvas.newShape.shape == shape) {
+		if (myCanvas.activeElementMode === "new") {
 			contentElm.addEventListener("click", handleClick);
 
 			// Remove the listener on component unmount
@@ -88,24 +86,17 @@
 			}
 		},
 		appendPoint = () => {
-			const idx = shape.pointCoords.length;
-			shape.pointCoords[idx] = {
-				x: 0,
-				y: 0,
-			};
-			shape.appendPoint(idx);
+			shape.appendPoint();
 			refX = undefined;
 			refY = undefined;
 			dX = undefined;
 			dY = undefined;
 		},
 		createShape = () => {
-			const pointCount = shape.pointCoords.length;
-			if (pointCount > 3) {
+			if (shape.points.length > 3) {
 				// Remove last point
-				shape.points.at(-1)!.clean();
-				shape.points.splice(pointCount - 1, 1);
-				shape.pointCoords.splice(pointCount - 1, 1);
+				shape.points.at(-1)!.remove();
+				shape.points.splice(shape.points.length - 1, 1);
 
 				// Register new shape
 				myCanvas.shapes.push(shape);
@@ -115,16 +106,17 @@
 				refY = undefined;
 				dX = undefined;
 				dY = undefined;
-				myCanvas.newShape.createNew(new Polygon([{ x: 0, y: 0 }]));
+
+				myCanvas.activeElement = new Polygon([{ x: 0, y: 0 }]);
 			}
 		},
 		deleteShape = () => {
-			shape.clean();
-			myCanvas.editShape.clean();
+			shape.remove();
+			closeMenu();
 		},
 		closeMenu = () => {
-			myCanvas.newShape.clean();
-			myCanvas.editShape.clean();
+			myCanvas.activeElement = undefined;
+			myCanvas.activeElementMode = undefined;
 		};
 </script>
 
@@ -138,9 +130,9 @@
 				id="x_loc"
 				bind:value={refX}
 				oninput={() => {
-					dX = roundFloat(shape.pointCoords.at(-1)!.x - shape.pointCoords.at(-2)!.x);
+					dX = shape.points.at(-1)!.x - shape.points.at(-2)!.x;
 				}}
-				placeholder={shape.pointCoords.at(-1)!.x.toFixed(3)} />
+				placeholder={shape.points.at(-1)!.x.toFixed(3)} />
 		</div>
 
 		<div class="flex-1 flex-col gap-1.5">
@@ -149,7 +141,7 @@
 				type="number"
 				id="y_loc"
 				bind:value={refY}
-				placeholder={shape.pointCoords.at(-1)!.y.toFixed(3)} />
+				placeholder={shape.points.at(-1)!.y.toFixed(3)} />
 		</div>
 	</div>
 
@@ -170,7 +162,7 @@
 				id="width"
 				bind:value={dX}
 				oninput={() => {
-					refX = roundFloat(shape.pointCoords.at(-2)!.x + dX!);
+					refX = shape.points.at(-2)!.x + dX!;
 				}}
 				disabled={shape.points.length === 0}
 				placeholder={dXPlaceholder} />
@@ -193,7 +185,7 @@
 	</div>
 
 	<div class="flex">
-		{#if myCanvas.newShape.shape === shape}
+		{#if myCanvas.activeElementMode === "new"}
 			<Button class="grow" onclick={() => appendPoint()}>Add Point</Button>
 		{:else}
 			<Button class="grow" onclick={() => appendPoint()}>Edit Point</Button>
@@ -201,9 +193,9 @@
 	</div>
 
 	<div class="flex flex-row gap-2">
-		{#if myCanvas.newShape.shape === shape}
+		{#if myCanvas.activeElementMode === "new"}
 			<Button class="grow" variant="secondary" onclick={() => createShape()}>Create</Button>
-		{:else if myCanvas.editShape.shape === shape}
+		{:else}
 			<Button class="grow" variant="destructive" onclick={deleteShape}><Trash2 />Delete</Button>
 		{/if}
 		<Button class="grow" variant="secondary" onclick={closeMenu}>Cancel</Button>

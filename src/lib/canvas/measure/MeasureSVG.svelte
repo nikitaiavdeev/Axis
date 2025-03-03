@@ -36,63 +36,47 @@
 				(measure.type == "horizontal" ? p3XY.y : p2XY.y),
 		});
 
-	let moveStart = $state({
-		pointName: "point1" as keyof typeof measure.points,
-		initPointsCorrds: {
-			point1: $state.snapshot(measure.point1),
-			point2: $state.snapshot(measure.point2),
-			point3: $state.snapshot(measure.point3),
-		},
-	});
+	let editedPoint = $state("point1" as keyof typeof measure.points);
 
 	$effect(() => {
-		if (myCanvas.editShape.shape === measure && ui.mouse.down) {
-			if (ui.options.editMode === "move") {
-				const dX = ui.mouse.x - moveStart.initPointsCorrds[moveStart.pointName].x,
-					dY = ui.mouse.y - moveStart.initPointsCorrds[moveStart.pointName].y;
-
-				measure.point1.x = moveStart.initPointsCorrds.point1.x + dX;
-				measure.point1.y = moveStart.initPointsCorrds.point1.y + dY;
-				measure.point2.x = moveStart.initPointsCorrds.point2.x + dX;
-				measure.point2.y = moveStart.initPointsCorrds.point2.y + dY;
-				measure.point3.x = moveStart.initPointsCorrds.point3.x + dX;
-				measure.point3.y = moveStart.initPointsCorrds.point3.y + dY;
+		if (myCanvas.activeElement === measure && myCanvas.mouse.down) {
+			if (myCanvas.uiOptions.editMode === "move") {
+				measure.points[editedPoint].xMove(myCanvas.mouse.x);
+				measure.points[editedPoint].yMove(myCanvas.mouse.y);
 			} else {
-				measure[moveStart.pointName].x = ui.mouse.x;
-				measure[moveStart.pointName].y = ui.mouse.y;
+				measure.points[editedPoint].xResize(myCanvas.mouse.x);
+				measure.points[editedPoint].yResize(myCanvas.mouse.y);
 			}
 		}
 	});
 
 	const editMeasure = () => {
+			// Ignore click if new shape is creating
+			if (myCanvas.activeElementMode === "new") return;
+
 			// Togle mode if measure already selected
-			if (myCanvas.editShape.shape === measure) {
-				myCanvas.editShape.toggleMode();
-			} else if (myCanvas.newShape.shape === undefined) {
-				myCanvas.editShape.editShape(measure);
+			if (myCanvas.activeElement === measure) {
+				myCanvas.uiOptions.editMode = myCanvas.uiOptions.editMode === "move" ? "resize" : "move";
+			} else if (myCanvas.activeElement === undefined) {
+				myCanvas.activeElement = measure;
 			}
+
+			myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
 		},
-		startMove = (pointName: string) => {
-			moveStart = {
-				pointName: pointName as keyof typeof measure.points,
-				initPointsCorrds: {
-					point1: $state.snapshot(measure.point1),
-					point2: $state.snapshot(measure.point2),
-					point3: $state.snapshot(measure.point3),
-				},
-			};
-			ui.mouse.down = true;
+		startMove = (pointName: keyof typeof measure.points) => {
+			editedPoint = pointName;
+			myCanvas.mouse.down = true;
 		};
 </script>
 
 <g
 	class="measure"
-	class:hoverable={myCanvas.newShape.shape === undefined && !ui.mouse.down}
-	class:selected={myCanvas.editShape.shape === measure}
-	class:move={myCanvas.editShape.shape === measure && ui.options.editMode === "move"}
-	class:resize={myCanvas.editShape.shape === measure && ui.options.editMode === "resize"}
+	class:hoverable={myCanvas.activeElement === undefined && !myCanvas.mouse.down}
+	class:selected={myCanvas.activeElement === measure}
+	class:move={myCanvas.activeElement === measure && myCanvas.uiOptions.editMode === "move"}
+	class:resize={myCanvas.activeElement === measure && myCanvas.uiOptions.editMode === "resize"}
 	style="font-size-adjust:from-font">
-	{#if !isNaN(measure.point3.x)}
+	{#if !isNaN(measure.points.point3.x)}
 		<line
 			x1={p1XY.x}
 			y1={p1XY.y}
@@ -130,7 +114,7 @@
 		</text>
 	{/if}
 
-	{#if myCanvas.editShape.shape === measure && ui.options.editMode === "resize"}
+	{#if myCanvas.activeElement === measure && myCanvas.activeElementMode === "resize"}
 		{#each Object.entries(measure.points) as [pointName, point] (pointName)}
 			<rect
 				class="point center"
@@ -139,10 +123,10 @@
 				width={10 / myCanvas.scale}
 				height={10 / myCanvas.scale}
 				role="none"
-				onmousedown={() => startMove(pointName)}>
+				onmousedown={() => startMove(pointName as keyof typeof measure.points)}>
 			</rect>
 		{/each}
-	{:else if myCanvas.newShape.shape === measure || myCanvas.editShape.shape === measure}
+	{:else if myCanvas.activeElement === measure && myCanvas.activeElementMode !== "resize"}
 		{#each Object.entries(measure.points) as [pointName, point] (pointName)}
 			<circle
 				class="point"
@@ -150,7 +134,7 @@
 				cy={point.d3Coord.y}
 				r={5 / myCanvas.scale}
 				role="none"
-				onmousedown={() => startMove(pointName)}>
+				onmousedown={() => startMove(pointName as keyof typeof measure.points)}>
 			</circle>
 		{/each}
 	{/if}

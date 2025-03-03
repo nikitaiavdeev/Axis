@@ -3,7 +3,7 @@ import type { Point } from "../point/rune.svelte";
 
 export abstract class Shape {
 	isHole = $state(false);
-	abstract readonly points: Readonly<Record<string, Point>>;
+	abstract readonly points: Readonly<Record<string, Point>> | Point[];
 	abstract properties: {
 		area: number;
 		cX: number;
@@ -22,6 +22,10 @@ export abstract class Shape {
 		myCanvas.shapes = myCanvas.shapes.filter((s) => s !== this);
 
 		// Delete all nodes
-		Object.values(this.points).forEach((point) => point.remove());
+		if (Array.isArray(this.points)) {
+			this.points.forEach((point) => point.remove());
+		} else {
+			Object.values(this.points).forEach((point) => point.remove());
+		}
 	}
 }

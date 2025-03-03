@@ -13,23 +13,21 @@
 	import { Measure } from "./rune.svelte";
 	import { onMount } from "svelte";
 
-	let { shape }: { shape: Measure } = $props();
+	let { measure }: { measure: Measure } = $props();
 	let creationStage = $state("point1" as "point1" | "point2" | "point3");
 
 	$effect(() => {
-		if (myCanvas.editShape.shape === shape) {
-			return;
-		}
-
-		if (creationStage == "point1") {
-			shape.point1.x = ui.mouse.x;
-			shape.point1.y = ui.mouse.y;
-		} else if (creationStage == "point2") {
-			shape.point2.x = ui.mouse.x;
-			shape.point2.y = ui.mouse.y;
-		} else if (creationStage == "point3") {
-			shape.point3.x = ui.mouse.x;
-			shape.point3.y = ui.mouse.y;
+		if (myCanvas.activeElementMode === "new") {
+			if (creationStage == "point1") {
+				measure.points.point1.xResize(myCanvas.mouse.x);
+				measure.points.point1.yResize(myCanvas.mouse.y);
+			} else if (creationStage == "point2") {
+				measure.points.point2.xResize(myCanvas.mouse.x);
+				measure.points.point2.yResize(myCanvas.mouse.y);
+			} else if (creationStage == "point3") {
+				measure.points.point3.xResize(myCanvas.mouse.x);
+				measure.points.point3.yResize(myCanvas.mouse.y);
+			}
 		}
 	});
 
@@ -45,15 +43,16 @@
 				creationStage = "point3";
 			} else if (creationStage == "point3") {
 				// Register new shape
-				myCanvas.measures.push(shape);
+				myCanvas.measures.push(measure);
 
 				// Clean and start creating new shape
 				creationStage = "point1";
-				myCanvas.newShape.createNew(new Measure());
+
+				myCanvas.activeElement = new Measure();
 			}
 		};
 
-		if (myCanvas.newShape.shape === shape) {
+		if (myCanvas.activeElementMode === "new") {
 			contentElm.addEventListener("click", handleClick);
 
 			// Remove the listener on component unmount
@@ -69,12 +68,12 @@
 			}
 		},
 		deleteShape = () => {
-			shape.remove();
-			myCanvas.editShape.clean();
+			measure.remove();
+			closeMenu();
 		},
 		closeMenu = () => {
-			myCanvas.newShape.clean();
-			myCanvas.editShape.clean();
+			myCanvas.activeElement = undefined;
+			myCanvas.activeElementMode = undefined;
 		};
 </script>
 
@@ -86,10 +85,10 @@
 		<ToggleGroup.Root
 			type="single"
 			bind:value={
-				() => shape.type,
-				(newValue: "" | typeof shape.type) => {
+				() => measure.type,
+				(newValue: "" | typeof measure.type) => {
 					if (newValue !== "") {
-						shape.type = newValue;
+						measure.type = newValue;
 					}
 				}
 			}>
@@ -106,7 +105,7 @@
 	</div>
 
 	<div class="flex flex-row gap-2">
-		{#if myCanvas.editShape.shape === shape}
+		{#if myCanvas.activeElementMode !== "new"}
 			<Button class="grow" variant="destructive" onclick={deleteShape}><Trash2 />Delete</Button>
 		{/if}
 		<Button class="grow" variant="secondary" onclick={closeMenu}>Cancel</Button>

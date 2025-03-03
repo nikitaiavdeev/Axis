@@ -47,7 +47,7 @@
 		const { activeElement, activeElementMode, uiOptions } = myCanvas;
 
 		// Ignore click if new shape is creating
-		if (activeElementMode === 'new') return
+		if (activeElementMode === "new") return;
 
 		// Togle mode if shape already selected
 		if (activeElement === shape) {

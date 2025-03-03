@@ -3,6 +3,7 @@
 	import { Trash2 } from "lucide-svelte";
 
 	// UI
+	import ShapeForm from "$lib/components/ui/ShapeForm.svelte";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
@@ -13,9 +14,11 @@
 	// Rune
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Circle } from "./rune.svelte";
-	import { onMount } from "svelte";
 
 	let { shape }: { shape: Circle } = $props();
+
+	// ShapeForm instance
+	let shapeForm = $state<ShapeForm>();
 
 	// Placeholder values while user click screen or type manually
 	let refX = $state<number | undefined>(undefined),
@@ -67,45 +70,20 @@
 		}
 	});
 
-	onMount(() => {
-		const contentElm = myCanvas.svg.node();
-
-		if (!contentElm) return;
-
-		const handleClick = () => {
-			if (refX !== undefined && refY !== undefined) {
-				radius = Number(shape.radius.toFixed(4));
-			}
-
-			if (refX === undefined) {
-				refX = Number(referencePoint.x.toFixed(4));
-			}
-
-			if (refY === undefined) {
-				refY = Number(referencePoint.y.toFixed(4));
-			}
-
-			createShape();
-		};
-
-		if (myCanvas.activeElementMode === "new") {
-			contentElm.addEventListener("click", handleClick);
-
-			// Remove the listener on component unmount
-			return () => {
-				contentElm.removeEventListener("click", handleClick);
-			};
+	const clickHandle = () => {
+		if (refX !== undefined && refY !== undefined) {
+			radius = Number(shape.radius.toFixed(4));
 		}
-	});
 
-	const onKeyDown = (event: KeyboardEvent) => {
-		if (event.key === "Escape") {
-			closeMenu();
-		} else if (event.key === "Enter") {
-			createShape();
+		if (refX === undefined) {
+			refX = Number(referencePoint.x.toFixed(4));
+		}
+
+		if (refY === undefined) {
+			refY = Number(referencePoint.y.toFixed(4));
 		}
 	};
-	const createShape = () => {
+	const createShapeCallback = () => {
 		if (refX !== undefined && refY !== undefined && radius !== undefined) {
 			// Save current reference point and isHole
 			const currentReferencePoint = shape.referencePoint,
@@ -122,14 +100,6 @@
 			myCanvas.activeElement = new Circle(0, 0, 0, currentReferencePoint, currentIsHole);
 		}
 	};
-	const deleteShape = () => {
-		shape.remove();
-		closeMenu();
-	};
-	const closeMenu = () => {
-		myCanvas.activeElement = undefined;
-		myCanvas.activeElementMode = undefined;
-	};
 </script>
 
 {#snippet marker(refPoint: Circle["referencePoint"], cx: number, cy: number, r: number)}
@@ -145,8 +115,7 @@
 	</circle>
 {/snippet}
 
-<Card.Root
-	class="absolute left-4 top-1/3 inline-flex w-[280px] -translate-y-1/2 flex-col gap-y-4 rounded-md p-4">
+<ShapeForm bind:this={shapeForm} element={shape} {createShapeCallback} {clickHandle}>
 	<div class="flex flex-col gap-1.5">
 		<Label>Reference Point</Label>
 		<svg class="w-full" width="100" height="100" viewBox="0 0 100 100">
@@ -194,12 +163,12 @@
 
 	<div class="flex flex-row gap-2">
 		{#if myCanvas.activeElementMode === "new"}
-			<Button class="grow" onclick={() => createShape()}>Create</Button>
+			<Button class="grow" onclick={createShapeCallback}>Create</Button>
 		{:else}
-			<Button class="grow" variant="destructive" onclick={deleteShape}><Trash2 />Delete</Button>
+			<Button class="grow" variant="destructive" onclick={() => shapeForm.deleteShape()}>
+				<Trash2 />Delete
+			</Button>
 		{/if}
-		<Button class="grow" variant="secondary" onclick={closeMenu}>Cancel</Button>
+		<Button class="grow" variant="secondary" onclick={() => shapeForm.closeMenu()}>Cancel</Button>
 	</div>
-</Card.Root>
-
-<svelte:window onkeydown={onKeyDown} />
+</ShapeForm>

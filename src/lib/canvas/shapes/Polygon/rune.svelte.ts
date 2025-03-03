@@ -1,28 +1,44 @@
 import { myCanvas } from "$lib/runes/canvas.svelte";
 import { Point } from "../../point/rune.svelte";
 import { vec3 } from "gl-matrix";
+import { Shape } from "../index.svelte";
 
-export class Polygon {
-	isHole = $state(false);
-	pointCoords = $state([] as { x: number; y: number }[]);
-	points = $state([]) as Point[];
+export class Polygon extends Shape {
+	// Points
+	points = $state([] as Point[]);
 
 	constructor(pointCoords: { x: number; y: number }[], isHole = false) {
-		this.pointCoords = pointCoords;
+		super(isHole);
 
-		for (let idx = 0; idx < pointCoords.length; idx++) {
-			this.appendPoint(idx);
+		for (const pointCoord of pointCoords) {
+			this.appendPoint(pointCoord.x, pointCoord.y);
 		}
-
-		this.isHole = isHole;
 	}
 
-	appendPoint(idx: number) {
-		this.points[idx] = new Point(
-			() => this.pointCoords[idx].x,
-			() => this.pointCoords[idx].y,
-			this
-		);
+	// Append point
+	appendPoint(x = 0, y = 0) {
+		const point = new Point(this, {
+			x,
+			y,
+			// Move each point of the polygon
+			xMover: (value) => {
+				const dx = point.x - value;
+				this.points.forEach((p) => {
+					p.xResize(p.x + dx);
+				});
+				return value;
+			},
+			yMover: (value) => {
+				const dy = point.y - value;
+				this.points.forEach((p) => {
+					p.yResize(p.y + dy);
+				});
+				return value;
+			},
+			// Standard resize
+		});
+
+		this.points[this.points.length] = point;
 	}
 
 	static createFromImport(coords: number[], indices: number[], normals: number[]) {
@@ -119,17 +135,7 @@ export class Polygon {
 		}
 	}
 
-	clean() {
-		// Delete shape
-		const idx = myCanvas.shapes.findIndex((s) => s === this);
-		if (idx >= 0) {
-			myCanvas.shapes.splice(idx, 1);
-		}
-
-		// Delete all nodes
-		this.points.forEach((point) => point.remove());
-	}
-
+	// Derived properties
 	properties = $derived.by(() => {
 		const properties = {
 				area: 0,
@@ -139,26 +145,26 @@ export class Polygon {
 				iY: 0,
 				iXY: 0,
 			},
-			pCoords = this.pointCoords;
+			points = this.points;
 
-		for (let idx = 0; idx < pCoords.length; idx++) {
-			const idxP1 = idx == pCoords.length - 1 ? 0 : idx + 1,
-				ithArea = pCoords[idx].x * pCoords[idxP1].y - pCoords[idxP1].x * pCoords[idx].y;
+		for (let idx = 0; idx < points.length; idx++) {
+			const idxP1 = idx == points.length - 1 ? 0 : idx + 1,
+				ithArea = points[idx].x * points[idxP1].y - points[idxP1].x * points[idx].y;
 
 			properties.area += ithArea;
-			properties.cX += ithArea * (pCoords[idx].x + pCoords[idxP1].x);
-			properties.cY += ithArea * (pCoords[idx].y + pCoords[idxP1].y);
+			properties.cX += ithArea * (points[idx].x + points[idxP1].x);
+			properties.cY += ithArea * (points[idx].y + points[idxP1].y);
 
 			properties.iX +=
-				ithArea * (pCoords[idx].y ** 2 + pCoords[idx].y * pCoords[idxP1].y + pCoords[idxP1].y ** 2);
+				ithArea * (points[idx].y ** 2 + points[idx].y * points[idxP1].y + points[idxP1].y ** 2);
 			properties.iY +=
-				ithArea * (pCoords[idx].x ** 2 + pCoords[idx].x * pCoords[idxP1].x + pCoords[idxP1].x ** 2);
+				ithArea * (points[idx].x ** 2 + points[idx].x * points[idxP1].x + points[idxP1].x ** 2);
 			properties.iXY +=
 				ithArea *
-				(pCoords[idx].x * pCoords[idxP1].y +
-					2 * pCoords[idx].x * pCoords[idx].y +
-					2 * pCoords[idxP1].x * pCoords[idxP1].y +
-					pCoords[idxP1].x * pCoords[idx].y);
+				(points[idx].x * points[idxP1].y +
+					2 * points[idx].x * points[idx].y +
+					2 * points[idxP1].x * points[idxP1].y +
+					points[idxP1].x * points[idx].y);
 		}
 
 		properties.area *= 0.5;

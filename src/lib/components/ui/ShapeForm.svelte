@@ -31,7 +31,6 @@
 
 		const handleClick = () => {
 			clickHandle();
-			createShapeCallback();
 		};
 
 		if (myCanvas.activeElementMode === "new") {

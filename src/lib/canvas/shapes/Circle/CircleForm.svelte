@@ -6,7 +6,6 @@
 	import ShapeForm from "$lib/components/ui/ShapeForm.svelte";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
-	import * as Card from "$lib/components/ui/card/index.js";
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { Checkbox } from "$lib/components/ui/checkbox/index.js";
 	import { cn } from "$lib/utils.js";
@@ -82,6 +81,8 @@
 		if (refY === undefined) {
 			refY = Number(referencePoint.y.toFixed(4));
 		}
+
+		createShapeCallback();
 	};
 	const createShapeCallback = () => {
 		if (refX !== undefined && refY !== undefined && radius !== undefined) {
@@ -163,12 +164,12 @@
 
 	<div class="flex flex-row gap-2">
 		{#if myCanvas.activeElementMode === "new"}
-			<Button class="grow" onclick={createShapeCallback}>Create</Button>
+			<Button class="grow" onclick={() => createShapeCallback()}>Create</Button>
 		{:else}
-			<Button class="grow" variant="destructive" onclick={() => shapeForm.deleteShape()}>
+			<Button class="grow" variant="destructive" onclick={() => shapeForm!.deleteShape()}>
 				<Trash2 />Delete
 			</Button>
 		{/if}
-		<Button class="grow" variant="secondary" onclick={() => shapeForm.closeMenu()}>Cancel</Button>
+		<Button class="grow" variant="secondary" onclick={() => shapeForm!.closeMenu()}>Cancel</Button>
 	</div>
 </ShapeForm>

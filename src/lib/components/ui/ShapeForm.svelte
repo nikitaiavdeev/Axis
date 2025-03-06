@@ -56,6 +56,7 @@
 			closeMenu();
 		},
 		closeMenu = () => {
+			myCanvas.activeElementMode === "new" && element.remove();
 			myCanvas.activeElement = undefined;
 			myCanvas.activeElementMode = undefined;
 		};

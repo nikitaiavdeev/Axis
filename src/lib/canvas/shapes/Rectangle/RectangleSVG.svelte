@@ -2,6 +2,9 @@
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Rectangle } from "./rune.svelte";
 
+	// Constants
+	import { MARKER_SIZE } from "$lib/constants";
+
 	let { shape }: { shape: Rectangle } = $props();
 
 	let editedPoint = $state("leftLower" as Rectangle["referencePoint"]);
@@ -68,8 +71,8 @@
 	class:hole={shape.isHole}
 	class:hoverable={myCanvas.activeElement === undefined && !myCanvas.mouse.down}
 	class:selected={myCanvas.activeElement === shape}
-	class:move={myCanvas.activeElement === shape && myCanvas.uiOptions.editMode === "move"}
-	class:resize={myCanvas.activeElement === shape && myCanvas.uiOptions.editMode === "resize"}>
+	class:move={myCanvas.activeElement === shape && myCanvas.activeElementMode === "move"}
+	class:resize={myCanvas.activeElement === shape && myCanvas.activeElementMode === "resize"}>
 	<!-- Rectangle shape -->
 	<path
 		class="shape"
@@ -87,10 +90,10 @@
 		{#each Object.entries(shape.points) as [pointName, point] (pointName)}
 			<rect
 				class="point {pointName}"
-				x={point.d3Coord.x - 5 / myCanvas.scale}
-				y={point.d3Coord.y - 5 / myCanvas.scale}
-				width={10 / myCanvas.scale}
-				height={10 / myCanvas.scale}
+				x={point.d3Coord.x - MARKER_SIZE / myCanvas.scale}
+				y={point.d3Coord.y - MARKER_SIZE / myCanvas.scale}
+				width={(2 * MARKER_SIZE) / myCanvas.scale}
+				height={(2 * MARKER_SIZE) / myCanvas.scale}
 				role="none"
 				onmousedown={() => startMove(pointName as Rectangle["referencePoint"])}>
 			</rect>
@@ -101,7 +104,7 @@
 				class="point"
 				cx={point.d3Coord.x}
 				cy={point.d3Coord.y}
-				r={5 / myCanvas.scale}
+				r={MARKER_SIZE / myCanvas.scale}
 				role="none"
 				onmousedown={() => startMove(pointName as Rectangle["referencePoint"])}>
 			</circle>

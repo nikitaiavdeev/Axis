@@ -16,7 +16,6 @@
 	// Global Events
 	import { keyPressEvent, onWheel, onMouseMove, onMouseUp } from "$lib/scripts/globalEvents";
 
-	import "../app.css";
 	import { onMount } from "svelte";
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 
@@ -25,11 +24,15 @@
 	import RectangleForm from "$lib/canvas/shapes/Rectangle/RectangleForm.svelte";
 	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
 	import CircleForm from "$lib/canvas/shapes/Circle/CircleForm.svelte";
-	// import { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
-	// import NewPolygon from "$lib/canvas/shapes/Polygon/NewPolygon.svelte";
-	// import { Measure } from "$lib/canvas/measure/rune.svelte";
-	// import NewMeasure from "$lib/canvas/measure/NewMeasure.svelte";
+	import { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
+	import PolygonForm from "$lib/canvas/shapes/Polygon/PolygonForm.svelte";
+	import { Measure } from "$lib/canvas/measure/rune.svelte";
+	import MeasureForm from "$lib/canvas/measure/MeasureForm.svelte";
 	import Results from "$lib/components/interface/Results.svelte";
+
+	// Styles'
+	import "$styles/app.css";
+	import "$styles/canvas.css";
 
 	let { children } = $props();
 
@@ -65,10 +68,10 @@
 			<RectangleForm shape={myCanvas.activeElement} />
 		{:else if myCanvas.activeElement instanceof Circle}
 			<CircleForm shape={myCanvas.activeElement} />
-			<!-- {:else if myCanvas.newShape.shape instanceof Polygon}
-			<NewPolygon shape={myCanvas.newShape.shape} />
+		{:else if myCanvas.activeElement instanceof Polygon}
+			<PolygonForm shape={myCanvas.activeElement} />
 		{:else if myCanvas.activeElement instanceof Measure}
-			<NewMeasure shape={myCanvas.activeElement} /> -->
+			<MeasureForm measure={myCanvas.activeElement} />
 		{/if}
 
 		{@render children()}

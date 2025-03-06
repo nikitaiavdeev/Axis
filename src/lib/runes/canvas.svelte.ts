@@ -5,17 +5,15 @@ import * as d3 from "d3";
 import type { Measure } from "$lib/canvas/measure/rune.svelte";
 import type { Shape } from "$lib/canvas/shapes/index.svelte";
 
+// Constants
+import { GRID_SIZE_PIXELS, GRID_SIZE_INCHES } from "$lib/constants.js";
+
 export class Canvas {
 	// Private properties for svg elements
 	// Done this way because document isn't availabe during class construction
 	#svg: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 	#gridPattern: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 	#content: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
-
-	// Canvas constants
-	consts = {
-		GRID_SIZE: 500,
-	};
 
 	// Canvas content position and scale
 	offsetX = $state(0);
@@ -47,15 +45,15 @@ export class Canvas {
 
 	// Scale without account for canvas offset
 	d3Scale = {
-		x: d3.scaleLinear([0, 0.5], [0, this.consts.GRID_SIZE * this.scale]),
-		y: d3.scaleLinear([0, 0.5], [0 + this.consts.GRID_SIZE * this.scale, 0]),
+		x: d3.scaleLinear([0, GRID_SIZE_INCHES], [0, GRID_SIZE_PIXELS * this.scale]),
+		y: d3.scaleLinear([0, GRID_SIZE_INCHES], [0 + GRID_SIZE_PIXELS * this.scale, 0]),
 	};
 
 	// Derived properties
 	// Scale with account for canvas offset
 	mouseScale = $derived({
-		x: d3.scaleLinear([0, 0.5], [this.offsetX, this.offsetX + this.consts.GRID_SIZE * this.scale]),
-		y: d3.scaleLinear([0, 0.5], [this.offsetY + this.consts.GRID_SIZE * this.scale, this.offsetY]),
+		x: d3.scaleLinear([0, GRID_SIZE_INCHES], [this.offsetX, this.offsetX + GRID_SIZE_PIXELS * this.scale]),
+		y: d3.scaleLinear([0, GRID_SIZE_INCHES], [this.offsetY + GRID_SIZE_PIXELS * this.scale, this.offsetY]),
 	});
 
 	svgSize = $derived(this.svg.node()!.getBoundingClientRect());
@@ -123,16 +121,16 @@ export class Canvas {
 	move(direction: "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown") {
 		switch (direction) {
 			case "ArrowLeft":
-				this.offsetX += 0.5 * this.scale * this.consts.GRID_SIZE;
+				this.offsetX += 0.5 * this.scale * GRID_SIZE_PIXELS;
 				break;
 			case "ArrowRight":
-				this.offsetX -= 0.5 * this.scale * this.consts.GRID_SIZE;
+				this.offsetX -= 0.5 * this.scale * GRID_SIZE_PIXELS;
 				break;
 			case "ArrowUp":
-				this.offsetY += 0.5 * this.scale * this.consts.GRID_SIZE;
+				this.offsetY += 0.5 * this.scale * GRID_SIZE_PIXELS;
 				break;
 			case "ArrowDown":
-				this.offsetY -= 0.5 * this.scale * this.consts.GRID_SIZE;
+				this.offsetY -= 0.5 * this.scale * GRID_SIZE_PIXELS;
 				break;
 		}
 	}

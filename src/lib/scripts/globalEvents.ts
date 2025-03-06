@@ -5,6 +5,9 @@ import { vec2 } from "gl-matrix";
 import { anchorPoints } from "$lib/canvas/point/rune.svelte";
 import { myCanvas } from "$lib/runes/canvas.svelte";
 
+// Constants
+import { GRID_SIZE_PIXELS } from "$lib/constants.js";
+
 export const keyPressEvent = (event: KeyboardEvent) => {
 		// Canvas zoom
 		if (event.ctrlKey && ["+", "-"].includes(event.key)) {
@@ -58,7 +61,7 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 		if (myCanvas.uiOptions.magnet) {
 			// Magnet to points
 			const closestPointID = anchorPoints.delaunay.find(myCanvas.mouse.x, myCanvas.mouse.y),
-				distanceToPixelsScale = 2 * myCanvas.consts.GRID_SIZE * myCanvas.scale;
+				distanceToPixelsScale = 2 * GRID_SIZE_PIXELS * myCanvas.scale;
 
 			if (closestPointID > -1) {
 				const closestPointXY = vec2.fromValues(

@@ -11,6 +11,7 @@ const config = {
 		// alias for shadcn
 		alias: {
 			"@/*": "./path/to/lib/*",
+			"$styles/*": "./src/styles/*",
 		},
 		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
 		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.

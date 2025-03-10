@@ -44,8 +44,11 @@
 	});
 
 	const onKeyDown = (event: KeyboardEvent) => {
+		console.log(event.key);
 		if (event.key === "Escape") {
 			closeMenu();
+		} else if (myCanvas.activeElementMode !== "new" && event.key === "Delete") {
+			deleteShape();
 		} else if (event.key === "Enter") {
 			createShapeCallback();
 		}

@@ -40,7 +40,7 @@
 
 	$effect(() => {
 		if (myCanvas.activeElement === measure && myCanvas.mouse.down) {
-			if (myCanvas.uiOptions.editMode === "move") {
+			if (myCanvas.activeElementMode === "move") {
 				measure.points[editedPoint].xMove(myCanvas.mouse.x);
 				measure.points[editedPoint].yMove(myCanvas.mouse.y);
 			} else {
@@ -56,12 +56,10 @@
 
 			// Togle mode if measure already selected
 			if (myCanvas.activeElement === measure) {
-				myCanvas.uiOptions.editMode = myCanvas.uiOptions.editMode === "move" ? "resize" : "move";
+				myCanvas.activeElementMode = myCanvas.activeElementMode === "move" ? "resize" : "move";
 			} else if (myCanvas.activeElement === undefined) {
 				myCanvas.activeElement = measure;
 			}
-
-			myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
 		},
 		startMove = (pointName: keyof typeof measure.points) => {
 			editedPoint = pointName;
@@ -73,24 +71,12 @@
 	class="measure"
 	class:hoverable={myCanvas.activeElement === undefined && !myCanvas.mouse.down}
 	class:selected={myCanvas.activeElement === measure}
-	class:move={myCanvas.activeElement === measure && myCanvas.uiOptions.editMode === "move"}
-	class:resize={myCanvas.activeElement === measure && myCanvas.uiOptions.editMode === "resize"}
+	class:move={myCanvas.activeElement === measure && myCanvas.activeElementMode === "move"}
+	class:resize={myCanvas.activeElement === measure && myCanvas.activeElementMode === "resize"}
 	style="font-size-adjust:from-font">
 	{#if !isNaN(measure.points.point3.x)}
-		<line
-			x1={p1XY.x}
-			y1={p1XY.y}
-			x2={p1OffsetXY.x}
-			y2={p1OffsetXY.y}
-			vector-effect="non-scaling-stroke">
-		</line>
-		<line
-			x1={p2XY.x}
-			y1={p2XY.y}
-			x2={p2OffsetXY.x}
-			y2={p2OffsetXY.y}
-			vector-effect="non-scaling-stroke">
-		</line>
+		<line x1={p1XY.x} y1={p1XY.y} x2={p1OffsetXY.x} y2={p1OffsetXY.y}></line>
+		<line x1={p2XY.x} y1={p2XY.y} x2={p2OffsetXY.x} y2={p2OffsetXY.y}></line>
 
 		<line
 			x1={p1OffsetXY.x}
@@ -98,8 +84,7 @@
 			x2={p2OffsetXY.x}
 			y2={p2OffsetXY.y}
 			marker-start="url(#triangle)"
-			marker-end="url(#triangle)"
-			vector-effect="non-scaling-stroke">
+			marker-end="url(#triangle)">
 		</line>
 		<text
 			class="text-sm"

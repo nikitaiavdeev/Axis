@@ -30,6 +30,14 @@
 	import { Polygon } from "../../canvas/shapes/Polygon/rune.svelte.js";
 	import { Measure } from "$lib/canvas/measure/rune.svelte.js";
 
+	$effect(() => {
+		if (!myCanvas.activeElementMode) return;
+		if (["move", "resize"].includes(myCanvas.activeElementMode)) {
+			myCanvas.uiOptions.editMode =
+				myCanvas.activeElementMode as typeof myCanvas.uiOptions.editMode;
+		}
+	});
+
 	const createNewShape = (shepe: "rectangle" | "circle" | "polygon" | "measure") => {
 		switch (shepe) {
 			case "rectangle":
@@ -118,6 +126,7 @@
 				} else {
 					myCanvas.uiOptions.editMode = newValue;
 				}
+				myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
 			}
 		}>
 		<Tooltip.Root>

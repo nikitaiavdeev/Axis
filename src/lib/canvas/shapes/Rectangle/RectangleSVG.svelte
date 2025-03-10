@@ -47,19 +47,15 @@
 	});
 
 	const editShape = () => {
-		const { activeElement, activeElementMode, uiOptions } = myCanvas;
-
 		// Ignore click if new shape is creating
-		if (activeElementMode === "new") return;
+		if (myCanvas.activeElementMode === "new") return;
 
 		// Togle mode if shape already selected
-		if (activeElement === shape) {
-			uiOptions.editMode = uiOptions.editMode === "move" ? "resize" : "move";
-		} else if (activeElement === undefined) {
+		if (myCanvas.activeElement === shape) {
+			myCanvas.activeElementMode = myCanvas.activeElementMode === "move" ? "resize" : "move";
+		} else if (myCanvas.activeElement === undefined) {
 			myCanvas.activeElement = shape;
 		}
-
-		myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
 	};
 	const startMove = (pointName: Rectangle["referencePoint"]) => {
 		editedPoint = pointName;
@@ -90,8 +86,10 @@
 		{#each Object.entries(shape.points) as [pointName, point] (pointName)}
 			<rect
 				class="point {pointName}"
+				class:clicked={myCanvas.mouse.down && pointName === editedPoint}
 				x={point.d3Coord.x - MARKER_SIZE / myCanvas.scale}
 				y={point.d3Coord.y - MARKER_SIZE / myCanvas.scale}
+				rx={(0.2 * MARKER_SIZE) / myCanvas.scale}
 				width={(2 * MARKER_SIZE) / myCanvas.scale}
 				height={(2 * MARKER_SIZE) / myCanvas.scale}
 				role="none"
@@ -102,6 +100,7 @@
 		{#each Object.entries(shape.points) as [pointName, point] (pointName)}
 			<circle
 				class="point"
+				class:clicked={myCanvas.mouse.down && pointName === editedPoint}
 				cx={point.d3Coord.x}
 				cy={point.d3Coord.y}
 				r={MARKER_SIZE / myCanvas.scale}

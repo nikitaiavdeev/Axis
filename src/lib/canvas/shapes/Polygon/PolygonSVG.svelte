@@ -29,19 +29,15 @@
 		return pathStr;
 	});
 
-	const editShape = () => {
-		const { activeElement, activeElementMode, uiOptions } = myCanvas;
-
-		// Ignore click if new shape is creating
-		if (activeElementMode === "new") return;
+	const editShape = () => {// Ignore click if new shape is creating
+		if (myCanvas.activeElementMode === "new") return;
 
 		// Togle mode if shape already selected
-		if (activeElement === shape) {
-			uiOptions.editMode = uiOptions.editMode === "move" ? "resize" : "move";
-		} else if (activeElement === undefined) {
+		if (myCanvas.activeElement === shape) {
+			myCanvas.activeElementMode = myCanvas.activeElementMode === "move" ? "resize" : "move";
+		} else if (myCanvas.activeElement === undefined) {
 			myCanvas.activeElement = shape;
 		}
-		myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
 	};
 	const startMove = (pointIdx: number) => {
 		editedPointID = pointIdx;
@@ -53,8 +49,8 @@
 	class:hole={shape.isHole}
 	class:hoverable={myCanvas.activeElement === undefined && !myCanvas.mouse.down}
 	class:selected={myCanvas.activeElement === shape}
-	class:move={myCanvas.activeElement === shape && myCanvas.uiOptions.editMode === "move"}
-	class:resize={myCanvas.activeElement === shape && myCanvas.uiOptions.editMode === "resize"}>
+	class:move={myCanvas.activeElement === shape && myCanvas.activeElementMode === "move"}
+	class:resize={myCanvas.activeElement === shape && myCanvas.activeElementMode === "resize"}>
 	<path class="shape" d={pathString} role="none" onclick={editShape} fill="url(#stress-fringe)" />
 
 	{#if myCanvas.activeElement === shape && myCanvas.activeElementMode === "resize"}

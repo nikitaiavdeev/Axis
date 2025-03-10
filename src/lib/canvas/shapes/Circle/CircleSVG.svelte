@@ -44,19 +44,15 @@
 	});
 
 	const editShape = () => {
-		const { activeElement, activeElementMode, uiOptions } = myCanvas;
-
 		// Ignore click if new shape is creating
-		if (activeElementMode === "new") return;
+		if (myCanvas.activeElementMode === "new") return;
 
 		// Togle mode if shape already selected
-		if (activeElement === shape) {
-			uiOptions.editMode = uiOptions.editMode === "move" ? "resize" : "move";
-		} else if (activeElement === undefined) {
+		if (myCanvas.activeElement === shape) {
+			myCanvas.activeElementMode = myCanvas.activeElementMode === "move" ? "resize" : "move";
+		} else if (myCanvas.activeElement === undefined) {
 			myCanvas.activeElement = shape;
 		}
-
-		myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
 	};
 	const startMove = (pointName: Circle["referencePoint"]) => {
 		editedPoint = pointName;
@@ -68,8 +64,8 @@
 	class:hole={shape.isHole}
 	class:hoverable={myCanvas.activeElement === undefined && !myCanvas.mouse.down}
 	class:selected={myCanvas.activeElement === shape}
-	class:move={myCanvas.activeElement === shape && myCanvas.uiOptions.editMode === "move"}
-	class:resize={myCanvas.activeElement === shape && myCanvas.uiOptions.editMode === "resize"}>
+	class:move={myCanvas.activeElement === shape && myCanvas.activeElementMode === "move"}
+	class:resize={myCanvas.activeElement === shape && myCanvas.activeElementMode === "resize"}>
 	<circle
 		class="shape"
 		cx={shape.points.center.d3Coord.x}

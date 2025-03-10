@@ -6,6 +6,7 @@
 		@apply stroke-[3px];
 		@apply stroke-transparent;
 		@apply fill-shape;
+		vector-effect: non-scaling-stroke;
 	}
 
 	.hole .point {
@@ -14,7 +15,13 @@
 
 	.selected .point,
 	.selected.point {
+		/* All points of selected shape and selected point in form */
 		@apply fill-shape-selected;
+	}
+
+	.clicked.point {
+		/* Clicked point during manipulation */
+		@apply fill-shape
 	}
 
 	.hoverable .point,
@@ -66,7 +73,11 @@
 	.measure {
 		@apply fill-none;
 		@apply stroke-primary;
-		vector-effect: non-scaling-stroke;
+
+		line{
+			vector-effect: non-scaling-stroke;
+		}
+		
 	}
 
 	.hole {

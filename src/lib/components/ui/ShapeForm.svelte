@@ -66,7 +66,7 @@
 </script>
 
 <Card.Root
-	class="absolute left-4 top-1/3 inline-flex w-[280px] -translate-y-1/2 flex-col gap-y-4 rounded-md p-4">
+	class="absolute top-1/3 left-4 inline-flex w-[280px] -translate-y-1/2 flex-col gap-y-4 rounded-md p-4">
 	{@render children?.()}
 </Card.Root>
 

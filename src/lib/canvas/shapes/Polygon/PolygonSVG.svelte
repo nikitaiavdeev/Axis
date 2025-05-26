@@ -29,7 +29,8 @@
 		return pathStr;
 	});
 
-	const editShape = () => {// Ignore click if new shape is creating
+	const editShape = () => {
+		// Ignore click if new shape is creating
 		if (myCanvas.activeElementMode === "new") return;
 
 		// Togle mode if shape already selected

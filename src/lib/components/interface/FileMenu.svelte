@@ -72,7 +72,7 @@
 	<DropdownMenu.Trigger
 		class={cn(
 			buttonVariants({ variant: "outline", size: "icon" }),
-			"absolute left-4 top-4 shadow-md"
+			"absolute top-4 left-4 shadow-md"
 		)}>
 		<Menu />
 	</DropdownMenu.Trigger>

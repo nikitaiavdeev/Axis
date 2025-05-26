@@ -52,8 +52,14 @@ export class Canvas {
 	// Derived properties
 	// Scale with account for canvas offset
 	mouseScale = $derived({
-		x: d3.scaleLinear([0, GRID_SIZE_INCHES], [this.offsetX, this.offsetX + GRID_SIZE_PIXELS * this.scale]),
-		y: d3.scaleLinear([0, GRID_SIZE_INCHES], [this.offsetY + GRID_SIZE_PIXELS * this.scale, this.offsetY]),
+		x: d3.scaleLinear(
+			[0, GRID_SIZE_INCHES],
+			[this.offsetX, this.offsetX + GRID_SIZE_PIXELS * this.scale]
+		),
+		y: d3.scaleLinear(
+			[0, GRID_SIZE_INCHES],
+			[this.offsetY + GRID_SIZE_PIXELS * this.scale, this.offsetY]
+		),
 	});
 
 	svgSize = $derived(this.svg.node()!.getBoundingClientRect());

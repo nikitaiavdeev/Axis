@@ -97,7 +97,7 @@
 
 		<!-- C.G. -->
 		{#if myCanvas.uiOptions.showResults}
-			<g class="fill-none stroke-primary">
+			<g class="stroke-primary fill-none">
 				<line
 					x1={myCanvas.d3Scale.x(myCanvas.properties.cX)}
 					y1={myCanvas.d3Scale.y(myCanvas.properties.cY) - 7 / myCanvas.scale}

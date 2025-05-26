@@ -54,7 +54,7 @@
 		</Tooltip.Root>
 	</Card.Root>
 
-	<Card.Root class="ms-4 inline-flex select-none items-center justify-center rounded-md">
+	<Card.Root class="ms-4 inline-flex items-center justify-center rounded-md select-none">
 		<div class="inline-flex h-9 w-[130px] items-center py-2 ps-4">
 			x: {myCanvas.mouse.x.toFixed(2)} in
 		</div>

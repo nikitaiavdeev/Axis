@@ -57,7 +57,7 @@
 	};
 </script>
 
-<Card.Root class="absolute left-1/2 top-4 inline-flex -translate-x-1/2 gap-x-1 rounded-md p-1">
+<Card.Root class="absolute top-4 left-1/2 inline-flex -translate-x-1/2 gap-x-1 rounded-md p-1">
 	<Tooltip.Root>
 		<Tooltip.Trigger>
 			<DropdownMenu.Root>

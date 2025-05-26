@@ -21,7 +21,7 @@
 
 	.clicked.point {
 		/* Clicked point during manipulation */
-		@apply fill-shape
+		@apply fill-shape;
 	}
 
 	.hoverable .point,
@@ -74,10 +74,9 @@
 		@apply fill-none;
 		@apply stroke-primary;
 
-		line{
+		line {
 			vector-effect: non-scaling-stroke;
 		}
-		
 	}
 
 	.hole {

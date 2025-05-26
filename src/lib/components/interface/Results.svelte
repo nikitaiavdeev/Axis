@@ -8,7 +8,7 @@
 </script>
 
 <Card.Root
-	class="absolute right-4 top-1/3 inline-flex -translate-y-1/2 flex-col gap-y-4 rounded-md p-4">
+	class="absolute top-1/3 right-4 inline-flex -translate-y-1/2 flex-col gap-y-4 rounded-md p-4">
 	<Table.Root>
 		<Table.Header>
 			<Table.Row>

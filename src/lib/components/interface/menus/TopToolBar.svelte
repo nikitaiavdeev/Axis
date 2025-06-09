@@ -6,7 +6,7 @@
 	import * as Tooltip from "$lib/components/ui/tooltip/index.js";
 	import * as Card from "$lib/components/ui/card/index.js";
 	import { Separator } from "$lib/components/ui/separator/index.js";
-	import { buttonVariants } from "../ui/button/index.js";
+	import { buttonVariants } from "$lib/components/ui/button/index.js";
 
 	// Icons
 	import {
@@ -21,13 +21,13 @@
 		Waypoints,
 		Expand,
 		Ruler,
-	} from "lucide-svelte";
+	} from "@lucide/svelte";
 
 	// Runes
 	import { myCanvas } from "$lib/runes/canvas.svelte.js";
-	import { Rectangle } from "../../canvas/shapes/Rectangle/rune.svelte.js";
-	import { Circle } from "../../canvas/shapes/Circle/rune.svelte.js";
-	import { Polygon } from "../../canvas/shapes/Polygon/rune.svelte.js";
+	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte.js";
+	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte.js";
+	import { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte.js";
 	import { Measure } from "$lib/canvas/measure/rune.svelte.js";
 
 	$effect(() => {
@@ -57,7 +57,7 @@
 	};
 </script>
 
-<Card.Root class="absolute top-4 left-1/2 inline-flex -translate-x-1/2 gap-x-1 rounded-md p-1">
+<Card.Root class="flex flex-row items-center justify-between gap-2 rounded-md p-1">
 	<Tooltip.Root>
 		<Tooltip.Trigger>
 			<DropdownMenu.Root>
@@ -114,6 +114,7 @@
 
 	<ToggleGroup.Root
 		type="single"
+		class="gap-2"
 		bind:value={
 			() => myCanvas.uiOptions.editMode,
 			(newValue: typeof myCanvas.uiOptions.editMode | "") => {
@@ -131,7 +132,9 @@
 		}>
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<ToggleGroup.Item value="move"><Move /></ToggleGroup.Item>
+				<ToggleGroup.Item class={buttonVariants({ variant: "ghost", size: "icon" })} value="move">
+					<Move />
+				</ToggleGroup.Item>
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Move mode</p>
@@ -140,7 +143,9 @@
 
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<ToggleGroup.Item value="resize"><MoveDiagonal /></ToggleGroup.Item>
+				<ToggleGroup.Item class={buttonVariants({ variant: "ghost", size: "icon" })} value="resize">
+					<MoveDiagonal />
+				</ToggleGroup.Item>
 			</Tooltip.Trigger>
 			<Tooltip.Content>
 				<p>Resize mode</p>

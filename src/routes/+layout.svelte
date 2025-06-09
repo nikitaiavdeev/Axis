@@ -1,11 +1,11 @@
 <script lang="ts">
 	// UI
 	import { Toaster } from "svelte-sonner";
-	import FileMenu from "$lib/components/interface/FileMenu.svelte";
-	import LightDarkMode from "$lib/components/interface/LightDarkMode.svelte";
-	import MouseInfo from "$lib/components/interface/MouseInfo.svelte";
-	import TopToolBar from "$lib/components/interface/TopToolBar.svelte";
 	import * as Tooltip from "$lib/components/ui/tooltip/index";
+
+	// Interface components
+	import Menus from "$lib/components/interface/Menus.svelte";
+	import MainCanvas from "$lib/canvas/MainCanvas.svelte";
 
 	// Light/Dark theme
 	import { ModeWatcher } from "mode-watcher";
@@ -17,22 +17,11 @@
 	import { keyPressEvent, onWheel, onMouseMove, onMouseUp } from "$lib/scripts/globalEvents";
 
 	import { onMount } from "svelte";
-	import { myCanvas } from "$lib/runes/canvas.svelte";
-
-	// Shapes
-	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
-	import RectangleForm from "$lib/canvas/shapes/Rectangle/RectangleForm.svelte";
-	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
-	import CircleForm from "$lib/canvas/shapes/Circle/CircleForm.svelte";
-	import { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
-	import PolygonForm from "$lib/canvas/shapes/Polygon/PolygonForm.svelte";
-	import { Measure } from "$lib/canvas/measure/rune.svelte";
-	import MeasureForm from "$lib/canvas/measure/MeasureForm.svelte";
-	import Results from "$lib/components/interface/Results.svelte";
 
 	// Styles'
 	import "$styles/app.css";
 	import "$styles/canvas.css";
+	import "$styles/shadcn.css";
 
 	let { children } = $props();
 
@@ -52,31 +41,16 @@
 <!-- Light/Dark theme -->
 <ModeWatcher></ModeWatcher>
 
-{#await myIndexedDB.init() then}
+<main class="@container h-screen w-screen overflow-auto">
 	<Tooltip.Provider>
-		<!-- Interface -->
-		<FileMenu></FileMenu>
-		<LightDarkMode></LightDarkMode>
-		<TopToolBar></TopToolBar>
-		<MouseInfo></MouseInfo>
+		<!-- Menus -->
+		<Menus />
 
-		{#if myCanvas.uiOptions.showResults}
-			<Results></Results>
-		{/if}
-
-		{#if myCanvas.activeElement instanceof Rectangle}
-			<RectangleForm shape={myCanvas.activeElement} />
-		{:else if myCanvas.activeElement instanceof Circle}
-			<CircleForm shape={myCanvas.activeElement} />
-		{:else if myCanvas.activeElement instanceof Polygon}
-			<PolygonForm shape={myCanvas.activeElement} />
-		{:else if myCanvas.activeElement instanceof Measure}
-			<MeasureForm measure={myCanvas.activeElement} />
-		{/if}
-
-		{@render children()}
+		{#await myIndexedDB.init() then}
+			<MainCanvas />
+		{/await}
 	</Tooltip.Provider>
-{/await}
+</main>
 
 <Toaster />
 

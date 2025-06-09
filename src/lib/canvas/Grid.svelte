@@ -37,14 +37,6 @@
 	{/each}
 </pattern>
 
-<g
-	id="grid"
-	onclick={() => {
-		// Clean selected element
-		if (myCanvas.activeElementMode !== "new") {
-			myCanvas.activeElement = undefined;
-		}
-	}}
-	role="none">
+<g id="grid">
 	<rect class="h-screen w-screen" fill="url(#grid-pattern)"></rect>
 </g>

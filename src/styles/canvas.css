@@ -1,11 +1,93 @@
-@tailwind base;
+@reference "tailwindcss";
+@reference "./shadcn.css";
+
+:root {
+	--shape: oklch(65% 0.15 250);
+	--shape-border: oklch(50% 0.14 250);
+	--shape-selected: oklch(80% 0.1 250);
+	--shape-selected-border: oklch(60% 0.16 250);
+
+	--shape-hole: oklch(60% 0.1 320);
+	--shape-hole-border: oklch(45% 0.12 320);
+	--shape-hole-selected: oklch(75% 0.08 320);
+	--shape-hole-selected-border: oklch(55% 0.14 320);
+
+	--marker: oklch(70% 0.18 30);
+	--marker-hover: oklch(65% 0.2 20);
+	--marker-selected: oklch(80% 0.12 30);
+
+	--grid: oklch(0 0.6 0);
+
+	--fringe-0: oklch(0.95 0.045 246.5);
+	--fringe-1: oklch(0.87 0.04 246.5);
+	--fringe-2: oklch(0.78 0.037 226.5);
+	--fringe-3: oklch(0.65 0.032 206.5);
+	--fringe-4: oklch(0.65 0.07 99.5);
+	--fringe-5: oklch(0.73 0.13 43.5);
+	--fringe-6: oklch(0.57 0.09 29.5);
+	--fringe-7: oklch(0.41 0.07 29.5);
+}
+
+.dark {
+	--shape: oklch(70% 0.13 250);
+	--shape-border: oklch(75% 0.09 250);
+	--shape-selected: oklch(60% 0.15 250);
+	--shape-selected-border: oklch(70% 0.12 250);
+
+	--shape-hole: oklch(65% 0.09 320);
+	--shape-hole-border: oklch(75% 0.09 250);
+	--shape-hole-selected: oklch(70% 0.07 320);
+	--shape-hole-selected-border: oklch(60% 0.1 320);
+
+	--marker: oklch(75% 0.14 30);
+	--marker-hover: oklch(80% 0.12 30);
+	--marker-selected: oklch(80% 0.12 30);
+
+	--grid: oklch(0 0.6 0);
+
+	--fringe-0: oklch(0.95 0.045 246.5);
+	--fringe-1: oklch(0.87 0.04 246.5);
+	--fringe-2: oklch(0.78 0.037 226.5);
+	--fringe-3: oklch(0.65 0.032 206.5);
+	--fringe-4: oklch(0.65 0.07 99.5);
+	--fringe-5: oklch(0.73 0.13 43.5);
+	--fringe-6: oklch(0.57 0.09 29.5);
+	--fringe-7: oklch(0.41 0.07 29.5);
+}
+
+@theme inline {
+	--color-shape: var(--shape);
+	--color-shape-border: var(--shape-border);
+	--color-shape-selected: var(--shape-selected);
+	--color-shape-selected-border: var(--shape-selected-border);
+
+	--color-shape-hole: var(--shape-hole);
+	--color-shape-hole-border: var(--shape-hole-border);
+	--color-shape-hole-selected: var(--shape-hole-selected);
+	--color-shape-hole-selected-border: var(--shape-hole-selected-border);
+
+	--color-marker: var(--marker);
+	--color-marker-hover: var(--marker-hover);
+	--color-marker-selected: var(--marker-selected);
+
+	--color-grid: var(--grid);
+
+	--color-fringe-0: var(--fringe-0);
+	--color-fringe-1: var(--fringe-1);
+	--color-fringe-2: var(--fringe-2);
+	--color-fringe-3: var(--fringe-3);
+	--color-fringe-4: var(--fringe-4);
+	--color-fringe-5: var(--fringe-5);
+	--color-fringe-6: var(--fringe-6);
+	--color-fringe-7: var(--fringe-7);
+}
 
 /* Point styling */
 @layer base {
 	.point {
 		@apply stroke-[3px];
 		@apply stroke-transparent;
-		@apply fill-shape;
+		@apply fill-marker;
 		vector-effect: non-scaling-stroke;
 	}
 
@@ -16,18 +98,18 @@
 	.selected .point,
 	.selected.point {
 		/* All points of selected shape and selected point in form */
-		@apply fill-shape-selected;
+		@apply fill-marker;
 	}
 
 	.clicked.point {
 		/* Clicked point during manipulation */
-		@apply fill-shape;
+		@apply fill-marker;
 	}
 
 	.hoverable .point,
 	.hoverable.point {
 		@apply hover:cursor-pointer;
-		@apply hover:fill-shape-selected;
+		@apply hover:fill-marker-hover;
 	}
 
 	.move .point {
@@ -65,8 +147,8 @@
 	}
 
 	.shape {
-		@apply fill-shape/40;
-		@apply stroke-shape;
+		@apply fill-shape;
+		@apply stroke-shape-border;
 		vector-effect: non-scaling-stroke;
 	}
 
@@ -81,30 +163,30 @@
 
 	.hole {
 		.shape {
-			@apply fill-shape-hole/40;
-			@apply stroke-shape-hole;
+			@apply fill-shape-hole;
+			@apply stroke-shape-hole-border;
 		}
 	}
 
 	.selected {
 		.shape {
-			@apply fill-shape-selected/40;
-			@apply stroke-shape-selected;
+			@apply fill-shape-selected;
+			@apply stroke-shape-selected-border;
 		}
 	}
 
 	.hoverable {
 		.shape {
 			@apply hover:cursor-pointer;
-			@apply hover:stroke-shape-selected;
-			@apply hover:fill-shape-selected/30;
+			@apply hover:stroke-shape-selected-border;
+			@apply hover:fill-shape-selected;
 		}
 	}
 
 	g.measure.hoverable:has(text:hover),
 	g.measure.selected {
 		@apply cursor-pointer;
-		@apply stroke-shape-selected;
-		@apply fill-shape-selected/30;
+		@apply stroke-shape-selected-border;
+		@apply fill-shape-selected;
 	}
 }

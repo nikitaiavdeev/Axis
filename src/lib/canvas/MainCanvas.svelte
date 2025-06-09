@@ -17,7 +17,20 @@
 	import { anchorPoints } from "./point/rune.svelte";
 </script>
 
-<svg id="main-canvas" class="h-screen w-screen" role="figure">
+<!-- svelte-ignore a11y_click_events_have_key_events -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<svg
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	id="main-canvas"
+	class="fixed top-0 left-0 z-0 h-screen w-screen"
+	role="figure"
+	onclick={() => {
+		// Clean selected element
+		if (myCanvas.activeElementMode !== "new") {
+			myCanvas.activeElement = undefined;
+		}
+	}}>
 	<defs>
 		<marker
 			id="triangle"
@@ -55,6 +68,7 @@
 	{#if myCanvas.uiOptions.showGrid}
 		<Grid />
 	{/if}
+
 	<g
 		id="canvas-content"
 		transform="translate({myCanvas.offsetX} {myCanvas.offsetY}) scale({myCanvas.scale})">

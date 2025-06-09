@@ -1,6 +1,6 @@
 <script lang="ts">
 	// Icons
-	import { Trash2, Ruler } from "lucide-svelte";
+	import { Trash2, Ruler } from "@lucide/svelte";
 
 	// UI
 	import ShapeForm from "$lib/components/ui/ShapeForm.svelte";

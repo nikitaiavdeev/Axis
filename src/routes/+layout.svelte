@@ -48,6 +48,9 @@
 
 		{#await myIndexedDB.init() then}
 			<MainCanvas />
+
+			<!-- Page is empty -->
+			{@render children?.()}
 		{/await}
 	</Tooltip.Provider>
 </main>

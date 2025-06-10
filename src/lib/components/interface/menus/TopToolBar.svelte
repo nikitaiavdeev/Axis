@@ -58,33 +58,39 @@
 </script>
 
 <Card.Root class="flex flex-row items-center justify-between gap-2 rounded-md p-1">
-	<Tooltip.Root>
-		<Tooltip.Trigger>
-			<DropdownMenu.Root>
-				<DropdownMenu.Trigger class={buttonVariants({ variant: "ghost", size: "icon" })}>
-					<DiamondPlus />
-				</DropdownMenu.Trigger>
+	<DropdownMenu.Root>
+		<DropdownMenu.Trigger>
+			<!-- Use snipped to avoid <button> inside <button -->
+			{#snippet child({ props })}
+				<div {...props}>
+					<Tooltip.Root>
+						<Tooltip.Trigger class={buttonVariants({ variant: "ghost", size: "icon" })}>
+							<DiamondPlus />
+						</Tooltip.Trigger>
 
-				<DropdownMenu.Content>
-					<DropdownMenu.Item onclick={() => createNewShape("rectangle")}>
-						<Square class="mr-2 size-4" />
-						<span>Rectangle</span>
-					</DropdownMenu.Item>
-					<DropdownMenu.Item onclick={() => createNewShape("circle")}>
-						<CircleIcon class="mr-2 size-4" />
-						<span>Circle</span>
-					</DropdownMenu.Item>
-					<DropdownMenu.Item onclick={() => createNewShape("polygon")}>
-						<Waypoints class="mr-2 size-4" />
-						<span>Polygon</span>
-					</DropdownMenu.Item>
-				</DropdownMenu.Content>
-			</DropdownMenu.Root>
-		</Tooltip.Trigger>
-		<Tooltip.Content>
-			<p>Create new shape</p>
-		</Tooltip.Content>
-	</Tooltip.Root>
+						<Tooltip.Content>
+							<p>Create new shape</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
+				</div>
+			{/snippet}
+		</DropdownMenu.Trigger>
+
+		<DropdownMenu.Content>
+			<DropdownMenu.Item onclick={() => createNewShape("rectangle")}>
+				<Square class="mr-2 size-4" />
+				<span>Rectangle</span>
+			</DropdownMenu.Item>
+			<DropdownMenu.Item onclick={() => createNewShape("circle")}>
+				<CircleIcon class="mr-2 size-4" />
+				<span>Circle</span>
+			</DropdownMenu.Item>
+			<DropdownMenu.Item onclick={() => createNewShape("polygon")}>
+				<Waypoints class="mr-2 size-4" />
+				<span>Polygon</span>
+			</DropdownMenu.Item>
+		</DropdownMenu.Content>
+	</DropdownMenu.Root>
 
 	<Tooltip.Root>
 		<Tooltip.Trigger
@@ -113,8 +119,8 @@
 	<Separator orientation="vertical" />
 
 	<ToggleGroup.Root
+		variant="outline"
 		type="single"
-		class="gap-2"
 		bind:value={
 			() => myCanvas.uiOptions.editMode,
 			(newValue: typeof myCanvas.uiOptions.editMode | "") => {
@@ -130,27 +136,37 @@
 				myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
 			}
 		}>
-		<Tooltip.Root>
-			<Tooltip.Trigger>
-				<ToggleGroup.Item class={buttonVariants({ variant: "ghost", size: "icon" })} value="move">
-					<Move />
-				</ToggleGroup.Item>
-			</Tooltip.Trigger>
-			<Tooltip.Content>
-				<p>Move mode</p>
-			</Tooltip.Content>
-		</Tooltip.Root>
+		<ToggleGroup.Item class={null} value="move">
+			<!-- Use snipped to avoid <button> inside <button -->
+			{#snippet child({ props })}
+				<div {...props}>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<Move />
+						</Tooltip.Trigger>
+						<Tooltip.Content>
+							<p>Move mode</p>
+						</Tooltip.Content>
+					</Tooltip.Root>
+				</div>
+			{/snippet}
+		</ToggleGroup.Item>
 
 		<Tooltip.Root>
 			<Tooltip.Trigger>
-				<ToggleGroup.Item class={buttonVariants({ variant: "ghost", size: "icon" })} value="resize">
-					<MoveDiagonal />
-				</ToggleGroup.Item>
-			</Tooltip.Trigger>
-			<Tooltip.Content>
-				<p>Resize mode</p>
-			</Tooltip.Content>
-		</Tooltip.Root>
+				<!-- Use snipped to avoid <button> inside <button -->
+				{#snippet child({ props })}
+				<div {...props}>
+
+		<ToggleGroup.Item value="resize">
+			
+			
+					
+							<MoveDiagonal />
+						
+				</div>
+			{/snippet}
+		</ToggleGroup.Item>
 	</ToggleGroup.Root>
 
 	<Separator orientation="vertical" />

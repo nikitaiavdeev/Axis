@@ -12,7 +12,8 @@
 	import { cn } from "$lib/utils.js";
 </script>
 
-<Card.Root class="flex flex-row items-center justify-between gap-2 rounded-sm p-1">
+<Card.Root
+	class="pointer-events-auto flex flex-row items-center justify-between gap-2 rounded-sm p-1">
 	<Tooltip.Root>
 		<Tooltip.Trigger
 			class={cn(buttonVariants({ variant: "ghost", size: "icon" }))}

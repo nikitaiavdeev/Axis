@@ -69,7 +69,7 @@
 		};
 </script>
 
-<Card.Root class="self-start rounded-md p-0">
+<Card.Root class="pointer-events-auto self-start rounded-md p-0">
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger class={cn(buttonVariants({ variant: "ghost", size: "icon" }))}>
 			<Menu />

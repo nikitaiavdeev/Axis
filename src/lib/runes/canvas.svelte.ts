@@ -15,6 +15,13 @@ export class Canvas {
 	#gridPattern: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 	#content: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
 
+	// Svg node
+	svgNodeBinder = $state(undefined as undefined | SVGGraphicsElement);
+	size = $state({
+		width: 0,
+		height: 0,
+	});
+
 	// Canvas content position and scale
 	offsetX = $state(0);
 	offsetY = $state(0);
@@ -62,7 +69,7 @@ export class Canvas {
 		),
 	});
 
-	svgSize = $derived(this.svg.node()!.getBoundingClientRect());
+	scaledGridSize = $derived(GRID_SIZE_PIXELS * this.scale);
 
 	properties = $derived.by(() => {
 		const properties = {
@@ -114,10 +121,10 @@ export class Canvas {
 		this.zoomDelta(1 / this.scale);
 	}
 
-	zoomDelta(zoomScale: number, posX = this.svgSize.width * 0.5, posY = this.svgSize.height * 0.5) {
+	zoomDelta(zoomScale: number, posX = this.size.width * 0.5, posY = this.size.height * 0.5) {
 		if (this.scale * zoomScale < 0.1) zoomScale = 0.1 / this.scale;
 
-		if (this.scale * zoomScale > 3) zoomScale = 3 / this.scale;
+		if (this.scale * zoomScale > 10) zoomScale = 10 / this.scale;
 
 		this.offsetX -= (posX - this.offsetX) * (zoomScale - 1);
 		this.offsetY -= (posY - this.offsetY) * (zoomScale - 1);
@@ -162,7 +169,7 @@ export class Canvas {
 				width: minMaxValues.maxX - minMaxValues.minX,
 				height: minMaxValues.maxY - minMaxValues.minY,
 			},
-			svgSize = this.svgSize;
+			svgSize = this.size;
 
 		// Move to center
 		this.offsetX = 0.5 * svgSize.width - center.x * this.scale;
@@ -171,11 +178,15 @@ export class Canvas {
 		// Adjust zoom
 		const svgElement = this.svg.node();
 		if (svgElement) {
-			const svgSize = this.svgSize,
+			const svgSize = this.size,
 				fitZoom = Math.min(svgSize.width / size.width, svgSize.height / size.height) * 0.9;
 
 			this.zoomDelta(fitZoom / this.scale);
 		}
+	}
+
+	get svgNode(): SVGGraphicsElement {
+		return this.svgNodeBinder!;
 	}
 
 	get svg(): d3.Selection<Element, unknown, HTMLElement, HTMLElement> {

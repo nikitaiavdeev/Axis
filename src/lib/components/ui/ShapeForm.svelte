@@ -65,7 +65,7 @@
 		};
 </script>
 
-<Card.Root class="inline-flex w-[280px] flex-col gap-y-4 rounded-md p-4">
+<Card.Root class="pointer-events-auto inline-flex w-[280px] flex-col gap-y-4 rounded-md p-4">
 	{@render children?.()}
 </Card.Root>
 

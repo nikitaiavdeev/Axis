@@ -57,7 +57,8 @@
 	};
 </script>
 
-<Card.Root class="flex flex-row items-center justify-between gap-2 rounded-md p-1">
+<Card.Root
+	class="pointer-events-auto flex flex-row items-center justify-between gap-2 rounded-md p-1">
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger>
 			<!-- Use snipped to avoid <button> inside <button -->
@@ -119,7 +120,7 @@
 	<Separator orientation="vertical" />
 
 	<ToggleGroup.Root
-		variant="outline"
+		class="gap-2"
 		type="single"
 		bind:value={
 			() => myCanvas.uiOptions.editMode,
@@ -136,44 +137,53 @@
 				myCanvas.activeElementMode = myCanvas.uiOptions.editMode;
 			}
 		}>
-		<ToggleGroup.Item class={null} value="move">
-			<!-- Use snipped to avoid <button> inside <button -->
-			{#snippet child({ props })}
-				<div {...props}>
-					<Tooltip.Root>
-						<Tooltip.Trigger>
+		<Tooltip.Root>
+			<Tooltip.Trigger>
+				<!-- Use snipped to avoid <button> inside <button -->
+				{#snippet child({ props })}
+					<div {...props}>
+						<ToggleGroup.Item
+							class={buttonVariants({ variant: "ghost", size: "icon" })}
+							value="move">
 							<Move />
-						</Tooltip.Trigger>
-						<Tooltip.Content>
-							<p>Move mode</p>
-						</Tooltip.Content>
-					</Tooltip.Root>
-				</div>
-			{/snippet}
-		</ToggleGroup.Item>
+						</ToggleGroup.Item>
+					</div>
+				{/snippet}
+			</Tooltip.Trigger>
+			<Tooltip.Content>
+				<p>Move mode</p>
+			</Tooltip.Content>
+		</Tooltip.Root>
 
 		<Tooltip.Root>
 			<Tooltip.Trigger>
 				<!-- Use snipped to avoid <button> inside <button -->
 				{#snippet child({ props })}
-				<div {...props}>
-
-		<ToggleGroup.Item value="resize">
-			
-			
-					
+					<div {...props}>
+						<ToggleGroup.Item
+							class={buttonVariants({ variant: "ghost", size: "icon" })}
+							value="resize">
 							<MoveDiagonal />
-						
-				</div>
-			{/snippet}
-		</ToggleGroup.Item>
+						</ToggleGroup.Item>
+					</div>
+				{/snippet}
+			</Tooltip.Trigger>
+			<Tooltip.Content>
+				<p>Resize mode</p>
+			</Tooltip.Content>
+		</Tooltip.Root>
 	</ToggleGroup.Root>
 
 	<Separator orientation="vertical" />
 
 	<Tooltip.Root>
 		<Tooltip.Trigger>
-			<Toggle bind:pressed={myCanvas.uiOptions.showGrid}><Grid3x3 /></Toggle>
+			<!-- Use snipped to avoid <button> inside <button -->
+			{#snippet child({ props })}
+				<div {...props}>
+					<Toggle bind:pressed={myCanvas.uiOptions.showGrid}><Grid3x3 /></Toggle>
+				</div>
+			{/snippet}
 		</Tooltip.Trigger>
 		<Tooltip.Content>
 			<p>Toggle Grid</p>
@@ -182,7 +192,12 @@
 
 	<Tooltip.Root>
 		<Tooltip.Trigger>
-			<Toggle bind:pressed={myCanvas.uiOptions.magnet}><Magnet /></Toggle>
+			<!-- Use snipped to avoid <button> inside <button -->
+			{#snippet child({ props })}
+				<div {...props}>
+					<Toggle bind:pressed={myCanvas.uiOptions.magnet}><Magnet /></Toggle>
+				</div>
+			{/snippet}
 		</Tooltip.Trigger>
 		<Tooltip.Content>
 			<p>Toggle Snap to Grid</p>
@@ -191,7 +206,12 @@
 
 	<Tooltip.Root>
 		<Tooltip.Trigger>
-			<Toggle bind:pressed={myCanvas.uiOptions.showResults}><Calculator /></Toggle>
+			<!-- Use snipped to avoid <button> inside <button -->
+			{#snippet child({ props })}
+				<div {...props}>
+					<Toggle bind:pressed={myCanvas.uiOptions.showResults}><Calculator /></Toggle>
+				</div>
+			{/snippet}
 		</Tooltip.Trigger>
 		<Tooltip.Content>
 			<p>Show cross section calculation</p>

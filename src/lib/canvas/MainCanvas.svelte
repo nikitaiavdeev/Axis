@@ -15,6 +15,25 @@
 	// import { Measure } from "./measure/rune.svelte";
 	// import MeasureSvg from "./measure/MeasureSVG.svelte";
 	import { anchorPoints } from "./point/rune.svelte";
+	import { onMount } from "svelte";
+
+	onMount(() => {
+		const onSVGResize = () => {
+				myCanvas.size = {
+					width: window.innerWidth,
+					height: window.innerHeight,
+				};
+			},
+			resizeObserver = new ResizeObserver(() => {
+				onSVGResize();
+			});
+
+		resizeObserver.observe(myCanvas.svgNode!);
+		onSVGResize();
+
+		// This callback cleans up the observer
+		return () => resizeObserver.unobserve(myCanvas.svgNode!);
+	});
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -25,6 +44,7 @@
 	id="main-canvas"
 	class="fixed top-0 left-0 z-0 h-screen w-screen"
 	role="figure"
+	bind:this={myCanvas.svgNodeBinder}
 	onclick={() => {
 		// Clean selected element
 		if (myCanvas.activeElementMode !== "new") {
@@ -72,6 +92,26 @@
 	<g
 		id="canvas-content"
 		transform="translate({myCanvas.offsetX} {myCanvas.offsetY}) scale({myCanvas.scale})">
+		<line
+			class="stroke-grid"
+			vector-effect="non-scaling-stroke"
+			shape-rendering="crispEdges"
+			x1="0"
+			y1="5"
+			x2="100"
+			y2="5">
+		</line>
+		<line
+			class="stroke-grid"
+			stroke-dasharray={(500 / 72) * myCanvas.scale}
+			vector-effect="non-scaling-stroke"
+			shape-rendering="crispEdges"
+			x1="0"
+			y1="10"
+			x2="100"
+			y2="10">
+		</line>
+
 		<!-- Draw shapes which aren't holes first -->
 		{#each myCanvas.shapes.filter((s) => !s.isHole && s !== myCanvas.activeElement) as shape, idx (idx)}
 			{#if shape instanceof Rectangle}

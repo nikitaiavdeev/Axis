@@ -21,13 +21,13 @@
 <div
 	class="pointer-events-none relative z-10 flex h-full w-full flex-col justify-between gap-2 p-4">
 	<!-- Top menus-->
-	<div class="not-only:items-top pointer-events-auto flex justify-between gap-2">
+	<div class="not-only:items-top pointer-events-none flex justify-between gap-2">
 		<FileMenu />
 		<TopToolBar />
 		<LightDarkMode />
 	</div>
 
-	<div class="pointer-events-auto flex items-center justify-between">
+	<div class="pointer-events-none flex items-center justify-between">
 		{#if myCanvas.activeElement instanceof Rectangle}
 			<RectangleForm shape={myCanvas.activeElement} />
 		{:else if myCanvas.activeElement instanceof Circle}
@@ -40,7 +40,7 @@
 	</div>
 
 	<!-- Bottom menus -->
-	<div class="pointer-events-auto flex items-center justify-between">
+	<div class="pointer-events-none flex items-center justify-between">
 		<div class="flex flex-row items-center gap-2">
 			<Zoom />
 			<MouseInfo />

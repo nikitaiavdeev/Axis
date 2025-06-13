@@ -9,7 +9,7 @@
 	import { buttonVariants } from "$lib/components/ui/button/index.js";
 </script>
 
-<Card.Root class="self-start rounded-md p-0">
+<Card.Root class="pointer-events-auto self-start rounded-md p-0">
 	<Tooltip.Root>
 		<Tooltip.Trigger
 			class={buttonVariants({ variant: "ghost", size: "icon" })}

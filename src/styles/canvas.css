@@ -2,57 +2,49 @@
 @reference "./shadcn.css";
 
 :root {
-	--shape: oklch(0.97 0 0 / 0.8); /* Unchanged, light, transparent */
-	--shape-border: oklch(0.205 0 0); /* Unchanged, high-contrast, opaque */
-	--shape-selected: oklch(0.985 0 0 / 0.7); /* Unchanged, lighter, transparent */
-	--shape-selected-border: oklch(0.708 0 0); /* Unchanged, high-contrast, opaque */
-
-	--shape-hole: oklch(0.205 0 0 / 0.8); /* Unchanged, dark, transparent */
-	--shape-hole-border: oklch(0.556 0 0); /* Unchanged, high-contrast, opaque */
-	--shape-hole-selected: oklch(0.646 0.222 41.116 / 0.7); /* Unchanged, dark, transparent */
-	--shape-hole-selected-border: oklch(0.708 0 0); /* Unchanged, high-contrast, opaque */
-
-	--marker: oklch(0.6 0.08 240); /* Neutral blue, medium lightness, opaque */
-	--marker-hover: oklch(0.5 0.1 245); /* Slightly darker neutral blue, opaque */
-	--marker-selected: oklch(0.7 0.06 235); /* Lighter neutral blue, opaque */
-
-	--grid: oklch(0 0.6 0); /* Unchanged */
-
-	--fringe-0: oklch(0.985 0 0 / 0.95); /* Unchanged */
-	--fringe-1: oklch(0.97 0 0 / 0.9); /* Unchanged */
-	--fringe-2: oklch(0.922 0 0 / 0.85); /* Unchanged */
-	--fringe-3: oklch(0.646 0.222 41.116 / 0.8); /* Unchanged */
-	--fringe-4: oklch(0.6 0.118 184.704 / 0.8); /* Unchanged */
-	--fringe-5: oklch(0.769 0.188 70.08 / 0.8); /* Unchanged */
-	--fringe-6: oklch(0.828 0.189 84.429 / 0.8); /* Unchanged */
-	--fringe-7: oklch(0.645 0.246 16.439 / 0.8); /* Unchanged */
+	--shape: oklch(0.97 0 0 / 0.8);
+	--shape-border: oklch(0.205 0 0);
+	--shape-selected: oklch(0.8 0.1 240 / 0.7);
+	--shape-selected-border: oklch(0.5 0.12 245);
+	--shape-hole: oklch(0.205 0 0 / 0.8);
+	--shape-hole-border: oklch(0.556 0 0);
+	--shape-hole-selected: oklch(0.646 0.222 41.116 / 0.7);
+	--shape-hole-selected-border: oklch(0.708 0 0);
+	--marker: oklch(0.6 0.08 240);
+	--marker-hover: oklch(0.5 0.1 245);
+	--marker-selected: oklch(0.7 0.06 235);
+	--grid: oklch(0 0.6 0);
+	--fringe-0: oklch(0.985 0 0 / 0.95);
+	--fringe-1: oklch(0.97 0 0 / 0.9);
+	--fringe-2: oklch(0.922 0 0 / 0.85);
+	--fringe-3: oklch(0.646 0.222 41.116 / 0.8);
+	--fringe-4: oklch(0.6 0.118 184.704 / 0.8);
+	--fringe-5: oklch(0.769 0.188 70.08 / 0.8);
+	--fringe-6: oklch(0.828 0.189 84.429 / 0.8);
+	--fringe-7: oklch(0.645 0.246 16.439 / 0.8);
 }
 
 .dark {
-	--shape: oklch(0.371 0 0 / 0.8); /* Unchanged, light, transparent */
-	--shape-border: oklch(0.985 0 0); /* Unchanged, high-contrast, opaque */
-	--shape-selected: oklch(0.269 0 0 / 0.7); /* Unchanged, lighter, transparent */
-	--shape-selected-border: oklch(0.556 0 0); /* Unchanged, high-contrast, opaque */
-
-	--shape-hole: oklch(0.205 0 0 / 0.8); /* Unchanged, dark, transparent */
-	--shape-hole-border: oklch(0.708 0 0); /* Unchanged, high-contrast, opaque */
-	--shape-hole-selected: oklch(0.488 0.243 264.376 / 0.7); /* Unchanged, dark, transparent */
-	--shape-hole-selected-border: oklch(0.556 0 0); /* Unchanged, high-contrast, opaque */
-
-	--marker: oklch(0.65 0.08 250); /* Neutral blue, medium lightness, opaque */
-	--marker-hover: oklch(0.55 0.1 255); /* Slightly darker neutral blue, opaque */
-	--marker-selected: oklch(0.75 0.06 245); /* Lighter neutral blue, opaque */
-
-	--grid: oklch(0 0.6 0); /* Unchanged */
-
-	--fringe-0: oklch(0.985 0 0 / 0.95); /* Unchanged */
-	--fringe-1: oklch(0.269 0 0 / 0.9); /* Unchanged */
-	--fringe-2: oklch(1 0 0 / 0.85); /* Unchanged */
-	--fringe-3: oklch(0.488 0.243 264.376 / 0.8); /* Unchanged */
-	--fringe-4: oklch(0.696 0.17 162.48 / 0.8); /* Unchanged */
-	--fringe-5: oklch(0.769 0.188 70.08 / 0.8); /* Unchanged */
-	--fringe-6: oklch(0.627 0.265 303.9 / 0.8); /* Unchanged */
-	--fringe-7: oklch(0.645 0.246 16.439 / 0.8); /* Unchanged */
+	--shape: oklch(0.269 0 0 / 0.8);
+	--shape-border: oklch(0.708 0 0);
+	--shape-selected: oklch(0.488 0.243 264.376 / 0.7);
+	--shape-selected-border: oklch(0.556 0 0);
+	--shape-hole: oklch(0.922 0 0 / 0.8);
+	--shape-hole-border: oklch(0.985 0 0);
+	--shape-hole-selected: oklch(0.75 0.1 250 / 0.7);
+	--shape-hole-selected-border: oklch(0.55 0.12 255);
+	--marker: oklch(0.65 0.08 250);
+	--marker-hover: oklch(0.55 0.1 255);
+	--marker-selected: oklch(0.75 0.06 245);
+	--grid: oklch(0 0.6 0);
+	--fringe-0: oklch(0.985 0 0 / 0.95);
+	--fringe-1: oklch(0.269 0 0 / 0.9);
+	--fringe-2: oklch(1 0 0 / 0.85);
+	--fringe-3: oklch(0.488 0.243 264.376 / 0.8);
+	--fringe-4: oklch(0.696 0.17 162.48 / 0.8);
+	--fringe-5: oklch(0.769 0.188 70.08 / 0.8);
+	--fringe-6: oklch(0.627 0.265 303.9 / 0.8);
+	--fringe-7: oklch(0.645 0.246 16.439 / 0.8);
 }
 
 @theme inline {
@@ -60,18 +52,14 @@
 	--color-shape-border: var(--shape-border);
 	--color-shape-selected: var(--shape-selected);
 	--color-shape-selected-border: var(--shape-selected-border);
-
 	--color-shape-hole: var(--shape-hole);
 	--color-shape-hole-border: var(--shape-hole-border);
 	--color-shape-hole-selected: var(--shape-hole-selected);
 	--color-shape-hole-selected-border: var(--shape-hole-selected-border);
-
 	--color-marker: var(--marker);
 	--color-marker-hover: var(--marker-hover);
 	--color-marker-selected: var(--marker-selected);
-
 	--color-grid: var(--grid);
-
 	--color-fringe-0: var(--fringe-0);
 	--color-fringe-1: var(--fringe-1);
 	--color-fringe-2: var(--fringe-2);
@@ -82,7 +70,6 @@
 	--color-fringe-7: var(--fringe-7);
 }
 
-/* Point styling */
 @layer base {
 	.point {
 		@apply stroke-[3px];
@@ -90,30 +77,24 @@
 		@apply fill-marker;
 		vector-effect: non-scaling-stroke;
 	}
-
 	.hole .point {
 		@apply fill-shape-hole;
 	}
-
 	.selected .point,
 	.selected.point {
 		@apply fill-marker;
 	}
-
 	.clicked.point {
 		@apply fill-marker;
 	}
-
 	.hoverable .point,
 	.hoverable.point {
 		@apply hover:cursor-pointer;
 		@apply hover:fill-marker-hover;
 	}
-
 	.move .point {
 		cursor: move !important;
 	}
-
 	.resize .point {
 		&.leftLower,
 		&.rightUpper {
@@ -136,43 +117,36 @@
 		}
 	}
 }
-/* Point styling */
 
 @layer base {
 	text {
 		stroke: none;
 		@apply fill-primary;
 	}
-
 	.shape {
 		@apply fill-shape;
 		@apply stroke-shape-border;
 		vector-effect: non-scaling-stroke;
 	}
-
 	.measure {
 		@apply fill-none;
 		@apply stroke-primary;
-
 		line {
 			vector-effect: non-scaling-stroke;
 		}
 	}
-
 	.hole {
 		.shape {
 			@apply fill-shape-hole;
 			@apply stroke-shape-hole-border;
 		}
 	}
-
 	.selected {
 		.shape {
 			@apply fill-shape-selected;
 			@apply stroke-shape-selected-border;
 		}
 	}
-
 	.hoverable {
 		.shape {
 			@apply hover:cursor-pointer;
@@ -180,7 +154,6 @@
 			@apply hover:fill-shape-selected;
 		}
 	}
-
 	g.measure.hoverable:has(text:hover),
 	g.measure.selected {
 		@apply cursor-pointer;

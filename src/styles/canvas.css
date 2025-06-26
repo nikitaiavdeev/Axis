@@ -2,57 +2,57 @@
 @reference "./shadcn.css";
 
 :root {
-	--shape: oklch(65% 0.15 250);
-	--shape-border: oklch(50% 0.14 250);
-	--shape-selected: oklch(80% 0.1 250);
-	--shape-selected-border: oklch(60% 0.16 250);
+	--shape: oklch(0.97 0 0 / 0.8); /* Unchanged, light, transparent */
+	--shape-border: oklch(0.205 0 0); /* Unchanged, high-contrast, opaque */
+	--shape-selected: oklch(0.985 0 0 / 0.7); /* Unchanged, lighter, transparent */
+	--shape-selected-border: oklch(0.708 0 0); /* Unchanged, high-contrast, opaque */
 
-	--shape-hole: oklch(60% 0.1 320);
-	--shape-hole-border: oklch(45% 0.12 320);
-	--shape-hole-selected: oklch(75% 0.08 320);
-	--shape-hole-selected-border: oklch(55% 0.14 320);
+	--shape-hole: oklch(0.205 0 0 / 0.8); /* Unchanged, dark, transparent */
+	--shape-hole-border: oklch(0.556 0 0); /* Unchanged, high-contrast, opaque */
+	--shape-hole-selected: oklch(0.646 0.222 41.116 / 0.7); /* Unchanged, dark, transparent */
+	--shape-hole-selected-border: oklch(0.708 0 0); /* Unchanged, high-contrast, opaque */
 
-	--marker: oklch(70% 0.18 30);
-	--marker-hover: oklch(65% 0.2 20);
-	--marker-selected: oklch(80% 0.12 30);
+	--marker: oklch(0.6 0.08 240); /* Neutral blue, medium lightness, opaque */
+	--marker-hover: oklch(0.5 0.1 245); /* Slightly darker neutral blue, opaque */
+	--marker-selected: oklch(0.7 0.06 235); /* Lighter neutral blue, opaque */
 
-	--grid: oklch(0 0.6 0);
+	--grid: oklch(0 0.6 0); /* Unchanged */
 
-	--fringe-0: oklch(0.95 0.045 246.5);
-	--fringe-1: oklch(0.87 0.04 246.5);
-	--fringe-2: oklch(0.78 0.037 226.5);
-	--fringe-3: oklch(0.65 0.032 206.5);
-	--fringe-4: oklch(0.65 0.07 99.5);
-	--fringe-5: oklch(0.73 0.13 43.5);
-	--fringe-6: oklch(0.57 0.09 29.5);
-	--fringe-7: oklch(0.41 0.07 29.5);
+	--fringe-0: oklch(0.985 0 0 / 0.95); /* Unchanged */
+	--fringe-1: oklch(0.97 0 0 / 0.9); /* Unchanged */
+	--fringe-2: oklch(0.922 0 0 / 0.85); /* Unchanged */
+	--fringe-3: oklch(0.646 0.222 41.116 / 0.8); /* Unchanged */
+	--fringe-4: oklch(0.6 0.118 184.704 / 0.8); /* Unchanged */
+	--fringe-5: oklch(0.769 0.188 70.08 / 0.8); /* Unchanged */
+	--fringe-6: oklch(0.828 0.189 84.429 / 0.8); /* Unchanged */
+	--fringe-7: oklch(0.645 0.246 16.439 / 0.8); /* Unchanged */
 }
 
 .dark {
-	--shape: oklch(70% 0.13 250);
-	--shape-border: oklch(75% 0.09 250);
-	--shape-selected: oklch(60% 0.15 250);
-	--shape-selected-border: oklch(70% 0.12 250);
+	--shape: oklch(0.371 0 0 / 0.8); /* Unchanged, light, transparent */
+	--shape-border: oklch(0.985 0 0); /* Unchanged, high-contrast, opaque */
+	--shape-selected: oklch(0.269 0 0 / 0.7); /* Unchanged, lighter, transparent */
+	--shape-selected-border: oklch(0.556 0 0); /* Unchanged, high-contrast, opaque */
 
-	--shape-hole: oklch(65% 0.09 320);
-	--shape-hole-border: oklch(75% 0.09 250);
-	--shape-hole-selected: oklch(70% 0.07 320);
-	--shape-hole-selected-border: oklch(60% 0.1 320);
+	--shape-hole: oklch(0.205 0 0 / 0.8); /* Unchanged, dark, transparent */
+	--shape-hole-border: oklch(0.708 0 0); /* Unchanged, high-contrast, opaque */
+	--shape-hole-selected: oklch(0.488 0.243 264.376 / 0.7); /* Unchanged, dark, transparent */
+	--shape-hole-selected-border: oklch(0.556 0 0); /* Unchanged, high-contrast, opaque */
 
-	--marker: oklch(75% 0.14 30);
-	--marker-hover: oklch(80% 0.12 30);
-	--marker-selected: oklch(80% 0.12 30);
+	--marker: oklch(0.65 0.08 250); /* Neutral blue, medium lightness, opaque */
+	--marker-hover: oklch(0.55 0.1 255); /* Slightly darker neutral blue, opaque */
+	--marker-selected: oklch(0.75 0.06 245); /* Lighter neutral blue, opaque */
 
-	--grid: oklch(0 0.6 0);
+	--grid: oklch(0 0.6 0); /* Unchanged */
 
-	--fringe-0: oklch(0.95 0.045 246.5);
-	--fringe-1: oklch(0.87 0.04 246.5);
-	--fringe-2: oklch(0.78 0.037 226.5);
-	--fringe-3: oklch(0.65 0.032 206.5);
-	--fringe-4: oklch(0.65 0.07 99.5);
-	--fringe-5: oklch(0.73 0.13 43.5);
-	--fringe-6: oklch(0.57 0.09 29.5);
-	--fringe-7: oklch(0.41 0.07 29.5);
+	--fringe-0: oklch(0.985 0 0 / 0.95); /* Unchanged */
+	--fringe-1: oklch(0.269 0 0 / 0.9); /* Unchanged */
+	--fringe-2: oklch(1 0 0 / 0.85); /* Unchanged */
+	--fringe-3: oklch(0.488 0.243 264.376 / 0.8); /* Unchanged */
+	--fringe-4: oklch(0.696 0.17 162.48 / 0.8); /* Unchanged */
+	--fringe-5: oklch(0.769 0.188 70.08 / 0.8); /* Unchanged */
+	--fringe-6: oklch(0.627 0.265 303.9 / 0.8); /* Unchanged */
+	--fringe-7: oklch(0.645 0.246 16.439 / 0.8); /* Unchanged */
 }
 
 @theme inline {
@@ -97,12 +97,10 @@
 
 	.selected .point,
 	.selected.point {
-		/* All points of selected shape and selected point in form */
 		@apply fill-marker;
 	}
 
 	.clicked.point {
-		/* Clicked point during manipulation */
 		@apply fill-marker;
 	}
 

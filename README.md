@@ -1,6 +1,6 @@
-# Axis: Cross-Section Analysis Tool
+# Section: Cross-Section Analysis Tool
 
-Axis is a standalone static Svelte application designed to create, manipulate, and analyze cross-sections. The app provides detailed calculations for area, centroid, and moments of inertia. It also supports importing surfaces from .IGES and .STEP file formats for enhanced flexibility.
+Section is a standalone static Svelte application designed to create, manipulate, and analyze cross-sections. The app provides detailed calculations for area, centroid, and moments of inertia. It also supports importing surfaces from .IGES and .STEP file formats for enhanced flexibility.
 
 ## Features
 
@@ -36,7 +36,7 @@ Ensure you have the following installed:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/nikitaiavdeev/Axis
+   git clone
    cd axis
    ```
 
@@ -84,11 +84,11 @@ pnpm preview
 
 ## File Import Support
 
-Axis supports `.IGES` and `.STEP` file formats for surface imports. Ensure your files are correctly formatted to avoid import issues.
+Section supports `.IGES` and `.STEP` file formats for surface imports. Ensure your files are correctly formatted to avoid import issues.
 
 ## License
 
-Axis is licensed under the [GNU General Public License v3.0](LICENSE).
+Section is licensed under the [GNU General Public License v3.0](LICENSE).
 
 ## Acknowledgments
 
@@ -97,4 +97,4 @@ Axis is licensed under the [GNU General Public License v3.0](LICENSE).
 
 ---
 
-Feel free to reach out if you have any questions or need support using Axis!
+Feel free to reach out if you have any questions or need support using Section!

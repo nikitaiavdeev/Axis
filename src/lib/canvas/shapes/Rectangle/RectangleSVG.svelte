@@ -1,197 +1,134 @@
 <script lang="ts">
+	// Classes and Runes
 	import { myCanvas } from "$lib/runes/canvas.svelte";
-	import { ui } from "$lib/runes/ui.svelte";
-	import { roundFloat } from "$lib/scripts/helpers.svelte";
-	import { Rectangle, ReferencePoint } from "./rune.svelte";
+	import { Rectangle } from "./rune.svelte";
+
+	// Constants
+	import { MARKER_SIZE } from "$lib/constants";
+	import { Point } from "$lib/canvas/point/rune.svelte";
+
+	// Utilities
+	import { cn } from "$lib/utils.js";
 
 	let { shape }: { shape: Rectangle } = $props();
 
-	const leftLowerPointXY = $derived(shape.points.leftLower.d3Coord),
-		leftUpperPointXY = $derived(shape.points.leftUpper.d3Coord),
-		rightUpperPointXY = $derived(shape.points.rightUpper.d3Coord),
-		rightLowerPointXY = $derived(shape.points.rightLower.d3Coord);
-
-	let moveStart = $state({
-		pointName: "leftLower" as keyof typeof shape.points,
-		clicked: {
-			x: 0,
-			y: 0,
-		},
-		leftLower: {
-			x: 0,
-			y: 0,
-		},
-		rightUpper: {
-			x: 0,
-			y: 0,
-		},
-	});
-
 	$effect(() => {
-		if (myCanvas.editShape.shape === shape && ui.mouse.down) {
-			const newLeftLower = {
-					x: moveStart.leftLower.x,
-					y: moveStart.leftLower.y,
-				},
-				newRightUpper = {
-					x: moveStart.rightUpper.x,
-					y: moveStart.rightUpper.y,
-				};
+		if (!shape.editedPoint) return;
 
-			if (ui.options.editMode === "move" || moveStart.pointName === "center") {
-				newLeftLower.x += ui.mouse.x - moveStart.clicked.x;
-				newLeftLower.y += ui.mouse.y - moveStart.clicked.y;
-				newRightUpper.x += ui.mouse.x - moveStart.clicked.x;
-				newRightUpper.y += ui.mouse.y - moveStart.clicked.y;
-			} else {
-				switch (moveStart.pointName) {
-					case "leftLower":
-						newLeftLower.x = ui.mouse.x;
-						newLeftLower.y = ui.mouse.y;
-						break;
-					case "middleLeft":
-						newLeftLower.x = ui.mouse.x;
-						break;
-					case "leftUpper":
-						newLeftLower.x = ui.mouse.x;
-						newRightUpper.y = ui.mouse.y;
-						break;
-					case "middleUpper":
-						newRightUpper.y = ui.mouse.y;
-						break;
-					case "rightUpper":
-						newRightUpper.x = ui.mouse.x;
-						newRightUpper.y = ui.mouse.y;
-						break;
-					case "middleRight":
-						newRightUpper.x = ui.mouse.x;
-						break;
-					case "rightLower":
-						newRightUpper.x = ui.mouse.x;
-						newLeftLower.y = ui.mouse.y;
-						break;
-					case "middleLower":
-						newLeftLower.y = ui.mouse.y;
-				}
-			}
+		if (
+			(myCanvas.newShape === shape && shape.editedPoint === shape.referencePoint) ||
+			(myCanvas.uiOptions.editMode === "move" &&
+				(myCanvas.editShape === shape || myCanvas.editShape == shape.editedPoint))
+		) {
+			shape.editedPoint.xMove(myCanvas.mouse.x);
+			shape.editedPoint.yMove(myCanvas.mouse.y);
+		} else if (
+			myCanvas.newShape === shape ||
+			((myCanvas.activeShape === shape || myCanvas.activeShape === shape.editedPoint) &&
+				myCanvas.mouse.down)
+		) {
+			shape.swapEditedPoint();
 
-			// Swap corners
-			if (newLeftLower.x > newRightUpper.x) {
-				[newLeftLower.x, newRightUpper.x] = [newRightUpper.x, newLeftLower.x];
-			}
-			if (newLeftLower.y > newRightUpper.y) {
-				[newLeftLower.y, newRightUpper.y] = [newRightUpper.y, newLeftLower.y];
-			}
-
-			shape.width = roundFloat(newRightUpper.x - newLeftLower.x);
-			shape.height = roundFloat(newRightUpper.y - newLeftLower.y);
-
-			switch (shape.referencePoint) {
-				case ReferencePoint.leftLower:
-				case ReferencePoint.middleLeft:
-				case ReferencePoint.leftUpper:
-					shape.refX = roundFloat(newLeftLower.x);
-					break;
-				case ReferencePoint.rightLower:
-				case ReferencePoint.middleRight:
-				case ReferencePoint.rightUpper:
-					shape.refX = roundFloat(newRightUpper.x);
-					break;
-				case ReferencePoint.middleLower:
-				case ReferencePoint.middleUpper:
-				case ReferencePoint.center:
-					shape.refX = roundFloat(0.5 * (newLeftLower.x + newRightUpper.x));
-					break;
-			}
-
-			switch (shape.referencePoint) {
-				case ReferencePoint.leftLower:
-				case ReferencePoint.middleLower:
-				case ReferencePoint.rightLower:
-					shape.refY = roundFloat(newLeftLower.y);
-					break;
-				case ReferencePoint.leftUpper:
-				case ReferencePoint.middleUpper:
-				case ReferencePoint.rightUpper:
-					shape.refY = roundFloat(newRightUpper.y);
-					break;
-				case ReferencePoint.middleLeft:
-				case ReferencePoint.middleRight:
-				case ReferencePoint.center:
-					shape.refY = roundFloat(0.5 * (newLeftLower.y + newRightUpper.y));
-					break;
-			}
+			shape.editedPoint.xResize(myCanvas.mouse.x);
+			shape.editedPoint.yResize(myCanvas.mouse.y);
 		}
 	});
 
-	const editShape = () => {
-			// Togle mode if shape already selected
-			if (myCanvas.editShape.shape === shape) {
-				myCanvas.editShape.toggleMode();
-			} else if (myCanvas.newShape.shape === undefined) {
-				myCanvas.editShape.editShape(shape);
-			}
-		},
-		startMove = (x: number, y: number, pointName: string) => {
-			moveStart = {
-				pointName: pointName as keyof typeof shape.points,
-				clicked: {
-					x: x,
-					y: y,
-				},
-				leftLower: {
-					x: shape.leftLowerX,
-					y: shape.leftLowerY,
-				},
-				rightUpper: {
-					x: shape.leftLowerX + shape.width,
-					y: shape.leftLowerY + shape.height,
-				},
-			};
+	const uniquePoints = $derived.by(() => {
+		const editedPointFiltered = shape.editedPoint
+			? Object.entries(shape.points)
+					// Remove all node which have same coords as selected
+					.filter(([_, point]) => {
+						return (
+							`${point.x},${point.y},${point === shape.editedPoint}` !==
+							`${shape.editedPoint!.x},${shape.editedPoint!.y},false`
+						);
+					})
+			: Object.entries(shape.points);
 
-			ui.mouse.down = true;
-		};
+		return Object.fromEntries(
+			editedPointFiltered.filter(([_, point], index, arr) => {
+				const keyStr = `${point.x},${point.y}`;
+				return index == arr.findIndex(([_, p]) => `${p.x},${p.y}` === keyStr);
+			})
+		);
+	});
+	const editShape = (shapeOrPoint = shape as Rectangle | Point) => {
+		// Ignore click if new shape is creating
+		if (myCanvas.newShape) return;
+
+		// Togle mode if shape already selected
+		if (myCanvas.editShape === shapeOrPoint) {
+			myCanvas.uiOptions.editMode = myCanvas.uiOptions.editMode === "move" ? "resize" : "move";
+		} else {
+			myCanvas.editShape = shapeOrPoint;
+		}
+	};
+	const startMove = (point: Point) => {
+		if (myCanvas.newShape !== shape) {
+			shape.editedPoint = point;
+		}
+	};
 </script>
 
 <g
 	class:hole={shape.isHole}
-	class:hoverable={myCanvas.newShape.shape === undefined && !ui.mouse.down}
-	class:selected={myCanvas.editShape.shape === shape}
-	class:move={myCanvas.editShape.shape === shape && ui.options.editMode === "move"}
-	class:resize={myCanvas.editShape.shape === shape && ui.options.editMode === "resize"}>
+	class:hoverable={myCanvas.newShape === undefined && !myCanvas.mouse.down}
+	class:selected={myCanvas.activeShape === shape}
+	class:move={myCanvas.editShape === shape && myCanvas.uiOptions.editMode === "move"}
+	class:resize={myCanvas.editShape === shape && myCanvas.uiOptions.editMode === "resize"}>
+	<!-- Rectangle shape -->
+	{myCanvas.editShape}
 	<path
 		class="shape"
+		role="none"
 		d="
-	M{leftLowerPointXY.x} {leftLowerPointXY.y}
-	L{leftUpperPointXY.x} {leftUpperPointXY.y}	
-	L{rightUpperPointXY.x} {rightUpperPointXY.y}
-	L{rightLowerPointXY.x} {rightLowerPointXY.y}
+	M{shape.points.leftLower.d3Coord.x} {shape.points.leftLower.d3Coord.y}
+	L{shape.points.leftUpper.d3Coord.x} {shape.points.leftUpper.d3Coord.y}
+	L{shape.points.rightUpper.d3Coord.x} {shape.points.rightUpper.d3Coord.y}
+	L{shape.points.rightLower.d3Coord.x} {shape.points.rightLower.d3Coord.y}
 	Z"
-		onclick={editShape}
-		role="none" />
+		onclick={() => editShape()} />
 
-	{#if myCanvas.editShape.shape === shape && ui.options.editMode === "resize"}
-		{#each Object.entries(shape.points) as [pointName, point] (pointName)}
-			<rect
-				class="point {pointName}"
-				x={point.d3Coord.x - 5 / myCanvas.scale}
-				y={point.d3Coord.y - 5 / myCanvas.scale}
-				width={10 / myCanvas.scale}
-				height={10 / myCanvas.scale}
-				role="none"
-				onmousedown={() => startMove(point.x(), point.y(), pointName)}>
-			</rect>
-		{/each}
-	{:else if myCanvas.newShape.shape === shape || myCanvas.editShape.shape === shape}
-		{#each Object.entries(shape.points) as [pointName, point] (pointName)}
+	<!-- Points -->
+	{#if myCanvas.newShape === shape || myCanvas.uiOptions.editMode === "resize"}
+		{#each Object.entries(uniquePoints) as [pointName, point] (pointName)}
 			<circle
-				class="point"
+				class={cn(
+					"point",
+					myCanvas.activeShape !== shape ? "fill-transparent" : "",
+					shape.editedPoint !== point ? "hover:fill-marker-hover" : "",
+					shape.editedPoint === point && myCanvas.newShape !== shape ? "fill-marker-selected" : ""
+				)}
+				style="cursor: {myCanvas.editShape === shape ? point.resizeCursor : 'point'};"
+				role="none"
 				cx={point.d3Coord.x}
 				cy={point.d3Coord.y}
-				r={5 / myCanvas.scale}
-				role="none"
-				onmousedown={() => startMove(point.x(), point.y(), pointName)}>
+				r={MARKER_SIZE / myCanvas.scale}
+				onclick={() => {
+					if (myCanvas.mouse.down) return;
+					editShape(point);
+				}}
+				onmousedown={() => startMove(point)}>
 			</circle>
+		{/each}
+	{:else if myCanvas.uiOptions.editMode === "move"}
+		{#each Object.entries(uniquePoints) as [pointName, point] (pointName)}
+			<rect
+				class={cn(
+					"point cursor-move",
+					myCanvas.activeShape !== shape ? "fill-transparent" : "",
+					shape.editedPoint !== point ? "hover:fill-marker-hover" : "",
+					shape.editedPoint === point ? "fill-marker-selected" : ""
+				)}
+				role="none"
+				x={point.d3Coord.x - MARKER_SIZE / myCanvas.scale}
+				y={point.d3Coord.y - MARKER_SIZE / myCanvas.scale}
+				rx={(0.2 * MARKER_SIZE) / myCanvas.scale}
+				width={(2 * MARKER_SIZE) / myCanvas.scale}
+				height={(2 * MARKER_SIZE) / myCanvas.scale}
+				onmousedown={() => startMove(point)}>
+			</rect>
 		{/each}
 	{/if}
 </g>

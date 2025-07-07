@@ -1,85 +1,116 @@
-import { Point, points } from "$lib/canvas/point/rune.svelte";
+import { anchorPoints, Point } from "$lib/canvas/point/rune.svelte";
 import * as d3 from "d3";
-import { ui } from "./ui.svelte";
 
 // Shapes
-import type { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
-import type { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
-import type { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
 import type { Measure } from "$lib/canvas/measure/rune.svelte";
+import type { Shape } from "$lib/canvas/shapes/index.svelte";
 
-const NewShape = () => {
-		let __shape = $state(undefined as undefined | Rectangle | Circle | Polygon | Measure);
-
-		return {
-			get shape() {
-				return __shape;
-			},
-			createNew(shape: Rectangle | Circle | Polygon | Measure) {
-				myCanvas.editShape.clean();
-				__shape = shape;
-			},
-			clean() {
-				if (__shape) {
-					__shape.clean();
-					__shape = undefined;
-				}
-			},
-		};
-	},
-	EditShape = () => {
-		let __shape = $state(undefined as undefined | Rectangle | Circle | Polygon | Measure);
-
-		return {
-			get shape() {
-				return __shape;
-			},
-			toggleMode() {
-				if (ui.options.editMode === "move") {
-					ui.options.editMode = "resize";
-				} else {
-					ui.options.editMode = "move";
-				}
-			},
-			editShape(shape: Rectangle | Circle | Polygon | Measure) {
-				__shape = shape;
-			},
-			clean() {
-				if (__shape) {
-					__shape = undefined;
-				}
-			},
-		};
-	};
+// Constants
+import { GRID_SIZE_PIXELS, GRID_SIZE_INCHES } from "$lib/constants.js";
 
 export class Canvas {
+	// Private properties for svg elements
+	// Done this way because document isn't availabe during class construction
+	#svg: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
+	#gridPattern: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
+	#content: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
+
+	// Svg node
+	svgNodeBinder = $state(undefined as undefined | SVGGraphicsElement);
+	size = $state({
+		width: 0,
+		height: 0,
+	});
+
+	// Canvas content position and scale
 	offsetX = $state(0);
 	offsetY = $state(0);
 	scale = $state(1);
 
-	consts = {
-		GRID_SIZE: 500,
-	};
+	// Active element of the canvas
+	newShape = $state(undefined as undefined | Shape | Measure);
+	editShape = $state(undefined as undefined | Shape | Measure | Point);
+	activeShape = $derived(this.newShape || this.editShape);
 
-	newShape = NewShape();
-	editShape = EditShape();
-
-	shapes = $state([] as (Rectangle | Circle | Polygon)[]);
+	// Shapes and measurments
+	shapes = $state([] as Shape[]);
 	measures = $state([] as Measure[]);
 
-	private __svg: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
-	private __gridPattern: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
-	private __content: undefined | d3.Selection<Element, unknown, HTMLElement, HTMLElement>;
-
-	mouseScale = $derived({
-		x: d3.scaleLinear([0, 0.5], [this.offsetX, this.offsetX + this.consts.GRID_SIZE * this.scale]),
-		y: d3.scaleLinear([0, 0.5], [this.offsetY + this.consts.GRID_SIZE * this.scale, this.offsetY]),
+	// UI options
+	uiOptions = $state({
+		showGrid: true,
+		magnet: true,
+		editMode: "move" as "move" | "resize",
+		showResults: false,
 	});
 
+	// Mouse state
+	mouse = $state({
+		x: 0,
+		y: 0,
+		magnetX: undefined as undefined | number,
+		magnetY: undefined as undefined | number,
+		down: false,
+	});
+
+	// Scale without account for canvas offset
 	d3Scale = {
-		x: d3.scaleLinear([0, 0.5], [0, this.consts.GRID_SIZE * this.scale]),
-		y: d3.scaleLinear([0, 0.5], [0 + this.consts.GRID_SIZE * this.scale, 0]),
+		x: d3.scaleLinear([0, GRID_SIZE_INCHES], [0, GRID_SIZE_PIXELS * this.scale]),
+		y: d3.scaleLinear([0, GRID_SIZE_INCHES], [0 + GRID_SIZE_PIXELS * this.scale, 0]),
 	};
+
+	// Derived properties
+	// Scale with account for canvas offset
+	mouseScale = $derived({
+		x: d3.scaleLinear(
+			[0, GRID_SIZE_INCHES],
+			[this.offsetX, this.offsetX + GRID_SIZE_PIXELS * this.scale]
+		),
+		y: d3.scaleLinear(
+			[0, GRID_SIZE_INCHES],
+			[this.offsetY + GRID_SIZE_PIXELS * this.scale, this.offsetY]
+		),
+	});
+
+	scaledGridSize = $derived(GRID_SIZE_PIXELS * this.scale);
+
+	properties = $derived.by(() => {
+		const properties = {
+			area: 0,
+			cX: 0,
+			cY: 0,
+			iX: 0,
+			iY: 0,
+			iXY: 0,
+		};
+
+		for (const shape of this.shapes) {
+			properties.area += shape.properties.area;
+			properties.cX += shape.properties.cX * shape.properties.area;
+			properties.cY += shape.properties.cY * shape.properties.area;
+		}
+
+		if (properties.area !== 0) {
+			properties.cX /= properties.area;
+			properties.cY /= properties.area;
+		}
+
+		for (const shape of this.shapes) {
+			const dX = properties.cX - shape.properties.cX,
+				dY = properties.cY - shape.properties.cY;
+
+			properties.iX += shape.properties.iX + shape.properties.area * dY ** 2;
+			properties.iY += shape.properties.iY + shape.properties.area * dX ** 2;
+			properties.iXY += shape.properties.iXY + shape.properties.area * dX * dY;
+		}
+
+		return properties;
+	});
+
+	cgPoint = new Point("CG", {
+		x: this.properties.cX,
+		y: this.properties.cY,
+	});
 
 	zoomIn() {
 		this.zoomDelta(1.1);
@@ -93,10 +124,10 @@ export class Canvas {
 		this.zoomDelta(1 / this.scale);
 	}
 
-	zoomDelta(zoomScale: number, posX = this.svgSize.width * 0.5, posY = this.svgSize.height * 0.5) {
+	zoomDelta(zoomScale: number, posX = this.size.width * 0.5, posY = this.size.height * 0.5) {
 		if (this.scale * zoomScale < 0.1) zoomScale = 0.1 / this.scale;
 
-		if (this.scale * zoomScale > 3) zoomScale = 3 / this.scale;
+		if (this.scale * zoomScale > 10) zoomScale = 10 / this.scale;
 
 		this.offsetX -= (posX - this.offsetX) * (zoomScale - 1);
 		this.offsetY -= (posY - this.offsetY) * (zoomScale - 1);
@@ -106,25 +137,25 @@ export class Canvas {
 	move(direction: "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown") {
 		switch (direction) {
 			case "ArrowLeft":
-				this.offsetX += 0.5 * this.scale * this.consts.GRID_SIZE;
+				this.offsetX += 0.5 * this.scale * GRID_SIZE_PIXELS;
 				break;
 			case "ArrowRight":
-				this.offsetX -= 0.5 * this.scale * this.consts.GRID_SIZE;
+				this.offsetX -= 0.5 * this.scale * GRID_SIZE_PIXELS;
 				break;
 			case "ArrowUp":
-				this.offsetY += 0.5 * this.scale * this.consts.GRID_SIZE;
+				this.offsetY += 0.5 * this.scale * GRID_SIZE_PIXELS;
 				break;
 			case "ArrowDown":
-				this.offsetY -= 0.5 * this.scale * this.consts.GRID_SIZE;
+				this.offsetY -= 0.5 * this.scale * GRID_SIZE_PIXELS;
 				break;
 		}
 	}
 
 	fitView() {
-		if (points.list.length < 1) return;
+		if (anchorPoints.list.length < 1) return;
 
 		// Find points max/min coordinates
-		const minMaxValues = points.list.reduce(
+		const minMaxValues = anchorPoints.list.reduce(
 				(acc, point) => ({
 					minX: Math.min(acc.minX, point.d3Coord.x),
 					maxX: Math.max(acc.maxX, point.d3Coord.x),
@@ -141,7 +172,7 @@ export class Canvas {
 				width: minMaxValues.maxX - minMaxValues.minX,
 				height: minMaxValues.maxY - minMaxValues.minY,
 			},
-			svgSize = this.svgSize;
+			svgSize = this.size;
 
 		// Move to center
 		this.offsetX = 0.5 * svgSize.width - center.x * this.scale;
@@ -150,78 +181,39 @@ export class Canvas {
 		// Adjust zoom
 		const svgElement = this.svg.node();
 		if (svgElement) {
-			const svgSize = this.svgSize,
+			const svgSize = this.size,
 				fitZoom = Math.min(svgSize.width / size.width, svgSize.height / size.height) * 0.9;
 
 			this.zoomDelta(fitZoom / this.scale);
 		}
 	}
 
-	properties = $derived.by(() => {
-		const properties = {
-			area: 0,
-			cX: 0,
-			cY: 0,
-			iX: 0,
-			iY: 0,
-			iXY: 0,
-		};
-
-		for (const shape of myCanvas.shapes) {
-			properties.area += shape.properties.area;
-			properties.cX += shape.properties.cX * shape.properties.area;
-			properties.cY += shape.properties.cY * shape.properties.area;
-		}
-
-		if (properties.area !== 0) {
-			properties.cX /= properties.area;
-			properties.cY /= properties.area;
-		}
-
-		for (const shape of myCanvas.shapes) {
-			const dX = properties.cX - shape.properties.cX,
-				dY = properties.cY - shape.properties.cY;
-
-			properties.iX += shape.properties.iX + shape.properties.area * dY ** 2;
-			properties.iY += shape.properties.iY + shape.properties.area * dX ** 2;
-			properties.iXY += shape.properties.iXY + shape.properties.area * dX * dY;
-		}
-
-		return properties;
-	});
-
-	cgPoint = new Point(
-		() => this.properties.cX,
-		() => this.properties.cY,
-		"CG"
-	);
-
-	get svgSize(): DOMRect {
-		return this.svg.node()!.getBoundingClientRect();
+	get svgNode(): SVGGraphicsElement {
+		return this.svgNodeBinder!;
 	}
 
 	get svg(): d3.Selection<Element, unknown, HTMLElement, HTMLElement> {
-		if (!this.__svg) {
-			this.__svg = d3.select("#main-canvas");
+		if (!this.#svg) {
+			this.#svg = d3.select("#main-canvas");
 		}
 
-		return this.__svg;
+		return this.#svg;
 	}
 
 	get gridPattern(): d3.Selection<Element, unknown, HTMLElement, HTMLElement> {
-		if (!this.__gridPattern) {
-			this.__gridPattern = d3.select("#grid-pattern");
+		if (!this.#gridPattern) {
+			this.#gridPattern = d3.select("#grid-pattern");
 		}
 
-		return this.__gridPattern;
+		return this.#gridPattern;
 	}
 
 	get content(): d3.Selection<Element, unknown, HTMLElement, HTMLElement> {
-		if (!this.__content) {
-			this.__content = d3.select("#canvas-content");
+		if (!this.#content) {
+			this.#content = d3.select("#canvas-content");
 		}
 
-		return this.__content;
+		return this.#content;
 	}
 }
 

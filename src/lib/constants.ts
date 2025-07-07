@@ -1,0 +1,5 @@
+// Canvas constants
+export const MARKER_SIZE = 6,
+	GRID_NUMBER_SUBGRIDS = 5,
+	GRID_SIZE_INCHES = 0.5,
+	GRID_SIZE_PIXELS = 500;

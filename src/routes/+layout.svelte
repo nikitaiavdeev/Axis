@@ -1,34 +1,33 @@
 <script lang="ts">
 	// UI
 	import { Toaster } from "svelte-sonner";
-	import FileMenu from "$lib/components/interface/FileMenu.svelte";
-	import LightDarkMode from "$lib/components/interface/LightDarkMode.svelte";
-	import MouseInfo from "$lib/components/interface/MouseInfo.svelte";
-	import TopToolBar from "$lib/components/interface/TopToolBar.svelte";
 	import * as Tooltip from "$lib/components/ui/tooltip/index";
+
+	// Interface components
+	import Menus from "$lib/components/interface/Menus.svelte";
+	import MainCanvas from "$lib/canvas/MainCanvas.svelte";
 
 	// Light/Dark theme
 	import { ModeWatcher } from "mode-watcher";
 
 	// IndexedDB
-	import { myIndexedDB } from "$lib/scripts/index.svelte";
+	import { myIndexedDB } from "$lib/scripts/indexedDB.svelte";
 
 	// Global Events
-	import { keyPressEvent, onWheel, onMouseMove, onMouseUp } from "$lib/scripts/globalEvents";
+	import {
+		keyPressEvent,
+		onWheel,
+		onMouseMove,
+		onMouseUp,
+		onMouseDown,
+	} from "$lib/scripts/globalEvents";
 
-	import "../app.css";
 	import { onMount } from "svelte";
-	import NewRectangle from "$lib/canvas/shapes/Rectangle/NewRectangle.svelte";
-	import { myCanvas } from "$lib/runes/canvas.svelte";
-	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
-	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
-	import NewCircle from "$lib/canvas/shapes/Circle/NewCircle.svelte";
-	import { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte";
-	import NewPolygon from "$lib/canvas/shapes/Polygon/NewPolygon.svelte";
-	import { ui } from "$lib/runes/ui.svelte";
-	import Results from "$lib/components/interface/Results.svelte";
-	import { Measure } from "$lib/canvas/measure/rune.svelte";
-	import NewMeasure from "$lib/canvas/measure/NewMeasure.svelte";
+
+	// Styles'
+	import "$styles/app.css";
+	import "$styles/canvas.css";
+	import "$styles/shadcn.css";
 
 	let { children } = $props();
 
@@ -48,47 +47,26 @@
 <!-- Light/Dark theme -->
 <ModeWatcher></ModeWatcher>
 
-{#await myIndexedDB.init() then}
+<main class="@container h-screen w-screen overflow-auto">
 	<Tooltip.Provider>
-		<!-- Interface -->
-		<FileMenu></FileMenu>
-		<LightDarkMode></LightDarkMode>
-		<TopToolBar></TopToolBar>
-		<MouseInfo></MouseInfo>
+		<!-- Menus -->
+		<Menus />
 
-		{#if ui.options.showResults}
-			<Results></Results>
-		{/if}
+		{#await myIndexedDB.init() then}
+			<MainCanvas />
 
-		{#if myCanvas.newShape.shape instanceof Rectangle}
-			<NewRectangle shape={myCanvas.newShape.shape} />
-		{:else if myCanvas.newShape.shape instanceof Circle}
-			<NewCircle shape={myCanvas.newShape.shape} />
-		{:else if myCanvas.newShape.shape instanceof Polygon}
-			<NewPolygon shape={myCanvas.newShape.shape} />
-		{:else if myCanvas.newShape.shape instanceof Measure}
-			<NewMeasure shape={myCanvas.newShape.shape} />
-		{/if}
-
-		{#if myCanvas.editShape.shape instanceof Rectangle}
-			<NewRectangle shape={myCanvas.editShape.shape} />
-		{:else if myCanvas.editShape.shape instanceof Circle}
-			<NewCircle shape={myCanvas.editShape.shape} />
-		{:else if myCanvas.editShape.shape instanceof Polygon}
-			<NewPolygon shape={myCanvas.editShape.shape} />
-		{:else if myCanvas.editShape.shape instanceof Measure}
-			<NewMeasure shape={myCanvas.editShape.shape} />
-		{/if}
-
-		{@render children()}
+			<!-- Page is empty -->
+			{@render children?.()}
+		{/await}
 	</Tooltip.Provider>
-{/await}
+</main>
 
 <Toaster />
 
 <!-- Global event listeners -->
 <svelte:window
+	onkeydown={(event) => keyPressEvent(event)}
 	onmousemove={(event) => onMouseMove(event)}
 	onwheel={(event) => onWheel(event)}
-	onkeydown={(event) => keyPressEvent(event)}
+	onmousedown={(event) => onMouseDown(event)}
 	onmouseup={(event) => onMouseUp(event)} />

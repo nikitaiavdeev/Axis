@@ -2,10 +2,14 @@
 import { vec2 } from "gl-matrix";
 
 // Runes
-import { points } from "$lib/canvas/point/rune.svelte";
+import { anchorPoints } from "$lib/canvas/point/rune.svelte";
 import { myCanvas } from "$lib/runes/canvas.svelte";
-import { ui } from "$lib/runes/ui.svelte";
-import { roundFloat } from "./helpers.svelte";
+
+// Constants
+import { GRID_SIZE_PIXELS } from "$lib/constants.js";
+import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
+
+let mouseDownTimer = undefined as undefined | number;
 
 export const keyPressEvent = (event: KeyboardEvent) => {
 		// Canvas zoom
@@ -40,7 +44,7 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 		event.preventDefault();
 
 		// Prevent selection while edeting elemetns
-		if (ui.mouse.down) {
+		if (myCanvas.mouse.down) {
 			window.getSelection()?.removeAllRanges();
 		}
 
@@ -53,43 +57,62 @@ export const keyPressEvent = (event: KeyboardEvent) => {
 
 		document.body.style.cursor = "auto";
 
-		ui.mouse.x = roundFloat(myCanvas.mouseScale.x.invert(event.pageX), 3);
-		ui.mouse.y = roundFloat(myCanvas.mouseScale.y.invert(event.pageY), 3);
+		myCanvas.mouse.x = myCanvas.mouseScale.x.invert(event.pageX);
+		myCanvas.mouse.y = myCanvas.mouseScale.y.invert(event.pageY);
 
 		// Magnet mouse location
-		if (ui.options.magnet) {
+		if (myCanvas.uiOptions.magnet && myCanvas.activeShape) {
 			// Magnet to points
-			const closestPointID = points.delaunay.find(ui.mouse.x, ui.mouse.y),
-				distanceToPixelsScale = 2 * myCanvas.consts.GRID_SIZE * myCanvas.scale;
+			const closestPointID = anchorPoints.delaunay.find(myCanvas.mouse.x, myCanvas.mouse.y),
+				distanceToPixelsScale = 2 * GRID_SIZE_PIXELS * myCanvas.scale;
 
-			if (closestPointID>-1) {
+			if (closestPointID > -1) {
 				const closestPointXY = vec2.fromValues(
-						points.list[closestPointID].x(),
-						points.list[closestPointID].y()
+						anchorPoints.list[closestPointID].x,
+						anchorPoints.list[closestPointID].y
 					),
-					distance = vec2.dist(vec2.fromValues(ui.mouse.x, ui.mouse.y), closestPointXY);
+					distance = vec2.dist(vec2.fromValues(myCanvas.mouse.x, myCanvas.mouse.y), closestPointXY);
 
 				if (distance * distanceToPixelsScale < 20) {
-					ui.mouse.x = closestPointXY[0];
-					ui.mouse.y = closestPointXY[1];
+					myCanvas.mouse.x = closestPointXY[0];
+					myCanvas.mouse.y = closestPointXY[1];
 					return;
 				}
 			}
 
 			// Magnet to grid
-			const closestX = Math.round(ui.mouse.x / 0.1) * 0.1,
-				closestY = Math.round(ui.mouse.y / 0.1) * 0.1;
+			const closestX = Math.round(myCanvas.mouse.x / 0.1) * 0.1,
+				closestY = Math.round(myCanvas.mouse.y / 0.1) * 0.1;
 
-			if (Math.abs(ui.mouse.x - closestX) * distanceToPixelsScale < 20) {
-				ui.mouse.x = closestX;
+			if (Math.abs(myCanvas.mouse.x - closestX) * distanceToPixelsScale < 20) {
+				myCanvas.mouse.x = closestX;
 			}
-			if (Math.abs(ui.mouse.y - closestY) * distanceToPixelsScale < 20) {
-				ui.mouse.y = closestY;
+			if (Math.abs(myCanvas.mouse.y - closestY) * distanceToPixelsScale < 20) {
+				myCanvas.mouse.y = closestY;
 			}
+		}
+
+		// Magnet to setted positions
+		if (myCanvas.mouse.magnetX) myCanvas.mouse.x = myCanvas.mouse.magnetX;
+		if (myCanvas.mouse.magnetY) myCanvas.mouse.y = myCanvas.mouse.magnetY;
+	},
+	onMouseDown = (event: MouseEvent) => {
+		if (event.buttons == 1) {
+			mouseDownTimer = setTimeout(() => {
+				myCanvas.mouse.down = true; // Timer completed, it's a hold
+			}, 200);
 		}
 	},
 	onMouseUp = (event: MouseEvent) => {
 		if (event.buttons == 0) {
-			ui.mouse.down = false;
+			if (mouseDownTimer) clearTimeout(mouseDownTimer); // Clear the timer on release
+
+			setTimeout(() => {
+				myCanvas.mouse.down = false; // Timer completed, it's a hold
+
+				if (myCanvas.editShape instanceof Rectangle) {
+					myCanvas.editShape.editedPoint = undefined;
+				}
+			}, 50);
 		}
 	};

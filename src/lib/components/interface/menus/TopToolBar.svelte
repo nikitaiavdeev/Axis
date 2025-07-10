@@ -1,5 +1,5 @@
 <script lang="ts">
-	// UI
+	// Import UI primitives and utilities (dropdowns, toggles, tooltips, cards, separators, button styles)
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu/index.js";
 	import { Toggle } from "$lib/components/ui/toggle/index.js";
 	import * as ToggleGroup from "$lib/components/ui/toggle-group/index.js";
@@ -8,7 +8,7 @@
 	import { Separator } from "$lib/components/ui/separator/index.js";
 	import { buttonVariants } from "$lib/components/ui/button/index.js";
 
-	// Icons
+	// Import icon components for toolbar actions
 	import {
 		DiamondPlus,
 		Move,
@@ -23,13 +23,14 @@
 		Ruler,
 	} from "@lucide/svelte";
 
-	// Runes
+	// Import canvas state and shape classes
 	import { myCanvas } from "$lib/runes/canvas.svelte.js";
 	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte.js";
 	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte.js";
 	import { Polygon } from "$lib/canvas/shapes/Polygon/rune.svelte.js";
 	import { Measure } from "$lib/canvas/measure/rune.svelte.js";
 
+	// Function to create a new shape on the canvas
 	const createNewShape = (shepe: "rectangle" | "circle" | "polygon" | "measure") => {
 		// Clear edited shape
 		myCanvas.editShape = undefined;
@@ -52,8 +53,10 @@
 	};
 </script>
 
+<!-- Toolbar card containing shape creation, view, and mode toggles -->
 <Card.Root
 	class="pointer-events-auto flex flex-row items-center justify-between gap-2 rounded-md p-1">
+	<!-- Dropdown for creating new shapes -->
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger>
 			<!-- Use snipped to avoid <button> inside <button -->
@@ -73,14 +76,17 @@
 		</DropdownMenu.Trigger>
 
 		<DropdownMenu.Content>
+			<!-- Rectangle shape option -->
 			<DropdownMenu.Item onclick={() => createNewShape("rectangle")}>
 				<Square class="mr-2 size-4" />
 				<span>Rectangle</span>
 			</DropdownMenu.Item>
+			<!-- Circle shape option -->
 			<DropdownMenu.Item onclick={() => createNewShape("circle")}>
 				<CircleIcon class="mr-2 size-4" />
 				<span>Circle</span>
 			</DropdownMenu.Item>
+			<!-- Polygon shape option -->
 			<DropdownMenu.Item onclick={() => createNewShape("polygon")}>
 				<Waypoints class="mr-2 size-4" />
 				<span>Polygon</span>
@@ -88,6 +94,7 @@
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 
+	<!-- Button for creating a new measurement -->
 	<Tooltip.Root>
 		<Tooltip.Trigger
 			class={buttonVariants({ variant: "ghost", size: "icon" })}
@@ -101,6 +108,7 @@
 
 	<Separator orientation="vertical" />
 
+	<!-- Button to fit the canvas view to all objects -->
 	<Tooltip.Root>
 		<Tooltip.Trigger
 			class={buttonVariants({ variant: "ghost", size: "icon" })}
@@ -114,6 +122,7 @@
 
 	<Separator orientation="vertical" />
 
+	<!-- Toggle group for switching between move and resize modes -->
 	<ToggleGroup.Root
 		class="gap-2"
 		type="single"
@@ -131,6 +140,7 @@
 				}
 			}
 		}>
+		<!-- Move mode toggle -->
 		<Tooltip.Root>
 			<Tooltip.Trigger>
 				<!-- Use snipped to avoid <button> inside <button -->
@@ -149,6 +159,7 @@
 			</Tooltip.Content>
 		</Tooltip.Root>
 
+		<!-- Resize mode toggle -->
 		<Tooltip.Root>
 			<Tooltip.Trigger>
 				<!-- Use snipped to avoid <button> inside <button -->
@@ -170,6 +181,7 @@
 
 	<Separator orientation="vertical" />
 
+	<!-- Toggle to show/hide grid -->
 	<Tooltip.Root>
 		<Tooltip.Trigger>
 			<!-- Use snipped to avoid <button> inside <button -->
@@ -184,6 +196,7 @@
 		</Tooltip.Content>
 	</Tooltip.Root>
 
+	<!-- Toggle to enable/disable snap to grid -->
 	<Tooltip.Root>
 		<Tooltip.Trigger>
 			<!-- Use snipped to avoid <button> inside <button -->
@@ -198,6 +211,7 @@
 		</Tooltip.Content>
 	</Tooltip.Root>
 
+	<!-- Toggle to show/hide cross section calculation results -->
 	<Tooltip.Root>
 		<Tooltip.Trigger>
 			<!-- Use snipped to avoid <button> inside <button -->

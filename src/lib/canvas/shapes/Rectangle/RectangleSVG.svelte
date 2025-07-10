@@ -1,20 +1,21 @@
 <script lang="ts">
-	// Classes and Runes
+	// Import canvas context and shape classes
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Rectangle } from "./rune.svelte";
 
-	// Constants
+	// Import constants and utilities
 	import { MARKER_SIZE } from "$lib/constants";
 	import { Point } from "$lib/canvas/point/rune.svelte";
-
-	// Utilities
 	import { cn } from "$lib/utils.js";
 
+	// Get Rectangle shape from props
 	let { shape }: { shape: Rectangle } = $props();
 
+	// Effect: Handles mouse interactions for editing/moving/resizing the rectangle
 	$effect(() => {
 		if (!shape.editedPoint) return;
 
+		// Move mode: update point position with mouse
 		if (
 			(myCanvas.newShape === shape && shape.editedPoint === shape.referencePoint) ||
 			(myCanvas.uiOptions.editMode === "move" &&
@@ -22,7 +23,9 @@
 		) {
 			shape.editedPoint.xMove(myCanvas.mouse.x);
 			shape.editedPoint.yMove(myCanvas.mouse.y);
-		} else if (
+		}
+		// Resize mode: swap edited point and resize
+		else if (
 			myCanvas.newShape === shape ||
 			((myCanvas.activeShape === shape || myCanvas.activeShape === shape.editedPoint) &&
 				myCanvas.mouse.down)
@@ -34,10 +37,11 @@
 		}
 	});
 
+	// Derived: Filter unique points for rendering markers
 	const uniquePoints = $derived.by(() => {
 		const editedPointFiltered = shape.editedPoint
 			? Object.entries(shape.points)
-					// Remove all node which have same coords as selected
+					// Remove all nodes with same coords as selected (except the selected itself)
 					.filter(([_, point]) => {
 						return (
 							`${point.x},${point.y},${point === shape.editedPoint}` !==
@@ -46,6 +50,7 @@
 					})
 			: Object.entries(shape.points);
 
+		// Remove duplicate points by coordinates
 		return Object.fromEntries(
 			editedPointFiltered.filter(([_, point], index, arr) => {
 				const keyStr = `${point.x},${point.y}`;
@@ -53,17 +58,21 @@
 			})
 		);
 	});
+
+	// Handle shape or point selection for editing
 	const editShape = (shapeOrPoint = shape as Rectangle | Point) => {
-		// Ignore click if new shape is creating
+		// Ignore if new shape is being created
 		if (myCanvas.newShape) return;
 
-		// Togle mode if shape already selected
+		// Toggle edit mode if already selected
 		if (myCanvas.editShape === shapeOrPoint) {
 			myCanvas.uiOptions.editMode = myCanvas.uiOptions.editMode === "move" ? "resize" : "move";
 		} else {
 			myCanvas.editShape = shapeOrPoint;
 		}
 	};
+
+	// Start moving a point (set as editedPoint)
 	const startMove = (point: Point) => {
 		if (myCanvas.newShape !== shape) {
 			shape.editedPoint = point;
@@ -71,26 +80,27 @@
 	};
 </script>
 
+<!--  SVG group for the rectangle and its points  -->
 <g
 	class:hole={shape.isHole}
 	class:hoverable={myCanvas.newShape === undefined && !myCanvas.mouse.down}
 	class:selected={myCanvas.activeShape === shape}
 	class:move={myCanvas.editShape === shape && myCanvas.uiOptions.editMode === "move"}
 	class:resize={myCanvas.editShape === shape && myCanvas.uiOptions.editMode === "resize"}>
-	<!-- Rectangle shape -->
+	<!-- Rectangle shape path -->
 	{myCanvas.editShape}
 	<path
 		class="shape"
 		role="none"
 		d="
-	M{shape.points.leftLower.d3Coord.x} {shape.points.leftLower.d3Coord.y}
-	L{shape.points.leftUpper.d3Coord.x} {shape.points.leftUpper.d3Coord.y}
-	L{shape.points.rightUpper.d3Coord.x} {shape.points.rightUpper.d3Coord.y}
-	L{shape.points.rightLower.d3Coord.x} {shape.points.rightLower.d3Coord.y}
-	Z"
+    M{shape.points.leftLower.d3Coord.x} {shape.points.leftLower.d3Coord.y}
+    L{shape.points.leftUpper.d3Coord.x} {shape.points.leftUpper.d3Coord.y}
+    L{shape.points.rightUpper.d3Coord.x} {shape.points.rightUpper.d3Coord.y}
+    L{shape.points.rightLower.d3Coord.x} {shape.points.rightLower.d3Coord.y}
+    Z"
 		onclick={() => editShape()} />
 
-	<!-- Points -->
+	<!-- Render points as circles for resize mode or new shape creation -->
 	{#if myCanvas.newShape === shape || myCanvas.uiOptions.editMode === "resize"}
 		{#each Object.entries(uniquePoints) as [pointName, point] (pointName)}
 			<circle
@@ -112,6 +122,7 @@
 				onmousedown={() => startMove(point)}>
 			</circle>
 		{/each}
+		<!-- Render points as rectangles for move mode -->
 	{:else if myCanvas.uiOptions.editMode === "move"}
 		{#each Object.entries(uniquePoints) as [pointName, point] (pointName)}
 			<rect

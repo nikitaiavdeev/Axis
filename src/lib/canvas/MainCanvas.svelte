@@ -2,10 +2,10 @@
 	// Components
 	import Grid from "./Grid.svelte";
 
-	// Runes
+	// Runes (state management for canvas)
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 
-	// Shapes
+	// Shape components and classes
 	import RectangleSVG from "$lib/canvas/shapes/Rectangle/RectangleSVG.svelte";
 	import { Rectangle } from "$lib/canvas/shapes/Rectangle/rune.svelte";
 	import { Circle } from "$lib/canvas/shapes/Circle/rune.svelte";
@@ -17,6 +17,7 @@
 	import { anchorPoints } from "./point/rune.svelte";
 	import { onMount } from "svelte";
 
+	// Set up resize observer to keep canvas size in sync with window
 	onMount(() => {
 		const onSVGResize = () => {
 				myCanvas.size = {
@@ -31,7 +32,7 @@
 		resizeObserver.observe(myCanvas.svgNode!);
 		onSVGResize();
 
-		// This callback cleans up the observer
+		// Cleanup observer on component destroy
 		return () => resizeObserver.unobserve(myCanvas.svgNode!);
 	});
 </script>
@@ -44,6 +45,7 @@
 	role="none"
 	bind:this={myCanvas.svgNodeBinder}>
 	<defs>
+		<!-- Arrow marker definition for lines/arrows -->
 		<marker
 			id="triangle"
 			viewBox="0 0 6 6"
@@ -56,6 +58,7 @@
 			<path d="M0,0 L0,6 L6,3 Z"></path>
 		</marker>
 
+		<!-- Solid background filter for SVG elements -->
 		<filter x="0" y="0" width="1" height="1" id="solid">
 			<feFlood flood-color="background" result="bg" />
 			<feMerge>
@@ -65,14 +68,16 @@
 		</filter>
 	</defs>
 
+	<!-- Optional grid background -->
 	{#if myCanvas.uiOptions.showGrid}
 		<Grid />
 	{/if}
 
+	<!-- Main canvas content group, applies pan/zoom transforms -->
 	<g
 		id="canvas-content"
 		transform="translate({myCanvas.offsetX} {myCanvas.offsetY}) scale({myCanvas.scale})">
-		<!-- Draw shapes which aren't holes first -->
+		<!-- Draw non-hole shapes first (background shapes) -->
 		{#each myCanvas.shapes.filter((s) => !s.isHole && s !== myCanvas.activeShape) as shape, idx (idx)}
 			{#if shape instanceof Rectangle}
 				<RectangleSVG {shape} />
@@ -83,7 +88,7 @@
 			{/if}
 		{/each}
 
-		<!-- Draw shapes which are holes second so they be above -->
+		<!-- Draw hole shapes above non-holes -->
 		{#each myCanvas.shapes.filter((s) => s.isHole && s !== myCanvas.activeShape) as shape, idx (idx)}
 			{#if shape instanceof Rectangle}
 				<RectangleSVG {shape} />
@@ -94,11 +99,12 @@
 			{/if}
 		{/each}
 
+		<!-- Measures (distance, etc.) would be drawn here -->
 		<!-- {#each myCanvas.measures.filter((m) => m !== myCanvas.activeElement) as measure, idx (idx)}
 			<MeasureSvg {measure} />
 		{/each} -->
 
-		<!-- Draw edited shape above all -->
+		<!-- Draw the currently edited/active shape above all others -->
 		{#if myCanvas.activeShape instanceof Rectangle}
 			<RectangleSVG shape={myCanvas.activeShape} />
 		{:else if myCanvas.activeShape instanceof Circle}
@@ -109,7 +115,7 @@
 			<MeasureSvg measure={myCanvas.activeElement} />-->
 		{/if}
 
-		<!-- C.G. -->
+		<!-- Center of Gravity (C.G.) cross and circle, if enabled -->
 		{#if myCanvas.uiOptions.showResults}
 			<g class="stroke-primary fill-none">
 				<line

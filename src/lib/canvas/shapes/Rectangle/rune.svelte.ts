@@ -3,8 +3,9 @@ import { Shape } from "../index.svelte";
 import { Point } from "../../point/rune.svelte";
 import { myCanvas } from "$lib/runes/canvas.svelte";
 
+// Rectangle shape class, extends Shape
 export class Rectangle extends Shape {
-	// Points
+	// Points defining the rectangle and their behaviors
 	points = {
 		center: new Point(this, {
 			name: "center" as keyof typeof this.points,
@@ -86,10 +87,18 @@ export class Rectangle extends Shape {
 		middleLower: Point;
 	};
 
-	// Reference point
+	// Reference point for transformations (default: leftLower)
 	referencePoint = $state(this.points.leftLower);
+	// Currently edited point (if any)
 	editedPoint = $state(undefined as undefined | Point);
 
+	/**
+	 * Rectangle constructor
+	 * @param refX - Initial X coordinate
+	 * @param refY - Initial Y coordinate
+	 * @param referencePoint - Which point to use as reference (default: leftLower)
+	 * @param isHole - Whether this rectangle is a hole (default: false)
+	 */
 	constructor(
 		refX: number,
 		refY: number,
@@ -100,7 +109,7 @@ export class Rectangle extends Shape {
 		this.referencePoint = this.points[referencePoint];
 		this.editedPoint = this.referencePoint;
 
-		// Set affected poionts and move all points to initial position
+		// Initialize all points at the reference position and set affected points
 		for (const point of Object.values(this.points)) {
 			point.x = refX;
 			point.y = refY;
@@ -108,16 +117,19 @@ export class Rectangle extends Shape {
 		}
 	}
 
-	// Getters & Setters
+	// Get rectangle width (distance between middleRight and middleLeft X)
 	get width() {
 		return this.points.middleRight.x - this.points.middleLeft.x;
 	}
-	// Height
+	// Get rectangle height (distance between middleUpper and middleLower Y)
 	get height() {
 		return this.points.middleUpper.y - this.points.middleLower.y;
 	}
 
-	// Reference point swapping logic
+	/**
+	 * Swaps the edited and reference points if the rectangle's width or height would become negative.
+	 * This ensures the rectangle is always defined with positive dimensions.
+	 */
 	swapEditedPoint() {
 		if (!this.editedPoint) return;
 
@@ -186,7 +198,10 @@ export class Rectangle extends Shape {
 		}
 	}
 
-	// Get Point opposite to reference
+	/**
+	 * Returns the point opposite to the current reference point.
+	 * Used for resizing and transformations.
+	 */
 	oppositePoint(): Point {
 		const swaps = {
 			center: this.points.center,
@@ -215,7 +230,7 @@ export class Rectangle extends Shape {
 		return swaps[this.referencePoint.name as keyof typeof this.points];
 	}
 
-	// // Reference point swapping logic
+	// // Reference point swapping logic (unused, kept for reference)
 	// swapReferencePoint(dimension: "width" | "height", point: Point): Point {
 	// 	const swaps = {
 	// 		width: {
@@ -242,13 +257,13 @@ export class Rectangle extends Shape {
 	// 	return swaps[dimension][point.name as keyof typeof this.points];
 	// }
 
-	// Derived properties
+	// Derived geometric properties of the rectangle
 	properties = $derived({
-		area: this.width * this.height,
-		cX: this.points.leftLower.x + 0.5 * this.width,
-		cY: this.points.leftLower.y + 0.5 * this.height,
-		iX: (this.width * this.height ** 3) / 12,
-		iY: (this.height * this.width ** 3) / 12,
-		iXY: 0,
+		area: this.width * this.height, // Area of the rectangle
+		cX: this.points.leftLower.x + 0.5 * this.width, // Center X
+		cY: this.points.leftLower.y + 0.5 * this.height, // Center Y
+		iX: (this.width * this.height ** 3) / 12, // Moment of inertia X
+		iY: (this.height * this.width ** 3) / 12, // Moment of inertia Y
+		iXY: 0, // Product of inertia (always 0 for axis-aligned rectangle)
 	});
 }

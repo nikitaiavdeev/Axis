@@ -2,26 +2,26 @@
 	// Icons
 	import { Trash2 } from "@lucide/svelte";
 
-	// UI
+	// UI components
 	import ShapeForm from "$lib/canvas/shapes/ShapeForm.svelte";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
-
 	import { Button } from "$lib/components/ui/button/index.js";
 	import { Checkbox } from "$lib/components/ui/checkbox/index.js";
 	import { cn } from "$lib/utils.js";
 
-	// Rune
+	// Rune (canvas logic)
 	import { myCanvas } from "$lib/runes/canvas.svelte";
 	import { Rectangle } from "./rune.svelte";
 	import { Point } from "$lib/canvas/point/rune.svelte";
 
+	// Props: Rectangle shape instance
 	let { shape }: { shape: Rectangle } = $props();
 
-	// ShapeForm instance
+	// Reference to ShapeForm instance
 	let shapeForm = $state<ShapeForm>();
 
-	// Placeholder values while user click screen or type manually
+	// State for user input fields (reference point, width, height)
 	let refX = $state<number | undefined>(undefined),
 		refY = $state<number | undefined>(undefined),
 		width = $state<number | undefined>(undefined),
@@ -29,35 +29,26 @@
 
 	// Effect: Update placeholders when rectangle changes
 	$effect(() => {
-		// if (myCanvas.editShape) {
-		// 	refX = Number(shape.referencePoint.x.toFixed(4));
-		// 	refY = Number(shape.referencePoint.y.toFixed(4));
-		// 	width = Number(shape.width.toFixed(4));
-		// 	height = Number(shape.height.toFixed(4));
-		// }
+		// Uncomment to update input placeholders when editing shape
+		// refX = Number(shape.referencePoint.x.toFixed(4));
+		// refY = Number(shape.referencePoint.y.toFixed(4));
+		// width = Number(shape.width.toFixed(4));
+		// height = Number(shape.height.toFixed(4));
 	});
 
 	// Effect: Update shape properties based on user input or mouse movement
 	$effect(() => {
-		// if (refX !== undefined) {
-		// 	myCanvas.mouse.magnetX = refX;
-		// }
-		// if (refY !== undefined) {
-		// 	myCanvas.mouse.magnetY = refY;
-		// }
+		// Uncomment to sync mouse magnet with input values
+		// myCanvas.mouse.magnetX = refX;
+		// myCanvas.mouse.magnetY = refY;
 		// if (refX !== undefined && refY !== undefined) clickHandle();
 	});
 
 	$effect(() => {
-		// if (width !== undefined) {
-		// }
-		// if (height !== undefined) {
-		// 	myCanvas.mouse.magnetY = refY;
-		// }
-
-		// if (refX !== undefined && refY !== undefined) clickHandle();
+		// Placeholder for additional effects on width/height change
 	});
 
+	// Handle click to set reference point or dimensions
 	const clickHandle = () => {
 		if (refX === undefined) {
 			refX = Number(shape.referencePoint.x.toFixed(4));
@@ -71,25 +62,28 @@
 			height = Number(shape.width.toFixed(4));
 		}
 
+		// If dimensions are missing, set editedPoint for further editing
 		if (width === undefined || height === undefined) {
 			shape.editedPoint = shape.oppositePoint();
 		}
 
 		createShapeCallback();
 	};
+
+	// Create shape and reset form for new shape creation
 	const createShapeCallback = () => {
 		if (refX !== undefined && refY !== undefined && width !== undefined && height !== undefined) {
 			// Register new shape
 			shape.editedPoint = undefined;
 			myCanvas.shapes.push(shape);
 
-			// Clean and start creating new shape
+			// Reset input fields
 			refX = undefined;
 			refY = undefined;
 			width = undefined;
 			height = undefined;
 
-			// Create a new Rectangle with saving previuse parameters
+			// Prepare a new Rectangle with previous parameters
 			myCanvas.newShape = new Rectangle(0, 0, {
 				referencePoint: shape.referencePoint.name as keyof typeof shape.points,
 				isHole: shape.isHole,
@@ -99,6 +93,7 @@
 </script>
 
 {#snippet marker(refPoint: Point, cx: number, cy: number, r: number)}
+	<!-- SVG marker for reference points -->
 	<circle
 		class={cn("point hoverable", shape.referencePoint == refPoint ? "selected" : "")}
 		role="none"
@@ -112,13 +107,16 @@
 	</circle>
 {/snippet}
 
+<!-- Main shape form UI -->
 <ShapeForm bind:this={shapeForm} element={shape} {createShapeCallback} {clickHandle}>
 	<div class="flex flex-col gap-1.5">
 		<Label>Reference Point</Label>
+		<!-- SVG preview of rectangle with selectable reference points -->
 		<svg class="w-full" width="100" height="100" viewBox="0 0 100 100">
 			<g class:hole={shape.isHole}>
 				<rect class="shape" x="10" y="10" width="80" height="80"></rect>
 
+				<!-- Render all possible reference points as markers -->
 				{@render marker(shape.points.leftLower, 10, 90, 6)}
 				{@render marker(shape.points.middleLeft, 10, 50, 4)}
 				{@render marker(shape.points.leftUpper, 10, 10, 6)}
@@ -132,6 +130,7 @@
 		</svg>
 	</div>
 
+	<!-- Input fields for X and Y location -->
 	<div class="flex w-full flex-row gap-2">
 		<div class="flex flex-col gap-1.5">
 			<Label for="x_loc">X loc, in</Label>
@@ -152,6 +151,7 @@
 		</div>
 	</div>
 
+	<!-- Input fields for width and height -->
 	<div class="flex w-full flex-row gap-2">
 		<div class="flex flex-col gap-1.5">
 			<Label for="width">Width, in</Label>
@@ -172,11 +172,13 @@
 		</div>
 	</div>
 
+	<!-- Checkbox for "Is Hole" property -->
 	<div class="flex w-full items-center space-x-2">
 		<Checkbox id="is_hole" bind:checked={shape.isHole} />
 		<Label for="is_hole">Is Hole</Label>
 	</div>
 
+	<!-- Action buttons: Create, Delete, Cancel -->
 	<div class="flex flex-row gap-2">
 		{#if myCanvas.newShape}
 			<Button class="grow" onclick={() => createShapeCallback()}>Create</Button>
